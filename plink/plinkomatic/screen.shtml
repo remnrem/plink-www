@@ -12,7 +12,31 @@
 </head>
 <body>
 
-<!--#include file="pomstart.html"-->
+<font size="6" color="darkgreen"><b>plink-o-matic...</b></font>
+<h1>Overview</h1>
+
+<table>
+<tr><td bgcolor="lightblue" valign="top" width=20%>
+
+<font size="1">
+
+
+<p><a href="pom1.php">Start Plinkomatic!</a></p>
+<p><hr /></p>
+<p><a href="index.shtml" color="white">1. Overview</a> </p>
+<p><a href="http://pngu.mgh.harvard.edu/~purcell/plink/">2. Main PLINK page</a></p>
+
+
+
+</font>
+</td><td width=5%>
+
+<td valign="top">
+
+
+
+&nbsp;</p>
+
 
 <h1>Screenshots</h1>
 
@@ -33,11 +57,16 @@
 
 
 
-<!--#include file="pomend.html"-->
+</td>
+<td width=10%>&nbsp; </td>
+</tr>
+</table>
+
+
 
 <hr>
 <em>
- This document last modified <!--#flastmod file="screen.shtml" -->
+ This document last modified Wednesday, 25-Jan-2017 11:39:25 EST
 </em>
 
 

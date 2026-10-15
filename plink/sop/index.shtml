@@ -7,7 +7,49 @@
 <title>SOP: Whole genome data analysis toolset</title>
 </head>
 
-<!--#include file="start.html"-->
+<!--<html>-->
+<!--<title>PLINK</title>-->
+<!--<body>-->
+
+<font size="6" color="darkgreen"><b>WGAS SOP</b></font>
+
+<h1>A Broad/MGH suite of scripts and resources for whole genome association analysis</h1>
+
+<table border=0>
+<tr><td bgcolor="lightblue" valign="top" width=20%>
+
+<font size="1">
+
+<a href="../index.shtml">Main PLINK page </a> </p>
+
+<a href="sop1.shtml">Data Management</a> </p>
+<ul> 
+ <li> <a href="sop1.shtml#ped">Making a PED file</a>
+ <li> <a href="sop1.shtml#plots">Plots of association results</a>
+</ul>
+
+<a href="sop1.shtml">QC/Summary statistics</a> </p>
+<ul> 
+ <li> <a href="sop2.shtml#qc1">QC pipeline</a>
+</ul>
+
+<a href="sop3.shtml">Association analysis</a> </p>
+<ul> 
+ <li> <a href="sop3.shtml#single">Single SNP tests</a>
+ <li> <a href="sop3.shtml#multi">Multimarker tests</a>
+ <li> <a href="sop3.shtml#cond">Coditional tests</a>
+</ul>
+
+
+</font>
+</td><td width=5%>
+
+<td valign="top">
+
+
+&nbsp;</p>
+
+
 
 <table border=0 width=100%>
 <tr><td width=70%>
@@ -24,11 +66,18 @@ PLINK and gPLINK).
 
 <hr>
 
-<!--#include file="end.html"-->
+</td>
+<td width=5%>&nbsp;
+</td>
+</tr>
+</table>
+
+
+
 
 <hr>
 <em>
- This document last modified <!--#flastmod file="index.shtml" -->
+ This document last modified Wednesday, 25-Jan-2017 11:39:26 EST
 </em>
 
 </body>
