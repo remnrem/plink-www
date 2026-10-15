@@ -1,0 +1,349 @@
+<?xml version="1.0"?>
+<tree name="PLINK-O-MATIC">
+
+<node name="Data management">
+
+ <node name="Create new PED/MAP fileset (reordered)">
+  <node name="Preserve original allele coding"> 
+   <link>pom2.php?m=recode</link>
+  </node>
+  <node name="Recode genotypes 11, 12 and 22 (00 missing)">
+   <link>pom2.php?m=recode12</link>
+  </node>
+  <node name="Recode genotypes as additive and dominant components">
+   <link>pom2.php?m=recodeAD</link>
+  </node>
+ </node>
+
+ <node name="Create a binary bED fileset"> 
+    <link>pom2.php?m=makebed</link>
+ </node>
+
+ <node name="Merge two PED files">
+   <node name="Output standard PED/MAP fileset">
+   <link>pom2.php?m=merge&amp;p=1</link>
+   </node>
+   <node name="Output a binary bED fileset">
+    <link>pom2.php?m=merge&amp;p=2</link>
+   </node>
+ </node>
+ 
+ <node name="Merge multiple PED files">
+   <node name="Output standard PED/MAP fileset">
+   <link>pom2.php?m=mmerge&amp;p=1</link>
+   </node>
+   <node name="Output a binary bED fileset">
+    <link>pom2.php?m=mmerge&amp;p=2</link>
+   </node>
+ </node> 
+  
+ <node name="Extract a subset of SNPs"> 
+   <node name="Output standard PED/MAP fileset">
+    <link>pom2.php?m=extract&amp;p=1</link>
+   </node>
+   <node name="Output a binary bED fileset">
+    <link>pom2.php?m=extract&amp;p=2</link>
+   </node>
+ </node>
+ 
+ <node name="Exclude a subset of SNPs"> 
+   <node name="Output standard PED/MAP fileset">
+    <link>pom2.php?m=exclude&amp;p=1</link>
+   </node>
+   <node name="Output a binary bED fileset">
+    <link>pom2.php?m=exclude&amp;p=2</link>
+   </node>
+ </node>
+
+ <node name="Extract a subset of individuals"> 
+   <node name="Output standard PED/MAP fileset">
+    <link>pom2.php?m=keep&amp;p=1</link>
+   </node>
+   <node name="Output a binary bED fileset">
+    <link>pom2.php?m=keep&amp;p=2</link>
+   </node>
+ </node>
+
+ <node name="Exclude of subset of individuals"> 
+   <node name="Output standard PED/MAP fileset">
+    <link>pom2.php?m=remove&amp;p=1</link>
+   </node>
+   <node name="Output a binary bED fileset">
+    <link>pom2.php?m=remove&amp;p=2</link>
+   </node>
+ </node>
+
+ <node name="Flip SNP strand">
+   <node name="Output standard PED/MAP fileset">
+    <link>pom2.php?m=flip&amp;p=1</link>
+   </node>
+   <node name="Output a binary bED fileset">
+    <link>pom2.php?m=flip&amp;p=2</link>
+   </node>
+ </node>
+
+</node>
+
+
+<node Name="Summary statistics" Type="document">
+
+ <node name="Missingness rates"> 
+  <node name="SNP and individual missing rates"> 
+  <link>pom2.php?m=missing</link>
+  </node>
+  <node name="Test for different rates between cases and controls"> 
+  <link>pom2.php?m=test-missing</link>
+  </node>
+  </node>
+
+ <node name="Allele frequencies"> 
+  <link>pom2.php?m=freq</link>    
+ </node>
+
+ <node name="Hardy-Weinberg equilibrium tests">
+   <link>pom2.php?m=hardy</link>    
+ </node>
+
+ <node name="Mendel error rates for nuclear family data">
+   <link>pom2.php?m=mendel</link>    
+ </node>
+
+</node>  
+
+
+<node Name="Population stratification and matching">
+
+  <node name="IBS distance-based clustering">
+
+   <node name="Cluster on genome-wide IBS">
+   <link>pom2.php?m=cluster&amp;p=1</link>    
+   </node>
+
+   <node name="Cluster on genome-wide IBS and external matching criteria">
+   <link>pom2.php?m=cluster&amp;p=2</link>    
+   </node>      
+
+  </node>
+
+  <node name="IBD estimation (genome-wide)">
+   <link>pom2.php?m=genome</link>    
+  </node>      
+
+  <node name="Heterozygosity / inbreeding coefficients">
+    <link>pom2.php?m=inbreeding</link>    
+  </node>
+
+  <node name="Runs of homozygosity">
+    <link>pom2.php?m=homo-run-snps</link>    
+  </node>  
+
+</node>
+
+<node Name="Linkage disequilibrium and haplotype inference">
+
+ <node><name>Pairwise r and r-squared</name>
+  <link>pom2.php?m=ld-r</link>
+ </node>
+
+ <node name="Haplotype inference">
+  
+   <node name="Calculate haplotype frequencies">
+   <link>pom2.php?m=hap&amp;p=1</link>
+   </node>
+
+   <node name="List individuals' haplotype phases">
+   <link>pom2.php?m=hap&amp;p=2</link>
+   </node>
+
+   <node name="Test case/control haplotype association">
+   <link>pom2.php?m=hap&amp;p=3</link>
+   </node>
+
+   <node name="Create imputed most-likely haplotype dataset">
+   <link>pom2.php?m=hap&amp;p=4</link>
+   </node>
+
+  </node>
+
+</node>
+
+<node Name="Association analysis">
+ 
+<node name="Single SNP analyses">
+
+ <node name="Population based sample">
+ 
+  <node name="Disease trait">
+
+    <node name="Basic allelic test"> 
+
+      <node name="Without permutation"> 
+       <link>pom2.php?m=assoc&amp;p=1</link>
+      </node>
+
+      <node name="With adaptive permutation"> 
+       <link>pom2.php?m=assoc&amp;p=2</link>
+      </node>
+
+      <node name="With maxT permutation"> 
+       <link>pom2.php?m=assoc&amp;p=3</link>
+      </node>
+
+    </node>
+
+    <node name="Cochran-Armitage trend test and genotypic test">
+      <node name="Without permutation"> 
+       <link>pom2.php?m=model&amp;p=1</link>
+      </node>
+
+      <node name="With adaptive permutation"> 
+       <link>pom2.php?m=model&amp;p=2</link>
+      </node>
+
+      <node name="With maxT permutation"> 
+       <link>pom2.php?m=model&amp;p=3</link>
+      </node>
+    </node>
+
+    <node name="Stratified/clustered sample tests">
+
+    <node name="Within-cluster permutation">   
+     	<node name="With adaptive permutation"> 
+      <link>pom2.php?m=within-file&amp;p=2</link>
+     	</node>
+     	<node name="With maxT permutation"> 
+      <link>pom2.php?m=within-file&amp;p=3</link>
+     	</node>
+    </node>
+   
+    <node name="Cochran-Mantel-Haenszel tests">
+      <node name="SNP-disease assocation conditional on cluster">
+       <link>pom2.php?m=mh</link>    
+      </node>
+      <node name="SNP-cluster association conditional on disease">
+       <link>pom2.php?m=mh2</link>    
+      </node>
+    </node>
+
+    <node name="Homogeneity of odds ratio tests">
+       <link>pom2.php?m=homog</link>    
+    </node>
+
+    </node>
+
+    <node name="Set-based tests">
+
+    <node name="Hotelling's T2 multilocus test">   
+
+     	<node name="Without permutation"> 
+      <link>pom2.php?m=t2&amp;p=1</link>
+     	</node>
+
+     	<node name="With adaptive permutation"> 
+      <link>pom2.php?m=t2&amp;p=2</link>
+     	</node>
+
+     	<node name="With maxT permutation"> 
+      <link>pom2.php?m=t2&amp;p=3</link>
+     	</node>
+
+    </node>
+
+    <node name="Sum-statistics gene-based test">   
+      <link>pom2.php?m=sumstat&amp;p=3</link>
+    </node>
+
+   </node>
+    </node>
+
+   <node name="Quantitative trait"> 
+
+   <node name="Standard association analysis">
+
+      <node name="Without permutation"> 
+       <link>pom2.php?m=qt&amp;p=1</link>
+      </node>
+      <node name="With adaptive permutation"> 
+       <link>pom2.php?m=qt&amp;p=2</link>
+      </node>
+      <node name="With maxT permutation"> 
+       <link>pom2.php?m=qt&amp;p=3</link>
+      </node>
+
+   </node>
+   
+   <node name="Stratified/clustered/interaction analysis">
+
+     <node name="Interaction/GxE analysis"> 
+      <link>pom2.php?m=gxe</link>
+     </node>
+
+      <node name="Within-cluster permutation">
+     		<node name="With adaptive permutation"> 
+      	<link>pom2.php?m=qt-within-file&amp;p=2</link>
+     		</node>
+     		<node name="With maxT permutation"> 
+      	<link>pom2.php?m=qt-within-file&amp;p=3</link>
+     		</node>
+   	</node>
+   </node>
+    </node>
+   
+
+
+
+
+
+ </node>
+
+  <node name="Family-based sample">
+    <node name="Disease traits: TDT analysis"> 
+          <node name="Single SNP TDT only">
+          <link>pom2.php?m=tdt&amp;set=no</link>    
+          </node>
+          <node name="Single SNP and set-based TDT">
+          <link>pom2.php?m=tdt&amp;set=true</link>    
+          </node>
+    </node>
+
+    <node name="Quantitative trait: gene-dropping permutation"> 
+          <node name="Gene-drop from founders">
+          <link>pom2.php?m=qtdt&amp;p=1</link>    
+          </node>
+          <node name="Gene-drop from parents">
+          <link>pom2.php?m=qtdt&amp;p=2</link>    
+          </node>
+    </node>
+  </node>
+
+
+</node>
+
+
+<node name="Epistatic analyses">
+ <node name="SNP x SNP epistasis">
+   <node name="Case-only analysis">
+   <link>pom2.php?m=epi&amp;p=1</link>
+   </node>
+   <node name="Case/control analysis">
+   <link>pom2.php?m=epi&amp;p=2</link>
+   </node>
+ </node>
+ <node name="Gene-based epistasis">
+   <node name="Case-only analysis">
+   <link>pom2.php?m=genepi&amp;p=1</link>
+   </node>
+   <node name="Case/control analysis">
+   <link>pom2.php?m=genepi&amp;p=2</link>
+   </node>
+ </node>
+</node>
+
+
+
+</node>
+
+
+
+</tree>
+

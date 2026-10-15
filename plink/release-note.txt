@@ -1,0 +1,72 @@
+
+Dear PLINK users, 
+
+Version 1.04 is now available for download, from 
+
+  http://pngu.mgh.harvard.edu/purcell/plink/download.shtml
+
+There are a number of new features and bug fixes, listed here:
+
+
+** Major new features **
+
+  1) Function to parse result files by gene/region lists (--gene-report, --gene-list, ...)
+  2) Function to parse CNV lists by gene/region lists (--cnv-verbose-report-regions, --cnv-subset, ...)
+  3) Extended functions and gene-information for clumping options (--clump-best, --clump-range, --clump-range-border, ...)
+  4) New set-based test, with LD-aware selection of SNPs in a set (--set-p, --set-r2, ...)
+  5) Procedure to identify likely strand-flip errors between cases/controls (--flip-scan, ...)
+  6) Can now include covariates with generic variant tests (--gvar, ...)
+
+
+** Minor new features **
+
+  1) Added function --compound-genotype to allele AG, 11, 00, etc in PED files only
+  2) Changed default thresholds (to be similar to --all)
+  3) Now --pfilter works on .adjusted output files also
+  4) Added --output-missing-phenotype and --output-missing-genotype options
+  5) Changed default behavior to not set pheotype to missing if sex code is missing 
+  6) Changed --recode, etc, output names to plink.ped, etc, rather than plink.recode.ped
+  7) Added --flip-subset option, to flip strand only for some individuals
+  8) Added --must-have-sex option to set phenotype to missing when recoding data
+  9) Added --make-pheno {file} * feature to set as cases people in {file}, else control 
+  10) Now reports sample summary after filtering for QTs, as for case/control data
+  11) N_GENO field is now always reported in the missing data output
+  12) Added fields PHOM and PHET to .hom output (and modified --read-homozyg also)
+  13) Added --keep-allele-order to stop flipping of allele codes when minor allele frequency is greater than 0.5
+  14) Added --proxy-b-r2 to specify alternate proxy parameters for rarer alleles
+  15) Added allele codes and frequencies to --homog output files
+  16) Added allele code fields to --hardy and --model output
+  17) Improved --lookup database, and changed server
+  18) Cache version test information, to check only once per day
+  19) Added --mperm-save and --mperm-save-all commands to record permutation history
+  20) Updated Rserve client to support new Rserve version protocol
+
+** Bug fixes ** 
+
+  1) No longer count female Y genotypes as missing
+  2) Fixed a problem with --proxy-glm and missing haplotypic data
+  3) Fixed --R function to send counts of minor, not major, allele
+  4) Fixed issue with missing genotypes and --gvar association statistics
+  5) Fixed minor bug with --hardy2 and --hwe2
+  6) Fixed problem when --sex used with --chap test
+  7) Fixed problem with --qfam routine when no valid observations
+  8) Fixed problem with --score (would miscount number of observed alleles)
+  9) Fixed problem with --hap-impute on X chromsome
+  10) Corrected switch of distances/similarities for --cluster-missing/--distance-matrix
+
+** Resources ** 
+
+  1) Added RefSeq gene-lists to the resources section of the web
+  2) Updated the PLINK-formatted HapMap fileset to release 23
+
+
+
+Thanks for your interest.  Please send questions to plink@pngu.mgh.harvard.edu, after 
+consulting the web page in general, and in particular this page:
+
+  http://pngu.mgh.harvard.edu/~purcell/plink/contact.shtml#probs
+
+
+Cheers, 
+--Shaun
+

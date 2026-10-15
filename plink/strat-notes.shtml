@@ -1,0 +1,182 @@
+<html>
+<body>
+
+<head>
+<link rel="stylesheet" href="plink.css" type="text/css">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<title>PLINK: Whole genome data analysis toolset</title>
+</head>
+
+<!--#include file="start.html"-->
+
+<h1>Population stratification: notes of use and interpretation</h1>
+
+
+
+</p>
+<a name="step1">
+<h2>Step 1. Precalculate the <tt>.genome</tt> file</h2>
+</a></p>
+
+The central information for both clustering and multi-dimensional
+scaling is the pairwise identity-by-state (IBS) information for each
+pair of individuals. This can be calculated in advance with
+the <tt>--genome</tt> command and stored in a <tt>plink.genome</tt>
+file and subsequently accessed for any clustering or MDS analysis with
+the <tt>--read-genome</tt> command.
+</p>
+If available, using a parallel compute cluster for this step is
+advisable (see the <tt>--genome-lists</tt> command described on the
+main page).
+</p>
+It is advisable to filter SNPs based on linkage disequilibrium prior
+to calculating genome-wide IBS. That is, it is probably not desirable
+to have many SNPs from the same region, in tight LD, all contributing
+to the IBS scores. At the extreme, such regions will influence the
+clustering and MDS analyses (e.g. a dimension of the MDS could
+represent local variation of a cluster of SNPs in LD). 
+</p>
+SNPs should probably be filtered to include only high genotyping, high
+confidence SNPs prior to this analysis also. For example, one might
+apply filters (assuming that most other basic QC has already been
+done) of
+<pre>
+     --maf 0.01
+     --geno 0.01
+     --mind 1
+</pre>
+and then apply LD pruning:
+<pre>
+     --indep-pairwise 100 50 0.2
+</pre>
+to get something in the order of 50,000 high-genotyping SNPs in
+approximate linkage equilibrium to use in the genome/cluster analysis.
+</p>
+
+Then run the <tt>--genome</tt> command on this reduced set, to
+calculate the <tt>plink.genome</tt> file. 
+
+
+</p>
+<a name="step2">
+<h2>Step 2. Look for outliers and obtain full cluster solution</h2></a>
+</p>
+
+Given the pre-calculated <tt>.genome</tt> file, the next step might be
+to look for extreme outliers before running the main clustering/MDS
+analysis.  This option will detect pairs of individuals that are
+appear much more similar (related/contaminated/duplicated) or
+dissimilar compared to the rest of the sample:
+<pre>
+     --read-genome plink.genome
+     --cluster
+     --neighbour 1 5
+</pre>
+
+Amongst others, the <tt>--cluster</tt> option produces the
+file <tt>plink.cluster3</tt> which we will use in the next step.
+</P>
+The <tt>--neighbour</tt> option produces the
+file <tt>plink.nearest</tt>: the columns to focus on are <tt>Z</tt>
+and <tt>NN==1</tt> rows, looking for outliers (e.g. say more than 3
+standard deviations). Plotting the results usually helps here. At this
+stage, running the
+<pre>
+     --het
+</pre>
+procedure to calculate heterozygosity coefficients is also helpful,
+similarly to look for outliers.
+</p>
+Any obvious outliers should most probably be removed from analysis at
+this stage.
+
+</p>
+<a name="step3">
+<h2>Step 3. Visualise the data using MDS, potentially determining the number of clusters</h2></a>
+</p>
+
+<pre>
+  --cluster
+  --mds-plot 6
+</pre>
+
+And look at <tt>plink.mds</tt> file -- identify further outliers / any
+evidence for 1 major cluster.  Remove outliers; if major clusters,
+lookup in previously calculated plink.cluster3 file (i.e. in R
+
+<pre>
+     d <- read.table("plink.mds",header=T)
+     k <- read.table("plink.cluster3")
+</pre>
+
+Plot the MDS, selecting the appropriate column of 'k' to supply the
+cluster solution K=X of N individuals (i.e. last col of k has K=1
+solution, next to last K=2, etc, up to column 3 has K=N solution; we
+add 1 to the colour code so we don't plot white on white.
+
+<pre>
+     plot( d$C1 , d$C2 , col = k[ , N+3-X ]+1 )
+</pre>
+
+The absolute values of each dimension do not have any useful
+interpretation.
+
+</p>
+
+Also, one might check whether any distinct clusters outside the main
+one map to a specific plate, batch, etc. at this stage. 
+
+<pre>
+     plot( d$C1 )
+     plot( d$C2 )
+</pre>
+
+
+2b) Optionally: take each component of the MDS and treat as a
+phenotype in a quantitative trait using all SNPs -- calculate lambda;
+plot results, to see if a dimension represents a particular location
+(i.e. lambda will be near 1). Helps determine whether that MDS
+could/should be used as a covariate downstream.
+
+3) Optionally: determine whether cases and controls are, on average,
+comparably matched (via permutation: are phenotypically discordant
+pairs less similar in IBS terms, on average?)
+
+   --read-genome plink.genome
+   --ibs-test
+
+
+ 4) Run main clustering -- in this scenario with
+
+  --ppc 1e-3
+  --cc
+
+ seem reasonable parameters. Setting ppc higher means more but smaller
+ clusters; setting ppc lower means fewer but larger clusters.
+
+
+ 5) Then
+
+   --mh --within
+
+ for main analysis.
+
+
+g. 
+
+
+
+
+
+<!--#include file="end.html"-->
+
+<hr>
+<em>
+ This document last modified <!--#flastmod file="strat.shtml" -->
+</em>
+
+</body>
+<HEAD>
+<META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
+</HEAD>
+</html>

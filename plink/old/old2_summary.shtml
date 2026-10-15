@@ -1,0 +1,175 @@
+<html>
+<title>PLINK</title>
+<body>
+
+<head>
+<link rel="stylesheet" href="plink.css" type="text/css">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<title>PLINK: Whole genome data analysis toolset</title>
+</head>
+
+<!--#include file="start.html"-->
+
+<blockquote>Summary statistics</blockquote>
+
+<tt>PLINK</tt> will generate a number of standard summary statistics
+that are useful for quality control (e.g. missing genotype rate, minor
+allele frequency, Hardy-Weinberg equilibrium failures and
+non-Mendelian transmission rates). Thse can also be used as thresholds
+for subsequent analyses (described in next section).
+
+<hr>
+
+<strong>Missing genotypes</strong>
+</p>
+To generate a list genotyping/missing rate statistics:
+</p><kbd>
+	plink --file data --missing 
+</kbd></p>
+will create two files:
+<pre>
+     plink.imiss
+     plink.lmiss 
+</pre>
+which detail missingness by individual and by SNP. For individuals, the
+format is:
+<pre>
+     Family ID (FID)
+     Individual ID (IID)
+     Missing phenotype? (Y/N)
+     Number of missing SNPs (N_MISS)
+     Proportion of missing SNPs (%_MISS)
+</pre>
+For each SNP, the format is:
+<pre>	
+     SNP ID (SNP)
+     Chromosome (CHR)
+     Number of individuals missing this SNP (N_MISS)
+     Proportion of sample missing for this SNP (%_MISS)
+</pre>
+
+</p>
+<hr>
+<strong>Hardy-Weinberg Equilibrium</strong>
+</p>
+
+To generate a list of genotype counts and Hardy-Weinberg test
+statistics for each SNP, with a particular threshold:
+
+</p><kbd>
+	plink --file data --hardy 0.01
+</kbd></p>
+will create a file:
+<pre>
+     plink.hwe
+</pre>
+This file has the following format: for case/control samples
+<pre>
+     SNP
+     Genotype counts in cases [A: A11 A12 A22 ]
+     Genotype counts in controls [U: A11 A12 A22 ]
+     Whole-sample genotype counts [A+U: A11 A12 A22 ]
+     Whole-sample HWE expected counts [E(A+U): A11 A12 A22 ]
+     Whole sample H-W chi-square
+     Whole sample H-W p-value
+     Cases-only H-W chi-square
+     Cases-only H-W p-value
+     Controls-only H-W chi-square
+     Controls-only H-W p-value
+</pre>
+For quantitative traits, only the whole-sample results will be given.
+</p>
+In addition, the following output will appear in the terminal, detailing
+how many SNPs failed the Hardy-Weinberg test, for the sample as a whole, 
+and (when <tt>PLINK</tt> has detected a disease phenotype) for cases and
+controls separately.
+<pre>
+Writing Hardy-Weinberg test results to [ plink.hwe ]
+22 markers failed HWE test ( p <= 0.05 )
+        16 markers failed HWE test in cases
+        12 markers failed HWE test in controls
+</pre>
+
+<warn>WARNING!</warn> Currently everybody is included in the 
+Hardy-Weinberg calculations -- for family data, it would be better 
+to only consider founders (i.e. independent genotypes). This option will 
+be added in future.
+</p>
+<warn>WARNING!</warn> Currently, the H-W test statistic is the standard 
+contingency table chi-square statistic: it has been shown that exact tests 
+have more desirable properties, particularly when one allele is rare. This 
+alternate approach will be adopted in the future. 
+</p>
+<hr>
+<strong>Allele frequency</strong>
+</p>
+
+To generate a list of minor allele frequencies (MAF) for each SNP:
+
+</p><kbd>
+	plink --file data --freq
+</kbd></p>
+will create a file:
+<pre>
+     plink.frq
+</pre>
+with five columns:
+<pre>
+     Chromosome
+     SNP identifier
+     Allele 1 code
+     Allele 2 code
+     Minor allele frequency
+</pre>
+ 
+
+</p>
+<hr>
+<strong>Mendel errors</strong>
+</p>
+
+To generate a list of genotype counts and Hardy-Weinberg test
+statistics for each SNP:
+
+</p><kbd>
+	plink --file data --mendel
+</kbd></p>
+will create files:
+<pre>
+     plink.mendel
+     plink.imendel
+     plink.lmendel
+</pre>
+
+The <tt>*.mendel</tt> file contains all Mendel errors (i.e. one line per 
+error); the <tt>*.imendel</tt> file contains a summary of per-family 
+error rates; the <tt>*.lmendel</tt> file contains a summary of per-SNP 
+error rates.</p>
+
+<warn>TODO</warn> Output from this option not yet fully implemented.
+
+</p>
+<hr>
+<strong>Pedigree errors</strong>
+</p>
+
+<tt>PLINK</tt> will spot some basic pedigree errors when performing a
+family-based test (<tt>--tdt</tt> option), otherwise pedigree
+structure (Family and individual ID) is completely ignored (i.e. all
+individuals are assumed to be unrelated).
+</p>
+For a more comprehensive evaluation of pedigree errors (invalid or
+incompletely specified pedigree structures) please use a different
+software package such as PEDSTATS or <a
+href="http://pngu.mgh.harvard.edu/purcell/famtypes/">famtypes</a>.
+
+
+<!--#include file="end.html"-->
+
+<hr>
+<em>
+ This document last modified <!--#flastmod file="summary.shtml" -->
+</em>
+
+</body>
+</html>

@@ -1,0 +1,20 @@
+<html>
+<script language="javascript" type="text/javascript">
+function runCmd(cmd)
+{
+  var shell = new ActiveXObject("WScript.shell");
+  alert('About to run : ' + cmd);
+  shell.run(cmd, 1);
+}
+</script>
+<body>
+  <a href="javascript:void"
+    onclick="runCmd('c:\\try.bat')">c:\try.bat</a><br>
+  <a href="javascript:void"
+    onclick="runCmd('c:\\winnt\\system32\\calc.exe')">
+    c:\winnt\system32\calc.exe (full path)</a><br>
+  <a href="javascript:void"
+    onclick="runCmd('xeyes')">calc (just like that)</a><br>
+</body>
+</html>
+

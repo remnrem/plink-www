@@ -1,0 +1,430 @@
+<html>
+<title>PLINK</title>
+<body>
+
+<head>
+<link rel="stylesheet" href="plink.css" type="text/css">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<title>PLINK: Whole genome data analysis toolset</title>
+</head>
+
+<!--#include file="start.html"-->
+
+
+<h1>R plugin functions</h1>
+
+This page describes PLINK's limited support for R-based 'plug-in' 
+functions.  In this manner, users can extend the basic functionality 
+of PLINK to better meet their own needs.
+</p>
+
+<a href="http://www.r-project.org/">R</a> is a powerful, freely-available 
+package for statistical computing. PLINK uses the <a  
+href="http://www.rforge.net/Rserve/">Rserve</a> package to communicate 
+with R. There are some notes on installing and running the Rserve 
+package below.
+</p>
+
+The idea is that some analyses, such as survival analysis for example,
+are already implemented in R but not available in
+PLINK. Having a simple interface for accessing such R functionality,
+allows one to benefit from both the data-handling features of PLINK
+(i.e. it being designed specifically to handle large SNP datasets
+efficiently, in a way that the basic R package is not) as well as the
+ever-increasing library of statistical tools in R. Also, this should
+provide an easy way to prototype new methods, etc.
+
+</p>
+
+Currently there is only support for SNP-based analyses. As of version
+1.05, multiple values can be returned for each SNP, as defined by the
+user.  Potentially (if there is interest/specific suggestions) these
+features will be expanded to allow other units of analysis and 
+broader communcation with R.
+
+
+</p><strong>Note</strong> Currently, there is only support for
+R-plugins for Linux-based and Mac OS PLINK distributions. 
+
+</p><strong>Note</strong> Version 1.04 onwards of PLINK has updated
+the client code to support the latest version of Rserve. You should
+re-install Rserve (see notes below) to make sure you have the latest
+version.
+
+
+<a name="rfunc1">
+<h2>Basic usage for R plug-ins</h2></a>
+</p>
+
+Assuming Rserve has been installed and is running locally 
+(see <a href="#rfunc3">below</a>) and that the file 
+<tt>myscript.R</tt> contains the R code conforming to the standard for a 
+PLINK plug-in (see <a href="#rfunc2">here</a>), then the command is simply
+<p><h5>
+ plink --file mydata --R myscript.R
+</h5></p>
+which generates a file
+<pre>
+     plink.auto.R
+</pre>
+
+This file contains the raw output for each SNP, which is whatever vector 
+of numeric values the user returned from their script, and some details about 
+the SNP. There is no header row; each row has the following fields.
+<pre>
+     Chromosome position
+     SNP id
+     Physical position (base-pair)
+     Minor allele (A1)
+     First return value from R-plugin
+     Second return value from R-plugin
+     ...
+</pre>
+
+Depending on how you set up the R script, each row may or may not have the same
+number of columns. Currently it is not possible to return strings of other R
+objects.
+
+</p> 
+If <tt>Rserve</tt> is running on anything other than the default port, you can specify an alternate port number by adding
+<pre>
+     --R-port 8221
+</pre>
+for example.
+
+<a name="rfunc2">
+<h2>Defining the R plug-in function</h2></a>
+</p>
+
+PLINK expects a function in the exact form
+
+<pre>
+     Rplink <- function(PHENO,GENO,CLUSTER,COVAR)
+</pre>
+
+to be defined in the supplied file. This function is expected to return 
+a numeric vector, with as many elements are there are SNPs. Internally, 
+PLINK will call the <tt>Rplink</tt> function -- it must be written exactly 
+as shown here. The objects refer to:
+<pre>
+     PHENO     vector of phenotypes (n)
+     GENO      matrix of genotypes (n x l)
+     CLUSTER   vector of cluster membership codes (n)
+     COVAR     matrix of covariates (n x c)
+</pre>
+where <tt>n</tt> is the number of individuals (after pruning, filtering, 
+etc) and <tt>c</tt> is the number of covariates (if any). PLINK 
+generates these objects internally, so the user can assume these exist 
+for when the <tt>Rplink()</tt> function is called. (In practice, the 
+number of SNPs, <tt>l</tt> will probably be smaller than the total number 
+of SNPs in the file, as PLINK passes the genotype data into R in batches 
+rather than all in one go).
+</p>
+
+Genotypes are coded 0, 1 or 2 copies of the minor allele, 
+and NA, as per the <tt>--recodeA</tt> option.
+</p>
+
+For each SNP, PLINK expects the function to return a numeric vector of values. This need not
+have the same number of values for each SNP (although this will make subsequently parsing of the
+output file harder, potentionally). If the desired return vector is <tt>r</tt>, then the actual 
+return vector must be 
+<pre>
+     c( length(r) , r )
+</pre>
+
+That is, PLINK expects back a long string of values, where it reads how many values to read for the first SNP, reads
+them, then reads how many values to read for the second SNP, reads them, etc.  By also using the abve formulation to 
+specify the return vector, PLINK will be able to parse the output.
+
+</p>
+
+An example R plug-in is shown here -- this is probably the most 
+straightforward template for an R-plugin, in which the <tt>apply()</tt> 
+function is used to iteratively call the nested function (<tt>f1()</tt>), 
+once per SNP, in this case. For example, the file <tt>myscript.R</tt> 
+might contain the following plug-in:
+<pre>
+Rplink <- function(PHENO,GENO,CLUSTER,COVAR)
+{
+
+ f1 <- function(x)   
+ { 
+    r <- mean(x, na.rm=T) / 2 
+    c( length(r) , r )  
+ }
+
+ as.numeric( apply(GENO, 2 , f1) )
+}
+</pre>
+
+If you are not familiar with the R language, there are a number of 
+excellent resources available from the main R <a 
+href="http://www.r-project.org/">webpage</a>.
+</p>
+
+Within the body of the main <tt>Rplink()</tt> function, there are no
+constraints on what you can do, as long as the return value is in the
+proper format, as described above. In this example, within the main
+body of the <tt>Rplink()</tt> function we first define a function
+that will be applied to each SNP, called <tt>f1()</tt>. Unlike
+the <tt>Rplink()</tt> function, you can call this whatever you want,
+or have as many functions as you want.  The function <tt>f1()</tt> 
+calculates the allele frequency for each
+SNP (as the genotypes are coded as the count of the minor allele,
+0,1,2). The second line applies this function to each column of the
+genotype data, using the <tt>apply( <em>data , row/col , function</em>
+)</tt> command.
+</p>
+Another, perhaps more useful, example is implementing survival analysis within PLINK: here 
+we define a function, <tt>f1()</tt> to return the p-value for the first coefficient; we assume
+here that a censoring variable was loaded into PLINK as the first covariate (i.e. the R <tt>Surv</tt> 
+function takes two parameters, the survival time and censoring status). (This is probably not the optimal 
+way to implement this analysis, but is intended purely as an example of what can be done.)
+<pre>
+     library(survival)
+     Rplink <- function(PHENO,GENO,CLUSTER,COVAR)
+     {
+      f1 <- function(s) 
+      {
+        m <- summary( coxph( Surv( PHENO , COVAR[,1] ) ~ s ) )
+        r <- c( m$coef , m$loglik, m$n )
+        c( length(r) , r )
+      }
+     apply( GENO , 2 , f1 )
+     }
+</pre>
+
+In other words, the general format is 
+
+<pre>
+     <em>{ load any libraries or auxiliary data from a file first }</em>
+     <b>Rplink <- function(PHENO,GENO,CLUSTER,COVAR)
+     {</b>
+      f1 <- function(x)
+      {
+      <em> { do something to generate per-SNP return vector r }</em>
+       c( length(r) , r )
+      }
+     apply( GENO , 2 , f1 )
+     <b>}</b>
+</pre>
+
+
+<a name="rfunc2b">
+<h2>Example of debugging an R plug-in</h2></a>
+</p>
+
+
+</p>
+To generate a text file that contains the R commands PLINK would have
+run (rather than actually trying to run them -- this is useful for
+debugging purposes), add the following flag
+<p><h5> plink --file mydata --R myscript.R --R-debug
+</h5></p>
+
+To illustrate the debug function, consider this example, in which we
+try to implement a logistic regression. The file
+<pre>
+     mylog.R
+</pre>
+which contains the function
+<pre>
+     Rplink <- function(PHENO,GENO,CLUSTER,COVAR)
+     {
+       f1 <- function(s) 
+       {
+        m <- glm( PHENO ~ s , family="binomial" )
+        r <- summary(m)$coef[8]
+        c( length(r) , r )
+       }
+      apply( GENO , 2 , f1 )
+     }
+</pre>
+and we have a dataset with three SNPs; the internal PLINK logistic regression command
+<h5>
+plink --file mydata --logistic
+</h5></p>
+yields
+<pre>
+     CHR  SNP         BP   A1       TEST    NMISS       ODDS         STAT            P
+       1 snp0      10000    A        ADD      200      1.256         1.15       0.2501
+       1 snp1      10001    B        ADD      200     0.9028      -0.5112       0.6092
+       1 snp2      10002    B        ADD      200     0.6085       -2.242      0.02499
+</pre>
+
+Trying to run the <tt>R</tt> implementation:
+<h5>
+plink --file mydata --R mylog.R
+</h5></p>
+we obtain a set of invalid p-values in <tt>plink.auto.R</tt>
+<pre>
+     1 snp0 10000  A  NA
+     1 snp1 10001  B  NA
+     1 snp2 10002  B  NA
+</pre>
+
+To find out what is happening, we will run the same command with the debug option
+<h5>
+plink --file mydata --R mylog.R --R-debug
+</h5></p>
+This writes to the file <tt>plink.auto.R</tt> the actual commands that would be passed to 
+R, including the data and the function:
+<pre>
+     n <- 200
+     
+     PHENO <- c( 2, 1, 1, 2, 2, 2, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 2,
+     1, 2, 1, 2, 1, 2, 2, 1, 1, 1, 2, 1, 1, 2, 2, 2, 2, 1, 2, 1, 1, 1, 2,
+     2, 2, 1, 1, 1, 1, 1, 2, 2, 1, 1, 2, 2, 2, 2, 1, 1, 1, 2, 1, 1, 2, 1,
+     2, 1, 1, 2, 2, 2, 1, 2, 2, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 2, 1, 2, 1,
+     2, 2, 1, 2, 1, 1, 2, 2, 2, 1, 2, 2, 1, 1, 1, 1, 2, 2, 2, 2, 2, 1, 1,
+     1, 1, 1, 2, 2, 1, 2, 2, 2, 2, 1, 2, 2, 1, 1, 2, 2, 2, 2, 2, 2, 1, 1,
+     1, 2, 1, 2, 2, 2, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 2, 1, 2, 1, 1, 2, 1,
+     1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 2, 2, 1, 1, 2, 1, 1, 2, 2, 1, 1,
+     2, 2, 2, 1, 2, 1, 2, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1 )
+     
+     COVAR <- matrix( NA , nrow = n , ncol = 0 , byrow = T)
+     
+     CLUSTER <- c( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ) 
+     
+     l <- 3 
+     
+     g <- c( 1, 2, 1, 2, 2, 1, 1, 1, 1, 2, 2, 0, 0, 1, 1, 0, 1, 2, 1, 1, 1,
+     2, 1, 1, 2, 1, 1, 0, 1, 1, 1, 0, 1, 2, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1,
+     1, 1, 1, 1, 0, 1, 2, 1, 1, 1, 1, 0, 1, 1, 0, 2, 2, 0, 1, 1, 2, 0, 1,
+     1, 1, 2, 1, 1, 1, 1, 1, 0, 2, 2, 0, 0, 2, 1, 1, 1, 2, 1, 1, 0, 1, 1,
+     1, 1, 2, 2, 2, 1, 0, 2, 0, 1, 1, 1, 0, 0, 1, 0, 1, 1, 0, 1, 1, 0, 1,
+     0, 2, 2, 1, 0, 0, 0, 1, 0, 1, 2, 2, 2, 1, 0, 0, 0, 2, 1, 2, 2, 1, 1,
+     1, 1, 0, 0, 1, 1, 1, 1, 1, 2, 1, 1, 0, 1, 2, 2, 1, 2, 2, 1, 2, 0, 1,
+     1, 1, 1, 2, 1, 1, 0, 1, 0, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 0, 1, 1, 1,
+     2, 2, 1, 2, 1, 1, 2, 2, 0, 0, 1, 2, 1, 0, 0, 1, 1, 2, 1, 2, 2, 2, 0,
+     1, 1, 0, 2, 1, 1, 2, 1, 0, 1, 1, 0, 1, 1, 1, 1, 2, 1, 1, 0, 1, 1, 0,
+     0, 1, 1, 2, 1, 0, 1, 2, 0, 2, 1, 1, 1, 0, 0, 2, 1, 1, 1, 2, 0, 1, 1,
+     1, 1, 1, 2, 1, 2, 0, 1, 1, 0, 1, 0, 2, 1, 0, 2, 1, 2, 2, 0, 0, 0, 1,
+     1, 2, 1, 1, 1, 0, 2, 1, 0, 2, 2, 1, 1, 2, 1, 1, 1, 2, 0, 1, 1, 0, 1,
+     2, 2, 2, 0, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 2, 0, 0, 2, 0, 2, 1, 1, 1,
+     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 0, 0, 1, 1, 0, 2, 1, 1, 1, 2,
+     2, 2, 1, 1, 0, 0, 2, 2, 1, 2, 2, 0, 2, 2, 2, 2, 0, 1, 2, 2, 2, 2, 0,
+     0, 0, 1, 1, 1, 2, 1, 1, 2, 1, 1, 1, 2, 2, 2, 0, 1, 2, 0, 0, 1, 1, 1,
+     0, 1, 1, 1, 0, 0, 1, 1, 2, 1, 0, 1, 0, 2, 2, 1, 2, 1, 1, 1, 0, 1, 1,
+     1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 2, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 2, 2,
+     2, 2, 1, 2, 1, 1, 1, 2, 1, 2, 0, 0, 1, 0, 1, 2, 1, 0, 2, 0, 1, 1, 0,
+     1, 0, 1, 1, 0, 2, 0, 1, 2, 1, 1, 2, 2, 1, 2, 0, 2, 0, 2, 0, 0, 1, 1,
+     1, 1, 2, 1, 0, 2, 0, 1, 1, 0, 1, 2, 2, 2, 1, 0, 1, 2, 1, 2, 1, 2, 0,
+     0, 1, 0, 1, 1, 2, 0, 1, 1, 2, 1, 0, 1, 2, 1, 0, 2, 2, 2, 2, 2, 2, 1,
+     0, 2, 1, 2, 1, 1, 1, 1, 2, 0, 1, 1, 1, 2, 2, 1, 0, 1, 1, 2, 1, 1, 0,
+     1, 1, 2, 1, 1, 1, 2, 1, 1, 1, 1, 1, 2, 0, 2, 0, 2, 2, 1, 0, 1, 2, 1,
+     0, 2, 0, 0, 1, 0, 2, 1, 0, 2, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 2, 2,
+     0, 1, 2, 1 ) 
+     
+     GENO <- matrix( g , nrow = n ,byrow=T) 
+     GENO[GENO == -1 ] <- NA
+          
+     Rplink <- function(PHENO,GENO,CLUSTER,COVAR)
+     {
+     f1 <- function(s) {
+        m <- glm( PHENO-1 ~ s , family="binomial" )
+        r <- summary(m)$coef[8]
+        c( length(r), r)
+      }
+     apply( GENO , 2 , f1 )
+     }
+</pre>
+
+In R, load this function
+<h5>
+source("plink.auto.R")
+</h5></p>
+and then try to run the <tt>Rplink</tt> function
+<h5>
+Rplink(PHENO,GENO,CLUSTER,COVAR)
+</h5></p>
+and you will see the error message
+<pre>
+     Error in eval(expr, envir, enclos) : y values must be 0 <= y <= 1
+</pre>
+which indicates that <tt>R</tt> is expecting a 0/1 coding for this
+particular function, not the default 1/2 coding used by PLINK for the
+phenotype/dependent variable. You might therefore want to change the
+relevant line of the function from
+<pre>
+     m <- glm( PHENO ~ s , family="binomial" )
+</pre>
+to
+<pre>
+     m <- glm( PHENO==2 ~ s , family="binomial" )
+</pre>
+for example. Then, repeating the above debug procedure, you would see in R
+<h5>
+Rplink(PHENO,GENO,CLUSTER,COVAR)
+</h5></p>
+gives
+<pre>
+     [1] 0.25013412 0.60921037 0.02499268
+</pre>
+which are the correct p-values.  So, now the function is fixed running 
+<h5>
+ plink --file mydata --R mylog.R 
+</h5></p> 
+would generate the same set of p-values as the PLINK
+logistic command, in <tt>plink.auto.R</tt>
+<pre>
+     1 snp0 10000  A  0.250134
+     1 snp1 10001  B  0.60921
+     1 snp2 10002  B  0.0249927
+</pre>
+This basic function could then be extended to return the coefficients also, or to use different analytic approaches 
+available in R.
+
+
+<a name="rfunc3">
+<h2>Setting up the Rserve package</h2></a>
+</p>
+
+First, you must ensure that you have <tt>Rserve</tt> installed on your 
+system. Normally, this will involve just typing, <b><em>at the R command 
+prompt (not the system shell prompt)</em></b>
+<h5>
+ install.packages("Rserve")
+</h5></p>
+
+<strong>HINT</strong> For this to work, R must have been configured with 
+<tt>--enable-R-shlib</tt>.
+</p>
+
+When using any R-based PLINK plug-in, Rserve must be running in the 
+background before invoking the PLINK command. To start Rserve, just type 
+at the shell prompt
+<h5>
+R CMD Rserve
+</h5></p> 
+(note, you may need to change <tt>Rserve</tt> to the full path of where 
+Rserve was installed), or, within R, type at the R prompt
+<h5>
+library(Rserve) <br>
+Rserve()
+</h5></p>
+Please see the <a href="http://www.rforge.net/Rserve/doc.html">Rserve 
+documentation</a> for further support.
+
+
+<!--#include file="end.html"-->
+
+<em>
+ This document last modified <!--#flastmod file="rfunc.shtml" -->
+</em>
+
+</body>
+
+<HEAD>
+<META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
+</HEAD>
+</html>

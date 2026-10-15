@@ -1,0 +1,44 @@
+Output files expected:
+
+Mrecode-recode.ped 	Recoded PED file
+Mrecode-recode.map	Recoded MAP file
+
+Mrecode12-recode.ped 	Recoded PED file
+Mrecode12-recode.map 	Recoded MAP file
+
+MrecodeAD-recode.ped 	Recoded PED file
+MrecodeAD-recode.map 	Recoded MAP file
+
+Mmakebed.bed 	Binary PED file
+Mmakebed.bim 	Binary MAP file
+Mmakebed.fam 	Binary FAM file
+
+MmergeP1-recode.ped 	Recoded PED file
+MmergeP1-recode.map 	Recoded MAP file
+
+MmergeP2-recode.ped 	Recoded PED file
+MmergeP2-recode.map 	Recoded MAP file
+
+MmergeP3-recode.ped 	Recoded PED file
+MmergeP3-recode.map 	Recoded MAP file
+
+MmergeP4-recode.ped 	Recoded PED file
+MmergeP4-recode.map 	Recoded MAP file
+
+MmergeP5-recode.ped 	Recoded PED file
+MmergeP5-recode.map 	Recoded MAP file
+
+MmergeP6.diff 	Difference file
+MmergeP6-recode.ped 	Recoded PED file
+MmergeP6-recode.map 	Recoded MAP file
+
+MmergeP7.diff 	Difference file
+MmergeP7-recode.ped 	Recoded PED file
+MmergeP7-recode.map 	Recoded MAP file
+
+MextractP1-recode.ped 	Recoded PED file
+MextractP1-recode.map 	Recoded MAP file
+
+MextractP2.bed 	Binary PED file
+MextractP2.bim 	Binary MAP file
+MextractP2.fam 	Binary FAM file

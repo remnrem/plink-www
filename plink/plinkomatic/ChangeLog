@@ -1,0 +1,10 @@
+----------------------
+xmltree - Changelog
+----------------------
+
+v 1.0.1 - 07/31/2002:
+  - few display bugs
+  + Can pass class XML filename or set file name in class
+  + All HTML is passed back when maketree is called
+
+v 1.0.0 - 07/21/2002: + First released version

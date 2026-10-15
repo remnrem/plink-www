@@ -1,0 +1,45 @@
+<html>
+<title>PLINK</title>
+<body>
+
+<head>
+<link rel="stylesheet" href="plink.css" type="text/css">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<title>PLINK: Whole genome data analysis toolset</title>
+</head>
+
+<!--#include file="start.html"-->
+
+
+<h1>New features / under development</h1>
+
+This page lists the features that have just been added to the 
+development source code (i.e. and are not yet in the stable release).
+</p>
+
+<strong>IMPORTANT</strong> Unless you know what you are doing, you are 
+best to ignore this page and these features until they feature in the 
+stable release and are documented in the main website.  </p>
+
+</p>
+
+<ul>
+<li> Added <tt>--cnv-test-region</tt> command
+<li> Fixed minor bug in haplotyping routine that could cause a segfault when a haplotype of size 1 SNP is phased
+</ul>
+
+</p>
+<hr>
+
+<!--#include file="end.html"-->
+
+<em>
+ This document last modified <!--#flastmod file="newfeat.shtml" -->
+</em>
+
+</body>
+
+<HEAD>
+<META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
+</HEAD>
+</html>

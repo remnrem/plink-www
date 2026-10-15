@@ -1,0 +1,358 @@
+<html>
+<title>PLINK</title>
+<body>
+
+<head>
+<link rel="stylesheet" href="plink.css" type="text/css">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<title>PLINK: Whole genome data analysis toolset</title>
+</head>
+
+<!--#include file="start.html"-->
+
+
+<h1>SNP simulation routine</h1>
+
+<tt>PLINK</tt> provides an interface to a very simplistic SNP 
+simulation routine, designed to generate large SNP datasets for
+population-based, case/control studies.  This function is largely
+intended as a convenience function for generating data to 
+prototype new methods, comparing the power of different approaches, 
+etc, rather than producing <em>realistic</em> whole genome data. 
+Critically, all SNPs simulated are <b><em>unlinked and in linkage 
+equilibrium</b></em>.
+
+</p>
+<a name="sim1">
+<h2>Basic usage</h2>
+</a>
+</p>
+
+The basic command to simulate a SNP data file is the <tt>--simulate</tt> option,
+<h5>
+ ./plink --simulate wgas.sim --make-bed --out sim1
+</h5></p>
+
+which takes as a parameter the name of a file (here <tt>wgas.sim</tt>)
+that describes the to-be-simulated data.
+
+</p>
+The simulation file <tt>wgas.sim</tt> is as follows:
+<pre>
+     100000  null      0.00 1.00  1.00 1.00
+     100     disease   0.00 1.00  2.00 mult
+</pre>
+These files can have 1 or more rows, where each row has exactly five fields, as follows
+<pre>
+     Number of SNPs in this <em>set</em>
+     Label of this set of SNPs
+     Lower allele frequency range
+     Upper allele frequency range
+     Odds ratio for disease, heterozygote
+     Odds ratio for disease, homozyygote (or "mult")
+</pre>
+
+Specifying <tt>mult</tt> implies a multiplicative risk for the
+homozygote, e.g. 2*2=4 in the above example.
+</p>
+Given this file, <tt>PLINK</tt> would generate 100,000 SNPs with no
+association with disease. Each SNP would have its own population
+allele frequency, generated as a uniform number between, in this case,
+0.00 and 1.00.  In addition, 100 extra SNPs will be simulated that are
+associated with disease (population odds ratio of 2.00).
+
+</p>
+
+The names of each SNP would follow from the label (which must be unqiue), 
+with a number appended, e.g. 
+
+<pre>
+     null_0
+     null_1
+     null_2
+     ...
+     disease_99
+</pre>
+
+An exception is that if a set only contains a single SNP, nothing is
+appended to the label. This is useful in generating multiple samples
+from the same population, as described below.
+
+</p>
+Obviously, a uniform allele frequency range is not realistic: one could instead specify a series of bins 
+to enrich for rarer SNPs, if so desired, to build a more realistic spectrum of allele frequencies (not that the example 
+below is meant to be more realistic).
+<pre>
+     20000  nullA     0.00 0.05  1.00 1.00
+     10000  nullB     0.05 0.10  1.00 1.00
+      5000  nullC     0.10 0.20  1.00 1.00
+     10000  nullD     0.20 0.99  1.00 1.00
+      ... 
+</pre>
+
+As well as generating the actual data, the <tt>--simulate</tt> outputs to the LOG file the following:
+<pre>
+     Reading simulation parameters from [ wgas.sim ]
+     Writing SNP population frequencies to [ plink.simfreq ]
+     Read 2 sets of SNPs, specifying 100100 SNPs in total
+     Simulating 100 cases and 100 controls
+     Assuming a disease prevalence of 0.01
+</pre>
+
+The <tt>plink.simfreq</tt> file is described <a href="#sim2">below</a>.  By default, 100 cases and 100 controls are generated. This 
+can be changed with the command-line options
+<pre>
+     --simulate-ncases 5000
+</pre>and<pre>
+     --simulate-ncontrols 5000
+</pre>
+for example.  Likewise, the default disease prevalence is assumed to be 0.01. This can be changed with 
+<pre>
+     --simulate-prevalence 0.05
+</pre>
+for example. 
+
+</p>
+
+In the example above, the simulated data were directly saved to a binary fileset: this need not be the case. For example, 
+any other analysis command could instead have been applied, e.g. <tt>--simulate</tt> acts just like <tt>--file</tt> or <tt>--bfile</tt>: 
+
+<h5>
+ ./plink --simulate wgas.sim --assoc 
+</h5></p> 
+
+although the actual simulated data would be subsequently lost of course. 
+
+</p>
+
+<strong>Hint</strong> This tool only generates individuals drawn from
+a homogeneous population, but you can easily imagine using several
+<tt>--simulate</tt> runs then using <tt>PLINK</tt> commands to merge
+the resulting files to specify more complex scenarios,
+e.g. representing population stratification, allelic heterogeneity,
+etc.
+</p>
+
+The command
+<pre>
+     --simulate-label POP1
+</pre>
+
+will append the text label <tt>POP1</tt> to the ID of each individual
+generated. This can be useful when generating and subsequently merging
+multiple simulated samples (so unique IDs can be specified across all
+samples).
+
+</p>
+
+
+
+</p>
+<a name="sim1b">
+<h2>Specification of LD between marker and causal variant</h2>
+</a>
+</p>
+It is also possible to simulate data in which the observed marker SNP
+is only in incomplete LD with the actual causal allele. This is
+achieved with either the <tt>--simulate-tags</tt> or <tt>--simulate-haps</tt>
+options, e.g. 
+<h5>
+ plink --simulate ld.sim --simulate-tags  
+</h5></p>
+PLINK now expects 9 fields instead of 6 in the simulation file: namely, 
+<pre>
+     Number of SNPs in this <em>set</em>
+     Label of this set of SNPs
+     Lower allele frequency range, causal variant
+     Upper allele frequency range, causal variant
+     Lower allele frequency range, marker
+     Upper allele frequency range, marker
+     Marker / causal variant LD (D-prime)
+     Odds ratio for disease, heterozygote causal variant
+     Odds ratio for disease, homozyygote causval variant, (or "mult")
+</pre>
+For example, 
+<pre>
+     5    snp    0.05 0.05      0.5 0.5    0.5   2 mult
+</pre>
+Implies 5 CVs, each of 5% MAF and 2-fold multiplicative effect size
+(each in linkage equilibrium still) but with 10 additional markers,
+each of 50% MAF, each in complete LD with D'=0.5 with their respective
+CV (i.e. pairs of markers are simulated). The command
+<h5>
+ plink --simulate ld.sim --simulate-tags --assoc
+</h5></p>
+will therefore generate only 10 SNPs, that are the markers that tag the CVs, i.e. 
+note the frequency of these variants is around 50%
+<pre>
+ CHR     SNP         BP   A1      F_A      F_U   A2        CHISQ            P           OR
+   1   snp_0          1    D    0.474   0.5045    d        3.723      0.05368       0.8851
+   1   snp_1          2    D    0.484   0.4985    d       0.8413        0.359       0.9436
+   1   snp_2          3    D    0.493   0.4775    d       0.9618       0.3267        1.064
+   1   snp_3          4    D    0.486    0.494    d       0.2561       0.6128       0.9685
+   1   snp_4          5    D   0.4925   0.5005    d        0.256       0.6129       0.9685
+</pre>
+In contrast, the related command
+<h5>
+ plink --simulate ld.sim --simulate-haps --assoc
+</h5></p>
+will output both the causal variant and the marker, with <tt>_M</tt>
+appended to the marker name:
+<pre>
+ CHR     SNP         BP   A1      F_A      F_U   A2        CHISQ            P           OR
+   1   snp_0          1    D   0.0995    0.044    d        46.25    1.042e-11        2.401
+   1 snp_0_M          2    B   0.4885    0.494    A        0.121       0.7279       0.9782
+   1   snp_1          3    D   0.0875    0.044    d         30.8    2.853e-08        2.083
+   1 snp_1_M          4    B   0.4815   0.5055    A        2.304        0.129       0.9084
+   1   snp_2          5    D    0.088   0.0575    d        13.79    0.0002044        1.582
+   1 snp_2_M          6    B    0.459   0.5115    A        11.03    0.0008943       0.8103
+   1   snp_3          7    D   0.0965    0.047    d        36.79    1.316e-09        2.166
+   1 snp_3_M          8    B   0.5005    0.491    A        0.361       0.5479        1.039
+   1   snp_4          9    D    0.093   0.0535    d        22.98    1.634e-06        1.814
+   1 snp_4_M         10    B   0.4895    0.496    A        0.169        0.681       0.9743
+</pre>
+
+<strong>WARNING</strong> Again, please note that this procedure does
+not produce anything like realistic patterns of LD as one would expect
+to observe in whole genome datasets: rather, this simply simulates
+pairs of markers, for which there is LD within, but not between,
+pairs.  
+</p>
+
+<a name="sim2">
+<h2>Resimulating a sample from the same population</h2>
+</a>
+</p>
+
+The <tt>--simulate</tt> command also generates the file <tt>plink.simfreq</tt>. This records, for each SNP of the two sets, <tt>null</tt> and 
+<tt>disease</tt> from the <tt>wgas.sim</tt> example, the <em>actual</em> allele frequency chosen for that particular SNP when simulating the 
+data. For example, 
+<pre>
+     1 null_0   0.1885 0.1885       1.00 1.00
+     1 null_1   0.424675 0.424675   1.00 1.00
+     1 null_2   0.12797 0.12797     1.00 1.00
+     1 null_3   0.544394 0.544394   1.00 1.00
+     1 null_4   0.938641 0.938641   1.00 1.00
+     ....
+</pre>
+
+Conveniently, this information is output in the same format as the original simulation file: note how the upper and lower allele frequency 
+range is converged to specify a particular value, i.e. the first row shows a range of 0.1885 to 0.1885, i.e. effectively forcing the allele 
+frequency for the first SNP to be 0.1885.  This can be useful, as to generate a new independent dataset <em>from the same population as the 
+first</em>, you would simply use the 
+<tt>plink.simfreq</tt> output file, as input for a new <tt>--simulate</tt> command, see below. 
+
+</p>
+Putting this together, one might imagine setting up a simple screen/replicate simulation design: first we generate the original
+WGAS screening data
+
+<h5>
+ ./plink --simulate wgas.sim --make-bed --out screen
+</h5></p>
+run our association test
+<h5>
+ ./plink --bfile screen --assoc 
+</h5></p>
+and extract a list of significant SNPs (here using the Unix <tt>gawk</tt> command, to filter on the p-value column, 9)
+<h5>
+ gawk ' NR>1 && $9 < 1e-3 { print $2 } ' plink.assoc > positives
+</h5></p>
+
+and then generate and test these same SNPs in an independent sample
+<h5>
+ ./plink --simulate screen.simfreq --extract positives --assoc --out replication
+</h5></p>
+
+etc.  By labeling true disease SNPs and null SNPs sensibly as above,
+you can tell how many true positives and false positives appear at the
+screening and the replication stages, e.g. using Unix <tt>bash</tt>
+shell scripting to summarise results:
+
+<pre>
+   t=1e-3
+   s0=`fgrep null plink.assoc | gawk ' $9 < t ' t=$t | wc -l`
+   s1=`fgrep disease plink.assoc | gawk ' $9 < t ' t=$t | wc -l`
+   echo "Detected $s1 true positives and $s0 false positives in screening"
+
+   t=1e-2
+   s0=`fgrep null replication.assoc | gawk ' $9 < t ' t=$t | wc -l`
+   s1=`fgrep disease replication.assoc | gawk ' $9 < t ' t=$t | wc -l`
+   echo "Of these, $s1 true positives and $s0 false positives replicate"
+</pre>
+
+</p>
+<a name="sim3">
+<h2>Simulating a quantitative trait</h2>
+</a>
+</p>
+
+To simulate a quantitative trait based on one or more unlinked SNPs, 
+use the command 
+<h5>
+ plink --simulate-qt myfile.sim  --simulate-n 1000
+</h5></p>
+where <tt>myfile.sim</tt> is similar in format to the file taken by the standard <tt>--simulate</tt> option, except
+the two final fields represent the additive genetic variance, and the ratio of dominance to additive effects, e.g. if
+<tt>myfile.sim</tt> is
+<pre>
+ 10 qtl 0.05 0.95  0.01 0
+</pre>
+then
+<h5>
+ plink --simulate-qt myfile.sim
+</h5></p>
+will generate ten unlinked QTLs, with allele frequency between 0.05
+and 0.95 for the trait-increasing allele. In each case, the effect
+size will be calculated to give a population variance explained of 0.01. The 
+final 0 indicates the effects are additive (1 means complete dominance, -1 
+means complete recessive). In this case, the output is 
+<pre>
+      Reading QT simulation parameters from [ sim1.sim ]
+      Writing SNP population frequencies to [ plink.simfreq ]
+      Read 1 sets of SNPs, specifying 10 SNPs in total
+      Simulating QT for 1000 individuals 
+      Total QTL variance is 0.1
+      Simulating disease variants (direct association)
+</pre>
+This lists the total population variance explained by all QTLs -- in this case, 0.1.  If the variance
+explained is greater than 1, an error message will be reported.
+</p>
+If the <tt>--assoc</tt> command were also specified along with the above command, standard QT association 
+tests would be performed for each simulate SNP, e.g. <tt>plink.qassoc</tt>:
+<pre>
+      CHR     SNP         BP    NMISS       BETA         SE         R2        T            P 
+        1   qtl_0          1     1000     0.1988    0.05263     0.0141    3.777    0.0001678 
+        1   qtl_1          2     1000    0.09956    0.04623   0.004626    2.154      0.03151 
+        1   qtl_2          3     1000    -0.2101     0.0683   0.009391   -3.076     0.002156 
+        1   qtl_3          4     1000      0.186    0.04728    0.01528    3.935    8.911e-05 
+        1   qtl_4          5     1000     0.1489    0.04714   0.009899    3.159     0.001632 
+        1   qtl_5          6     1000    -0.1854    0.04569    0.01623   -4.057    5.351e-05 
+        1   qtl_6          7     1000     0.2287    0.05745    0.01563    3.981    7.355e-05 
+        1   qtl_7          8     1000    -0.2011    0.08519   0.005551    -2.36      0.01845 
+        1   qtl_8          9     1000      0.166    0.04337    0.01446    3.827    0.0001377 
+        1   qtl_9         10     1000    -0.1007    0.04773   0.004437   -2.109       0.0352 
+</pre>
+
+showing <tt>R2</tt> (variance explained) values around 0.01, as
+expected, with the sampling variation due to sample of 1000
+individuals (the default sample size, if <tt>--simulate-n</tt> is not
+specified).
+</p>
+
+The additional commands such as <tt>--simulate-label</tt> and
+<tt>--simulate-tags</tt>, etc, can be used with the
+<tt>--simulate-qt</tt> option.
+
+<!--#include file="end.html"-->
+
+
+<em>
+ This document last modified <!--#flastmod file="simulate.shtml" -->
+</em>
+
+</body>
+
+<HEAD>
+<META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
+</HEAD>
+</html>

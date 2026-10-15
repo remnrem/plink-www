@@ -1,0 +1,64 @@
+<html>
+<head>
+	<title>CheckMe</title>
+</head>
+
+<body>
+<form>
+<!--  <p style="line-height: half"> -->
+
+<table>
+<tr>
+	<td><input type="checkbox" name="check_first" onclick=GrayOut(this,"first_name","");GrayOut(this,"last_name","")></td>
+	<td>Enter a name</td>
+	<td></td>
+</tr>
+<tr>
+	<td><input type="text" name="first_name" value="" disabled="true"></td>
+	<td>First Name</td>
+</tr>
+<tr>
+	<td><input type="text" name="last_name" value="" disabled="true"></td>
+	<td>Last Name</td>
+</tr>
+</table>
+
+<table>
+<tr>
+	<td><input type="checkbox" onclick=GrayOut(this,"missg","")></td>
+	<td width=15%><tt> --missing -genotype </tt> </td>
+	<td> <input type="text" size="10"  value="0" name="missg" disabled="true"></td>
+	<td> <b>Missing genotype value.</b> [[]] </td>
+</tr>
+</table>
+
+
+</form>
+
+<!-- This Java script allows a checkbox to control a specified field.
+
+In this example, the checkbox starts out unchecked, and the corresponding field
+is grayed out.  When the checkbox is selected, the field is enabled, and can be
+entered.  If the field has a set value, this value is changed to "" when the 
+checkbox is unchecked and the field is disabled.
+<input type="checkbox" onclick=GrayOut(this,"fieldname")>
+<input type="text" name="fieldname" value="" disabled="true">
+-->
+<script>
+function GrayOut(obj_checkbox,field,new_val)
+{
+  if(obj_checkbox.checked)
+  {
+    obj_checkbox.form.elements[field].disabled = false;
+    
+  }
+  else
+  {
+    obj_checkbox.form.elements[field].value = new_val; 
+    obj_checkbox.form.elements[field].disabled = true;  
+  }
+}
+</script>
+
+</body>
+</html>

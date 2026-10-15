@@ -1,0 +1,518 @@
+<html>
+<body>
+
+<head>
+<link rel="stylesheet" href="plink.css" type="text/css">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<title>PLINK: Whole genome data analysis toolset</title>
+</head>
+
+<!--#include file="start.html"-->
+
+<h1>Permutation procedures</h1>
+</p>
+
+Permutation procedures provide a computationally intensive approach to 
+generating significance levels empirically. Such values have desirable 
+properties: for example, relaxing assumptions about normality of 
+continuous phenotypes and Hardy-Weinberg equilibrium, dealing with rare 
+alleles and small sample sizes, providing a framework for 
+correction for multiple testing, and controlling for 
+identified substructure or familial relationships by permuting only 
+within cluster.
+</p>
+
+<h6>Conceptual overview of permutation procedures</h6>
+
+Permutation procedures are available for a variety of tests, as
+described below. For some tests, however, these procedures are not
+available (e.g. SNP x SNP epistasis tests). For other tests,
+permutation is necessary to obtain any significance values at all
+(e.g. set-based tests). </p>
+
+The permutation tests described below come can be categorized in two ways:
+<ul>
+ <li> Label-swapping versus gene-dropping
+ <li> Adaptive versus max(T)
+</ul>
+
+
+<h6>Label-swapping and gene-dropping</h6>
+
+In samples of unrelated individuals, one simply swaps labels (assuming 
+that individuals are 
+interchangeable under the null) to provide a new dataset sampled under 
+the null hypothesis. 
+Note that only the phenotype-genotype relationship is destroyed by 
+permutation: the patterns 
+of LD between SNPs will remain the same under the observed and permuted 
+samples. 
+
+For family data, it might be better (or in the case of affected-only 
+designs such as the TDT, necessary) to perform gene-dropping permutation 
+instead.  In it's most simple form, this just involves flipping which 
+allele is transmitted from parent to offspring with 50:50 probability. 
+This approach can extend to general pedigrees also, dropping genes from 
+founders down the generations. 
+</p>
+For quantitative traits, or samples in which both affected and 
+unaffected non-founders are present, one can then perform a basic test of 
+association (with disease, or with a quantitative trait) treating the 
+pedigree data as if they were all unrelated (i.e. just using the 
+<tt>--assoc</tt> option) but creating permuted datasets by gene-dropping 
+will both control for stratification and the non-independence of  related 
+individuals (i.e. as these will also be properties of every permuted 
+dataset).  It is possible to maintain LD between SNPs by applying the 
+same series of 50:50 flip/no-flip decisions to all SNPs in the 
+same permuted replicate for a given transmission. In addition, it is 
+possible to control for linkage by applying the same series of flip/no-flip 
+decisions to all siblings in the same nuclear family. Both these features 
+are automatically applied 
+in <tt>PLINK</tt>.
+
+<h6>Adaptive and max(T) permutation</h6>
+
+Using either label-swapping or gene-dropping, there are two basic 
+approaches to performing the permutations. The default mode is to use an 
+<b><em>adaptive</em></b> permutation 
+approach, in which we give up permuting SNPs that are clearly going to be non-significant 
+more quickly than SNPs that look interesting. In otherwords, if after only 10 permutations 
+we see that for 9 of these the permuted test statistic for a given SNP is larger than the
+observed test statistic, there is little point in carrying on, as this SNP is incredibly 
+unlikely to ever achieve a highly significant result. This greatly speeds up the permutation
+procedure, as most SNPs (that are not highly significant) will drop out quite quickly, making it possible
+to properly evaluate significance for the handful of SNPs that require millions of permutations.
+Naturally, the precision with which one has estimated the significance p-value (i.e. relating from 
+the number of permutations performed) will be correlated the significance value itself -- but for 
+most purposes, this is precisely what one wants, as it is of little interest whether a clearly 
+un-associated SNP really has a p-value of 0.78 or 0.87.
+
+</p>
+
+In contrast, <b><em>max(T)</em></b> permutation does not drop SNPs along the way. If 1000 permutations are
+specified, then all 1000 will be performed, for all SNPs. The benefit of doing this is that two sets 
+of empirical significance values can then be calculated -- pointwise estimates of an individual SNPs 
+significance, but also a value that controls for that fact that thousands of other SNPs were tested. This
+is achieved by comparing each observed test statistic against the maximum of all permuted statistics (i.e. 
+over all SNPs) for each single replicate. In otherwords, the p-value now controls the familywise error rate, 
+as the p-value reflects the chance of seeing a test statistic this large, given you've performed as many 
+tests as you have.  Because the permutation schemes preserve the correlational structure between SNPs, this
+provides a less stringent correction for multiple testing in comparison to the Bonferroni, which assumes 
+all tests are independent.  Because it is now the corrected p-value that is of interest, it is typically 
+sufficient to perform a much smaller number of tests -- i.e. it is probably not necessary to demonstrate that 
+something is genome-wide significant beyond 0.05 or 0.01. 
+</p>
+
+<h6>Computational issues</h6>
+
+<tt>PLINK</tt> performs the basic tests of association reasonably quickly -- for small datasets both permutation 
+procedures will be feasible. For example, for a dataset comprising 100,000 SNPs measured on 350 individuals, 
+each permutation (for all 100K SNPs) takes approximately 2 seconds on a modern Linux workstation. At this speed, it 
+will take just over 1 day to perform 50,000 permutations using the max(T) mode and label-swapping.  With the same dataset, 
+using adaptive mode, the entire analysis is finished much quicker (although the empirical p-values are, of course, not 
+corrected for multiple testing). For larger datasets (e.g. 1000s of individuals measured on >500K SNPs) things will 
+slow down, although this will be linear with the number of genotypes -- if one has access to a cluster, however, the 
+max(T) approach lends itself to easy parrallelization (i.e. if one can set many jobs running analysing the same data, it 
+is easy to combine the empirical p-values afterwards). 
+
+</p>
+By default, <tt>PLINK</tt> will select a random seed for the
+permutations, based on the system clock. To specify a fixed seed
+instead add the command
+<pre>
+   --seed 6377474
+</pre>
+where the parameter a (large) integer seed.
+</p>
+
+<a name="perm">
+<h2>Basic (adaptive) permutation procedure</h2></a>
+</p>
+
+The default method for permutation is the adaptive method. To obtain a max(T) permutation p-value, 
+see <a href="mperm">the section below</a>. For either either case/control or quantitative trait 
+association analysis, use the option:
+<h5>
+	plink --file mydata --assoc --perm 
+</h5></p>
+to initiate adaptive permutation testing. As well as the <tt>plink.assoc</tt> or <tt>plink.qassoc</tt> output file, 
+adding the <tt>--perm</tt> option will generate a file named:
+<h5>
+	plink.assoc.perm	
+</h5></p>
+which contains the fields:
+<pre>
+     CHR     Chromosome
+     SNP     SNP ID
+     STAT    Test statistic
+     EMP1    Empirical p-value (adaptive)
+     NP      Number of permutations performed for this SNP
+</pre>
+
+An alternate scheme is also available, that may under some circumstances be useful. 
+Specifically, this approach fixes the observed marginal counts for the 2-by-3 tables 
+that is case/control status by the two alleles <em>and the missing allele count</em>. 
+After permuting case/control label, only two cells in the table, e.g. missing and 
+A2 alleles for controls, are counted, the rest of the table is filled in on 
+the basis of the fixed marginal values. This speeds up the permutation procedure 
+a little, and also implicitly downweights association results where there is 
+a lot of missing genotype data that is non-random with respect to genotype 
+and case/control status.  Naturally, this approach can not provide total 
+protection against the problem of non-random missing genotype data. Also, 
+for SNPs with lots of missing data, this test will be conservative, whether 
+the missingness is non-random or not. For these reasons, this is not the 
+default option, although this approach might be one worth exploring further. To 
+use this alternate permutation scheme, use the <tt>--p2</tt> flag:
+<h5>
+	plink --file mydata --assoc --perm --p2
+</h5></p>
+or 
+<h5>
+	plink --file mydata --assoc --mperm 1000 --p2
+</h5></p>
+
+
+
+</p>
+
+<a name="aperm">
+<h2>Adaptive permutation parameters</h2></a>
+</p>
+
+Although the <tt>--perm</tt> option invokes adaptive permutation by 
+default, there are various parameters that alter the behavior of the 
+adaptive process that can be tweaked using the <tt>--aperm</tt> option, 
+followed by six parameters: for example, 
+<h5>
+plink --file mydata --assoc --aperm 10 1000000 0.0001 0.01 5 0.001
+</h5></p>
+
+The six arguments (along with the default values) are:
+<pre>
+     Minimum number of permutations per SNP           5
+     Maximum number of permutations per SNP           1000000
+     Alpha level threshold (alpha)                    0
+     Confidence interval on empirical p-value (beta)  0.0001
+     Interval to prune test list (intercept)          1
+     Interval to prune test list (slope)              0.001
+</pre>
+
+These are interpreted as follows: for every SNP, at least 5 permutations 
+will be performed, but no more than 1000000. After 5 permutations, the 
+p-values will be evaluated to see which SNPs we can prune. The first 
+interval value means to perform this pruning every 5 replicates; 
+the second pruning parameter (0.001) means that the rate of pruning slows down with 
+increasing number of replicates (i.e. pruning is, in this case, performed every 5+0.001R replicates
+where R is the current number of replicates). At each pruning stage, a <tt>100*(1 - beta / 2T)%</tt> 
+confidence interval is calculated for each empirical p-value, where <tt>beta</tt> is, in this case 0.01, 
+and <tt>T</tt> is the number of SNPs. Using the normal approximation to the binomial, we prune any SNP for 
+which the lower confidence bound is greater than <tt>alpha</tt> or the upper confidence bound is less than 
+<tt>alpha</tt>.
+
+
+<a name="mperm">
+<h2>max(T) permutation</h2></a>
+</p>
+
+To perform the max(T) permutation procedure, use the <tt>--mperm</tt> 
+option, which takes a single paramter, the 
+number of permutations to be performed: e.g. to use with the TDT test:
+<h5>
+plink --file mydata --tdt --mperm 5000
+</h5></p>
+which will generate (along with the <tt>plink.tdt</tt> file) an file named
+<pre>
+     plink.tdt.mperm
+</pre>
+which contains the fields:
+<pre>
+     CHR     Chromosome
+     SNP     SNP ID
+     STAT    Test statistic
+     EMP1    Empirical p-value (pointwise)
+     EMP2    Corrected empirical p-valie (max(T) / familywise) 
+</pre>
+
+</p><strong>Hint</strong> If multiple runs of <tt>PLINK</tt> are performed on the same 
+dataset in parallel, using a computer cluster to speed up the max(T) permutations, 
+then the resulting estimates of empirical significance can be combined across runs 
+as follows. Empirical p-values are calculated as <tt>(R+1)/(N+1)</tt> where <tt>R</tt> is 
+the number of times the permuted test is greater than the observed test; <tt>N</tt> is the 
+number of permutations. Therefore, therefore, given <tt>p_i</tt>, the empirical p-value
+for the ith run, this implies that <tt>p_i*(N_i+1)-1</tt> replicates passed the observed 
+value. The overall empirical p-value should then be:
+<pre>
+     ( SUM_i { p_i * ( N_i + 1 ) - 1 } + 1 ) / ( SUM_i { N_i } + 1 ) 
+</pre>
+
+
+</p>
+To produce output files that contain either the best statistic per replicate, or all statistics per replicate, use either option
+<pre>
+     --mperm-save
+</pre>
+or
+<pre>
+     --mperm-save-all
+</pre>
+along with the usual <tt>--mperm</tt> command.  The first command generates a file
+<pre>
+     plink.mperm.dummp.best
+</pre>
+which contains two columns. The first is the replicate number (0 represents the original data, the remaining rows 1 to <em>R</em> where <em>R</em> is the
+number of permutations specified). The second column is the maximum test statistic over all SNPs for that replicate.
+</pre>
+The second command, <tt>--mperm-save-all</tt> produces a file
+<pre>
+     plink.mperm.dump.all
+</pre>
+that could be a very large file: the test statistic for all SNPs for all replicates. As before, the first row is the original data; 
+the first column represents the replicate number; all other columns represent the test statistic values for each SNP (<tt>NA</tt>
+if this cannot be calculated). These two files might be of use if, for example, you wish to create your own wrapper around PLINK to perform higher-order 
+corrections for multiple testing, e.g. if more than one phenotype is tested per SNP. In most cases, for this purpose, 
+the first form should suffice.
+
+
+</p>
+<a name="genedrop">
+<h2>Gene-dropping permutation</h2></a>
+</p>
+
+To perform gene-dropping permutation, use the <tt>--genedrop</tt> option, 
+combined with the standard <tt>--assoc</tt> option. Either adaptive: e.g. 
+<h5>
+   plink --file mydata --assoc --genedrop
+</h5></p>
+or max(T) permutation: e.g. 
+<h5>
+   plink --file mydata --assoc --genedrop --mperm 10000
+</h5></p>
+can be specified.
+
+</p>
+
+This analysis option is equally applicable to disease and quantitative traits, 
+although at least some non-founder individuals should be unaffected. 
+Currently, an individual must have both parents genotyped for genedropping. For founders 
+and for individuals without two genotyped parents, their genotypes are 
+unchanged throughout all genedropping permutations. 
+
+</p>
+It is possible to combine label-swapping with gene-dropping, however, to 
+handle different family/sample configurations. That is, the basic 
+gene-dropping procedure will leave untouched all individuals without two 
+parents, making them uninformative for the test of association. One can 
+think of at least three classes of groups of people without two parents 
+in the dataset: founders/parents, siblings and unrelated singletons. 
+Label-swapping within these groups can provide additional sources 
+information for association that control different levels of the 
+between/within family components of association.
+</p>
+There are three options, which can be used together, are:
+<pre>
+     --swap-sibs                within family
+     --swap-parents             partial within-family
+     --swap-unrel               between family
+</pre>
+
+which label-swap between sibs without genotyped parents (swapping only 
+within families), between parents only (swapping only within families), 
+or between all singletons (unrelated individuals) (swapping between 
+familes).
+
+</P>
+
+<h6>Basic within family QTDT</h6>
+
+This test only considers information from individuals with two genotyped 
+parents:
+
+<h5>
+plink --file mydata --assoc --genedrop
+</h5></p>
+
+
+<h6>Discordant sibling test</h6>
+
+Although gene-dropping only considers individuals with two parents to be 
+informative, valid family-based tests can include information from 
+full-siblings -- by label-swapping only within each full sibship that 
+does not otherwise have parents, it is possible to augment 
+the power of the gene-dropping approach:
+<h5>
+plink --file mydata --assoc --genedrop --swap-sibs
+</h5></p>
+
+<h6>parenTDT/parenQTDT</h6>
+
+This test additionally incorporates information from phenotypically
+discordant parents (for either quantitative or disease triats). This
+provides more information for association, but provides a weaker level
+of protection against stratification (i.e. it assumes that mother and
+father pairs are well matched in terms of subpopulation stratum).
+
+<h5>
+plink --file mydata --assoc --genedrop --swap-parents
+</h5></p>
+
+
+<h6>Standard association for singleton, unrelated individuals</h6>
+
+If a sample is a mixture of families and unrelated individuals (e.g. 
+case/control and offspring/parent trios combined) then adding this 
+option as well as the <tt>--gene-drop</tt> option will perform 
+label-swapping permutation for all unrelated individuals.
+
+<h5>
+plink --file mydata --assoc --genedrop --swap-unrel
+</h5></p>
+
+One or more of these options can be included with the <tt>--genedrop</tt> 
+option. These features allow between and within family components of 
+association to be included in analysis. Below are the results of some 
+simple, proof-of-principle simulations, to illustrate parental 
+discordance test:
+</p>
+Here is a subset of the results: in all cases, we have an unselected
+quantitative trait measured in parent/offspring nuclear families. 
+The four models:
+<ol type=A>
+<li> no stratification, no QTL
+<li> no stratification, QTL
+<li> stratification between families (i.e. mother and father from same subpopulation), no QTL
+<li> stratification within families (i.e. mother and father might not be from same 
+subpopulation), no QTL
+</ol>
+
+The three analytic procedures:
+<ol type=I>
+<li> standard QTL test (i.e. ignore family structure, which we know is incorrect)
+<li> gene-dropping permutation (i.e. within family QTDT)
+<li> gene-dropping + parental label-swapping (i.e. parenQTDT)
+</ol>
+
+From simulation, the empirically estimated power/type I error rates (for 
+a nominal value of 0.05) are:
+<pre>
+     500 trios (QT)
+       I     II    III
+     A 0.121 0.045 0.053
+     B 0.841 0.239 0.563
+     C 0.461 0.056 0.056
+     D 0.505 0.055 0.501
+
+     500 tetrads (QT)
+       I     II    III
+     A 0.173 0.043 0.050
+     B 0.900 0.363 0.653
+     C 0.439 0.042 0.045
+     D 0.390 0.044 0.421
+</pre>
+That is,
+<ol>
+<li> method I is, as expected, liberal (e.g. for tetrads, we see type I
+error rate of 17.3% instead of 5%). Subsequent values for this test should
+therefore be ignored in the table
+
+<li> the parenQTDT (III) (as implemented by gene-dropping) is considerably
+more powerful than the standard within-family test that ignores parental
+phenotypes (II) -- i.e. 65% versus 36% for tetrads, in this particular
+instance.
+
+<li> the parenQTDT is robust to stratification so long as it is
+between-family (condition C) -- i.e. it only assumes that mum and dad are
+matched on strata, not the whole sample.  When this does not hold
+(condition D), then we get spurious association, as expected.
+
+</ol>
+
+</p><strong>HINT</strong> For disease traits, the parenTDT test is 
+automatically performed by the <tt>--tdt</tt> option (as long as there 
+are at least 10 phenotypically discordant parental pairs in the sample). 
+See the section of standard <a href="anal.shtml">association testing</a> 
+for more details.
+
+</p>
+<a name="cluster">
+<h2>Within-cluster permutation</h2></a>
+</p>
+
+To perform label-swapping permutaion only <em>within clusters</em>, you 
+must supply either a cluster file with the <tt>--within</tt> option, 
+or indicate that family ID is to be used as the cluster variable, with the 
+<tt>--family</tt> option. Then any label-swapping permutation procedure 
+will only swap phenotype labels between individuals within the same 
+cluster. For example, 
+<h5>
+   plink --file mydata --assoc --within mydata.clst --perm 
+</h5></p>
+if the file <tt>mydata.clst</tt> were (for a PED file containing only 6 
+individuals, the file format is family ID, individual ID, cluster):
+<pre>
+     F1  1  1
+     F2  1  1
+     F3  1  1
+     F4  1  2
+     F5  1  2
+     F6  1  3
+</pre>
+this would imply that only sets {1,2,3} and {4,5} could be permuted.  That is, 1 and 3 could 
+swap phenotypes, but not 1 and 5, for example. In this way, any between-cluster effects 
+are preserved in each permuted dataset, which thereby controls for them.
+</p>
+To permute with family ID as the cluster variable for label-swapping, use 
+the 
+<h5>
+	plink --file mydata --assoc --family --perm 
+</h5></p>
+
+Note that label-swapping within families is different from gene-dropping. 
+This approach would be appropriate for sibship data, for example, when no 
+parents are available. The assumption is that individuals within family 
+unit are interchangeable under the null -- as such, you should not 
+include mixtures of full siblings and half siblings, or siblings
+and parents, for example, in the same cluster using this approach. 
+
+</p><strong>Note</strong> Other options for stratified analyses are 
+described on the <a href="anal.shtml#strat">previous 
+page</a>
+
+
+</p>
+<a name="mkphe">
+<h2>Generating permuted phenotype filesets</h2></a>
+</p>
+
+To generate a phenotype file with <em>N</em> permuted phenotypes in it, use the function
+<h5>
+ plink --bfile mydata --make-perm-pheno 10
+</h5></p>
+which will make a file
+<pre>
+     plink.pphe
+</pre>
+with 10 phenotypes (listed after the FID and IID as the first two
+columns). This can then be used in any further analysis with PLINK or
+any other program.  This command can be combined
+with <tt>--within</tt>, to generate permuted phenotype files in which
+individuals' phenotypes are only swapped within each level of the stratifying
+cluster variable, e.g. 
+<h5>
+ plink --bfile mydata --make-perm-pheno 10 --within strata1.dat
+</h5></p>
+
+
+<!--#include file="end.html"-->
+</p>
+
+<em>
+ This document last modified <!--#flastmod file="anal.shtml" -->
+</em>
+
+
+</body>
+
+<HEAD>
+<META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
+</HEAD>
+</html>

@@ -1,0 +1,132 @@
+<html>
+<body>
+
+<head>
+<link rel="stylesheet" href="plink.css" type="text/css">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<title>PLINK: Whole genome data analysis toolset</title>
+</head>
+
+<!--#include file="start.html"-->
+
+<h1>Getting started with PLINK</h1>
+</p>
+This page contains some important information on learning to use PLINK
+and how to handle any problems you encounter.
+</p>
+We suggest that after <a href="download.shtml">downloading</a> PLINK
+you first try the <a href="tutorial.shtml">tutorial</a>. This will
+familiarize you with the basic PLINK commands.
+</p>
+
+
+<a name="cite">
+<h2>Citing PLINK</h2>
+</a></p>
+If you use PLINK in any published work, please cite both the software
+(as an electronic resource/URL) and the manuscript describing the
+methods.
+
+<pre>
+        Package:     PLINK (including version number)
+        Author:      Shaun Purcell
+        URL:         http://pngu.mgh.harvard.edu/purcell/plink/
+
+        Purcell S, Neale B, Todd-Brown K, Thomas L, Ferreira MAR, 
+	Bender D, Maller J, Sklar P, de Bakker PIW, Daly MJ & Sham PC (2007) 
+        PLINK: a toolset for whole-genome association and population-based 
+	linkage analysis. American Journal of Human Genetics, 81.
+</pre>
+
+
+<a name="probs">
+<h2>Reporting problems, bugs and questions</h2>
+</a></p>
+
+If you have any problems with PLINK or would like to report a bug, 
+please follow these steps:
+</p>
+<center>
+<strong>PLEASE READ THIS SECTION BEFORE E-MAILING!</strong>
+</center>
+</p>
+
+When an analysis does not report the results you expect, or when PLINK
+seemingly gives different answers to previous versions or to other
+software packages, or the last time you ran it, etc, please feel me to
+e-mail me
+<pre>
+     plink AT chgr DOT mgh DOT harvard DOT edu
+</pre>
+<b><em>but</em></b> also please consider the following before doing so:
+</p>
+
+<ol>
+
+ <li> Please first check the <a href="faq.shtml">Frequently Asked Questions</a> 
+list to see if your question has already been answered
+</p>
+
+ <li> Please check the LOG file, it often contains important
+ information. For example, did it filter out some individuals based on
+ genotyping rate or missing phenotype/sex information which you were
+ not expecting?
+</p>
+ <li> Please check the format of your data: is it plain text? does
+each file have the correct number of rows, etc. Are the missing value
+codes appropriate? 
+</p>
+
+ <li> Please recheck the web-documentation: sometimes the syntax of an
+option may change.
+</p>
+
+ <li> If the above steps do not resolve your problem, then please 
+e-mail me <tt> plink AT chgr dot mgh dot harvard dot edu </tt> (this is
+different from the mailing list -- i.e. your e-mail will only be sent to me,
+not the whole list). The more specific your e-mail, the easier it will be 
+for me to diagnose any problem or error.  Please include:
+</p>
+
+ <ul>
+  <li> The whole LOG file(s)
+</p>
+  <li> The type of machine you were using 
+</p>
+  <li> Ideally, please try to make some reduced dataset that
+ replicates the problem that you are able to send to me in a ZIP file,
+ so that I will be able to recreate the problem; any data sent to me
+ for these purposes will be immediately deleted after I have resolved
+ the problem.
+</p>
+ </ul>
+</ol>
+
+</p><strong>HINT</strong> The more of the above steps you follow, the
+more likely you are to receive a timely, useful response!  If you
+haven't heard within a week or so, please feel free to send a reminder
+e-mail...
+</p>
+
+</p><strong>IMPORTANT</strong> I am willing and able to advise on the
+use of specific features implemented in PLINK: to diagnose whether
+they are working as intended and to give a generic description of a
+procedure or method, if it is unclear from the web documentation. I'm
+afraid I will not necessarily be able to give specific advice on any
+one particular dataset, why you should use one method over another,
+what it all means, etc...
+
+<!--#include file="end.html"-->
+
+<hr>
+<em>
+ This document last modified <!--#flastmod file="cite.shtml" -->
+</em>
+
+
+</body>
+
+<HEAD>
+<META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
+</HEAD>
+</html>

@@ -1,0 +1,353 @@
+<html>
+<body>
+
+<head>
+<link rel="stylesheet" href="plink.css" type="text/css">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<title>PLINK: Whole genome data analysis toolset</title>
+</head>
+
+<!--#include file="start.html"-->
+
+<h1>Analysis of dosage data</h1>
+&nbsp;
+</p>
+
+This page describes features to analyse "dosage" SNP datasets, for
+example, from imputation packages <a
+href="www.stat.auckland.ac.nz/~bbrowning/beagle/beagle.html">BEAGLE</a>
+or <a href="www.sph.umich.edu/csg/abecasis/mach/">MACH</a>. The
+<tt>--dosage</tt> command will take data in a variety of formats (but
+best suited to BEAGLE-style output, with one SNP per line) potentially
+compressed and distributed across multiple files, and perform
+association tests between the phenotype and the dosage data (expected
+allele counts) as well as outputing merged, filtered or hard-called
+datasets.
+
+</p>
+
+<a name="basic">
+<h2>Basic usage</h2>
+</a></p>
+
+The basic usage is 
+<h5>
+ plink --dosage myfile.dat --fam mydata.fam 
+</h5></p>
+which will create a file
+<pre>
+     plink.assoc.dosage
+</pre>
+
+which contains the fields
+
+<pre>
+     CHR   Chromosome code, if map file specified
+     SNP   SNP code
+      BP   Base-pair position, if map file specified
+      A1   Allele 1 code
+      A2   Allele 2 code
+     FRQ   Frequency of A1, from dosage data
+    INFO   R-squared quality metric / information content
+      OR   Odds ratio for association (or BETA for quantitative traits)
+      SE   Standard error of effect estimate
+       P   p-value for association tests
+</pre>
+
+If a MAP file is also specified
+<h5>
+ plink --dosage myfile.dat --fam mydata.fam --map mymap.map
+</h5></p>
+
+then a) extra CHR and BP fields will be reported in the output, b)
+only SNPs that are present in the MAP file will be analysed and
+reported.
+
+The basic format of a dosage file specifies that each row of the file
+corresponds to a SNP (i.e. similar to a transposed PED file, rather
+than one individual per row). There are three default columns that
+should appear before the dosage data:
+
+<pre>
+     SNP  A1  A2  Dosage data ...
+</pre>
+For example
+<pre>
+        SNP  A1  A2   F1 I1       F2 I2        F3 I3
+     rs0001   A   C   0.98 0.02   1.00 0.00    0.00 0.01 
+     rs0002   G   A   0.00 1.00   0.00 0.00    0.99 0.01 
+</pre>
+
+In this case, we have data for two SNPs on three individuals. Here,
+each genotype is represented by two numbers (alternative
+representations can be specified below).  For example, the two numbers
+for the first SNP represent the probability of an <tt>A/A</tt>, then
+an <tt>A/C</tt> genotype. The probability of a <tt>G/G</tt> is
+naturally 1 minus the sum of these.
+</p>
+
+Individuals in the dosage data but not the FAM file are ignored
+(unless the <tt>noheader</tt> option is specified, see
+below). Individuals in the FAM file but not the doseage file are
+removed from the dataset.
+
+</p>
+Association tests are performed within a linear or logistic regression
+framework.  As such, many standard options such as <tt>--covar</tt> or
+<tt>--within</tt> can be specified. See the main page on association
+for more details.  Not all options are available however: for example,
+permutation is not possible with dosage data files.
+</p>
+
+The <tt>INFO</tt> metric is calculated based on the entire file, based
+on the ratio of empirical and expected variance in dosage.  Values
+closer to 1 indicate better expected quality of imputation. Values can
+be above 1: note that values much greater than 1 can indicate strong
+departure from HWE.
+
+</p>
+
+Optionally, if extra fields exist they can be skipped, via the
+<tt>skip0</tt>, <tt>skip1</tt> and <tt>skip2</tt> options (see below):
+
+<pre>
+     {skip0}  SNP  {skip1}  A1  A2  {skip2}  Dosage data  ...
+</pre>
+
+By default, we expect a header row for each dosage file, that has the
+same header fields for the leading columns, and then lists the
+<tt>FID</tt> and <tt>IID</tt> codes for the individuals in that file.
+If there is no header (<tt>noheader</tt> option), then PLINK assumes
+the order and number of individuals in the each dosage file should
+correspond to the FAM file (after any exclusions, e.g. from
+<tt>--remove</tt>, etc) specifed.
+</p>
+
+As described below, dosage data can be represented in a number of
+ways. Dosage data can be spread across multiple files: if the
+<tt>list</tt> option is specified, e.g.
+
+<h5>
+ plink --dosage myfile.lst list --fam mydata.fam
+</h5></p>
+
+where <tt>myfile.lst</tt> is a list of file names (full paths can be
+specified if the dosage files are in different directories), e.g.
+
+<pre>
+     chr1.dose
+     chr2.dose
+     chr3.dose
+     ...
+</pre>
+
+
+</p>
+<a name="opt">
+<h2>Options</h2>
+</a></p>
+
+The options available are as follows:
+
+<pre>
+     list          Indicates that the file following <tt>--dosage</tt> is a list of dosage files
+                   (as opposed to being a dosage file itself).
+     sepheader     Indicates that the ID lists are in separate files (requires 'list')
+     noheader      Indicates that there are no headers available
+
+     skip0=N       Number of fields to skip before SNP
+     skip1=N       Number of fields to skip between SNP and A1
+     skip2=N       Number of fields to skip between A2 and genotype data
+
+     dose1         Dosage data is 0..1, not 0..2 scale
+     format=N      Dosage, two probabilities or three (N=1,2,3)
+
+     Z             All input (dosage) files and output files compressed
+     Zin           All input files are compressed
+     Zout          Output file will be compressed 
+
+     occur         Helper function: count number of occurrences 
+</pre>
+
+Most of these options modify the expected format of the input
+files. Examples are given in the section below. 
+
+
+</p>
+<a name="examples">
+<h2>Examples of different input format options</h2>
+</a></p>
+
+Based on the example data file shown above, here are some examples
+different of how the data could be differently formatted. That is,
+these are all equivalent and will give the same results. The purpose
+of these options is to reduce the likely number of steps required in
+preparing the data file(s) for analysis.  The major fixed
+specification is that the data are essentially in SNP-by-individual
+(one row is one SNP) format in all cases.
+
+</p>
+
+<b><em>Split by SNP, single dosage</em></b></p>
+
+Here each file contains all individuals, has a header file and
+contains single dosages of the <tt>A1</tt> allele.
+
+</p>
+
+<tt><font color="blue">a1.dose</font></tt>
+<pre>
+        SNP  A1  A2   F1 I1 F2 I2 F3 I3
+     rs0001   A   C   0.02 0.00 1.99
+</pre>
+<tt><font color="blue">a2.dose</font></tt>
+<pre>
+        SNP  A1  A2   F1 I1 F2 I2 F3 I3
+     rs0002   G   A   1.00 2.00 0.01
+</pre>
+
+The command would be
+
+<h5>
+plink --fam d.fam  --dosage a.txt list format=1
+</h5></p>
+
+where <tt>a.txt</tt> is a text file, with 2 fields, SNP batch and dosage file name
+
+<pre>
+     1 a1.dose
+     2 a2.dose
+</pre>
+
+in which the numeric codes indicate different batches of
+SNPs. Obviously, in real examples a given file would likely contain a
+very large number of SNPs (e.g. all SNPs for a given chromosome).
+
+</p><b><em>Split by individuals, with some leading nuissance fields</em></b></p>
+
+<tt><font color="blue">b1.dose</font></tt>
+<pre>
+        SNP  A1  A2   F     R2    F1 I1       F2 I2    
+     rs0001   A   C   0.02  0.98  0.98 0.02   1.00 0.00
+     rs0002   G   A   0.5   0.23  0.00 1.00   0.00 0.00
+</pre>
+
+<tt><font color="blue">b2.dose</font></tt>
+<pre>
+        SNP  A1  A2  F     R2    F3 I3
+     rs0001   A   C  0.02  0.8   0.00 0.01 
+     rs0002   G   A  0.5   0.55  0.99 0.01 
+</pre>
+
+The command to read these data is then
+
+<h5>
+ plink --fam d.fam --dosage b.txt list skip2=2
+</h5></p>
+
+where <tt>b.txt</tt> is a text file, with 1 field (file name), as
+there is only a single batch of SNPs (i.e. all dosage files contain
+the same set of SNPs, in the same order).
+
+<pre>
+     b1.dose
+     b2.dose
+</pre>
+
+The <tt>skip2</tt> option means that PLINK knows to ignore the fields
+<tt>F</tt> and <tt>R2</tt> fields.
+
+</p><b><em>Split by SNP and individual, without headers, different
+individual order and compressed</em></b></p>
+
+In this third example, the same dataset is spread across four
+files. Note how the order of which individuals are in which file, and
+the order within the file, changes between different batches of
+SNPs. As long as such changes are accurately represented in the
+headers (whether these are in the dosage file itself, or in separate
+header files, as in this example), this is allowed.
+</p>
+
+<tt><font color="blue">c1.dose.gz</font></tt>
+<pre>
+     rs0001   A   C   0.98 0.02   1.00 0.00
+</pre>
+<tt><font color="blue">c2.dose.gz</font></tt>
+<pre>
+     rs0001   A   C   0.00 0.01 
+</pre>
+<tt><font color="blue">c3.dose.gz</font></tt>
+<pre>
+     rs0002   G   A   0.00 1.00   
+</pre>
+<tt><font color="blue">c4.dose.gz</font></tt>
+<pre>
+     rs0002   G   A   0.99 0.01   0.00 0.00
+</pre>
+
+with the accompanying list of IDs in the auxiliary files
+
+</p><tt><font color="blue">c1.lst</font></tt>
+<pre>
+     F1 I1
+     F2 I2
+</pre>
+<tt><font color="blue">c2.lst</font></tt>
+<pre>
+     F3 I3
+</pre>
+<tt><font color="blue">c3.lst</font></tt>
+<pre>
+     F1 I1
+</pre>
+<tt><font color="blue">c4.lst</font></tt>
+<pre>
+     F3 I3
+     F2 I2
+</pre>
+
+The command to read these data is then
+
+<h5>
+ plink --fam d.fam --dosage c.txt list sepheader Zin  --write-dosage
+</h5></p>
+
+where <tt>c.txt</tt> is a text file, with 3 fields (SNP batch, file name, separate header)
+
+<pre>
+     1 c1.dose.gz c1.lst
+     1 c2.dose.gz c2.lst
+     2 c3.dose.gz c3.lst
+     2 c4.dose.gz c4.lst
+</pre>
+
+Note that in this example, the individuals are differently distibuted
+between files in the first versus the second batch of SNPs. It is also
+not necessary that all individuals are specified -- they will be set
+to have a missing datapoint in that case.  
+
+The main constraint is that between files within a particular
+genomic-batch, the length and SNP order must be exactly the same.
+
+
+
+
+
+
+
+
+
+<!--#include file="end.html"-->
+
+<hr>
+<em>
+ This document last modified <!--#flastmod file="dosage.shtml" -->
+</em>
+
+
+</body>
+
+<HEAD>
+<META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
+</HEAD>
+</html>

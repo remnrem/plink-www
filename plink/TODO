@@ -1,0 +1,15 @@
+
+
+
+---------
+
+
+TODO: if a variable has 0 variance in MODEL, it is automatically dropped
+
+---------
+
+TODO: obligatory missingness with a simple allele code
+TODO: r^2 for --linear 
+TODO: ci/se in --whap/--gvar
+TODO: --model-gen and --adjust -- why do not these work? df=2?
+TODO: ibs matrix that is lower diagonal. IBD in matrix form?

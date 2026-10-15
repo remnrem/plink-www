@@ -1,0 +1,261 @@
+<html>
+<body>
+
+<head>
+<link rel="stylesheet" href="plink.css" type="text/css">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<title>PLINK: Whole genome data analysis toolset</title>
+</head>
+
+<!--#include file="start.html"-->
+
+
+<h1>Inclusion thresholds</h1>
+
+This secion describes options that can be used to filter out
+individuals or SNPs on the basis of the summary statistic measures
+described in the previous <a href="summary.shtml">summary
+statistics</a> page.
+
+
+<h6>Summary statistics versus inclusion criteria</h6>
+
+The following table summarizes the relationship between the commands 
+to generate summary statistics (as described on the <a 
+href="summary.shtml">previous page</a>, versus the commands to exclude 
+individuals and/or markers, which are described on this page.
+</p>
+
+<table width=80% border=1>
+<tr>
+<td width=40%><b>Feature</b></td>
+<td width=30%><b>As summary statistic</b></td>
+<td width=30%><b>As inclusion criteria</b></td>
+</tr>
+	
+<tr>
+<td>Missingness per individual</td>
+<td> <tt>--missing</tt> </td> 
+<td> <tt>--mind</tt> <em>N</em></td>
+</tr>
+
+<tr>
+<td>Missingness per marker</td>
+<td> <tt>--missing</tt> </td> 
+<td> <tt>--geno</tt> <em>N</em> </td>
+</tr>
+
+<tr>
+<td>Allele frequency</td>
+<td> <tt>--freq</tt> </td> 
+<td> <tt>--maf</tt> <em>N</em> </td>
+</tr>
+
+<tr>
+<td>Hardy-Weinberg equilibrium</td>
+<td> <tt>--hardy</tt> </td> 
+<td> <tt>--hwe</tt> <em>N</em> </td>
+</tr>
+
+<tr>
+<td>Mendel error rates</td>
+<td> <tt>--mendel</tt> </td> 
+<td> <tt>--me</tt> <em>N</em> <em>M</em></td>
+</tr>
+
+</table>
+
+
+<h6>Default threshold values</h6>
+
+By default, <tt>PLINK</tt> does not impose any filters on minor allele
+frequency or genotyping rate. (Note that versions prior to 1.04 use to
+have thresholds of 0.01 for frequency and 0.1 for individual and SNP
+missing rate -- this is no longer the case, i.e. it is as if
+the <tt>--all</tt> keyword is always specified).
+</p>
+
+To perform an analysis, or generate a new dataset, with filters
+applied, add the <tt>--mind</tt>, <tt>--geno</tt> or <tt>--maf</tt>
+options are to the command line, for example, when
+the <tt>--remove</tt> command is given.
+</p>
+
+
+<a name="miss2">
+<h2>Missing rate per person</h2></a>
+</p>
+
+The initial step in all data analysis is to exclude individuals with too much missing
+genotype data. This option is set as follows:
+<h5>
+	plink --file mydata --mind 0.1
+</h5></p>
+which means exclude with more than 10% missing genotypes (this is the defalt 
+value). A line in the terminal output will appear, indicating how many 
+individuals were removed due to low genotyping. If any individuals were 
+removed, a file called
+<pre>
+     plink.irem     
+</pre>
+will be created, listing the Family and Individual IDs of these removed individuals. 
+Any subsequent analysis also specifeid on the same command line will be 
+performed without 
+these individuals.
+</p>
+One might instead wish to create a new PED file with these individuals 
+permanently removed, simply add an option to generate a new fileset: for example, 
+<h5>
+	plink --file data --mind 0.1 --recode  --out cleaned
+</h5></p>
+will generate files
+<pre>
+     cleaned.ped
+     cleaned.map
+</pre>
+with the high-missing-rate individuals removed; alternatively, to create a binary fileset 
+with these individuals removed:
+<h5>
+	plink --file data --mind 0.1 --make-bed  --out cleaned
+</h5></p>
+which results in the files
+<pre>
+     cleaned.bed
+     cleaned.bim
+     cleaned.fam
+</pre>
+
+</p><strong> HINT </strong> You can specify that certain genotypes
+were never attempted, i.e. that they are obligatory missing, and these
+will be handled appropriately by these genotyping rate filters. See
+the <a href="summary.shtml#oblig_missing">summary statistics page</a>
+for more details.
+
+
+<a name="maf">
+<h2>Allele frequency</h2></a>
+</p>
+
+Once individuals with too much missing genotype data have been excluded, subsequent 
+analyses can be set to automatically exclude SNPs on the
+basis of MAF (minor allele frequency):
+<h5>
+	plink --file mydata --maf 0.05
+</h5></p>
+means only include SNPs with MAF >= 0.05. The default value is 0.01. This quantity is based 
+only on founders (i.e. individuals for whom the paternal and maternal individual codes and 
+both 0). 
+
+</p>This option is appropriately counts alleles for X and Y chromosome SNPs. 
+
+<a name="miss1">
+<h2>Missing rate per SNP</h2></a>
+</p>
+
+Subsequent analyses can be set to automatically exclude SNPs on the
+basis of missing genotype rate, with the <tt>--geno</tt> option: the default is to include all SNPS (i.e. <tt>--geno 1</tt>).
+To include only SNPs with a 90% genotyping rate (10% missing) use
+<h5>
+	plink --file mydata --geno 0.1 
+</h5></p>
+As with the <tt>--maf</tt> option, these counts are calculated after removing individuals with 
+high missing genotype rates.
+
+
+
+<a name="hwd">
+<h2>Hardy-Weinberg Equilibrium</h2></a>
+</p>
+
+To exclude markers that failure the Hardy-Weinberg test at a specified significance 
+threshold, use the option:
+<h5>
+	plink --file mydata --hwe 0.001 
+</h5></p>
+
+By default this filter uses an exact test (see <a href="summary.shtml#hardy">this section</a>). 
+The standard asymptotic (1 df genotypic chi-squared test) can be requested with the <tt>--hwe2</tt>
+option instead of <tt>--hwe</tt>.
+</p>
+
+The following output will appear in the console window and in <tt>plink.log</tt>,
+detailing how many SNPs failed the Hardy-Weinberg test, for the sample as a whole,
+and (when <tt>PLINK</tt> has detected a disease phenotype) for cases and
+controls separately:
+<pre>
+Writing Hardy-Weinberg tests (founders-only) to [ plink.hwe ]
+30 markers failed HWE test ( p <= 0.05 ) and have been excluded
+        34 markers failed HWE test in cases
+        30 markers failed HWE test in controls
+</pre>
+
+This test will only be based on founders (if family-based data are being 
+analysed) unless the <tt>--nonfounders</tt> option is also specified. 
+In case/control samples, this test will be based on controls only, unless the 
+<tt>--hwe-all</tt> option is specified, in which case the phenotype
+will be ignored. This can be important if parents are coded as missing
+in an affected offspring trio sample.
+
+</p>
+
+Please refer to the <a href="summary.shtml#hardy"><tt>--hardy</tt></a> option for more details on
+producing summary statistics of all HWE rates.
+
+<a name="mendel">
+<h2>Mendel error rate</h2></a>
+</p>
+
+For family-based data only, to exclude individuals and/or markers on
+the basis on Mendel error rate, use the option:
+
+<h5>
+	plink --file mydata --me 0.05 0.1 
+</h5></p>
+where the two parameters are:
+<ol>
+<li> the first parameter determines that families with more than 5% Mendel errors 
+(considering all SNPs) will be discarded.
+<li> the second parameter indicates that SNPs with more than 10% Mendel error rate 
+will be excluded (i.e. based on the number of trios); 
+</ol>
+
+Please refer to the <a href="summary.shtml#mendel">summary
+statistics</a> page for more details on generating summary statistics
+for Mendel error rates.
+
+</p><strong>Note</strong> Currently, <tt>PLINK</tt> calculates the per
+SNP Mendel error rates at the same time as the per family error
+rates. In future releases, this may change such that the per family
+error rate is calculated <em>after</em> SNPs failing this test have
+been removed. Also, using this command currently removes entire
+nuclear families on the basis of high Mendel error rates: it will
+often be more appropriate to remove particular individuals (e.g. if a
+second sibling shows no Mendel errors). For this more fine-grained
+procedure, use the <tt>--mendel</tt> option to generate a complete
+enumeration of error rates by family and individual and exclude
+individuals as desired.
+
+Finally, it is possible to zero out specific Mendelian inconsistencies
+with the option <tt>--set-me-missing</tt>. This should be used in
+conjunction with a data generation command and the <tt>--me</tt>
+option. Specifically, the <tt>--me</tt> parameters should be both to
+1, in order not to exclude any particular SNP or individual/family,
+but instead to zero out only specific genotypes with Mendel errors and
+save the dataset as a new file. (Both parental and offspring genotypes
+will be set to missing.)
+<h5>
+ plink --bfile mydata --me 1 1 --set-me-missing --make-bed --out newdata
+</h5></p>
+
+<!--#include file="end.html"-->
+
+<hr>
+<em>
+ This document last modified <!--#flastmod file="thresh.shtml" -->
+</em>
+
+</body>
+<HEAD>
+<META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
+</HEAD>
+</html>

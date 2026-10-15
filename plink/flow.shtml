@@ -1,0 +1,319 @@
+<html>
+<body>
+
+<head>
+<link rel="stylesheet" href="plink.css" type="text/css">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<title>PLINK: Whole genome data analysis toolset</title>
+</head>
+
+<!--#include file="start.html"-->
+
+<h1>Order of major operations in PLINK</h1>
+
+This section contains a rough flow-chart of some of the main
+operations in PLINK. In particular, it is designed to indicate the
+order in which certain operations are performed (i.e. whether SNPs are
+excluded before or after merging files, etc), and also when PLINK
+halts operation, e.g. after certain commands, meaning that certain
+combinations are not feasible. 
+
+</p>
+
+Most of these steps are optional (i.e. will only occur if a specific command 
+has been issued on the command line).
+
+</p>
+
+<ul>
+ <li> Parse command line, for commands and options
+ <li> Check version, unused options, warnings
+ <li> Define chromosome set (human, or <tt>--mouse</tt>, <tt>--rice</tt>, etc)
+</p>
+
+ <li> Run ID-helper utility (<tt>--id-dict</tt> and <tt>--id-match</tt>), then <b>QUIT</b>
+</p>
+ <li> Run SNP-annotation (<tt>--lookup</tt> and <tt>--lookup-gene</tt>), then <b>QUIT</b>
+</p>
+ <li> Run compression/decompressio utility (<tt>--compress</tt> and <tt>--decompress</tt>), then <b>QUIT</b>
+</p>
+
+ <li> Read input, either:
+  <ul>
+  <li> Dummy dataset(<tt>--dummy</tt>), or
+  <li> Simulated dataset (<tt>--simulate</tt>), or
+  <li> Result files for meta-analysis (<tt>--meta-analysis</tt>), or
+  <li> Result files for gene-based report (<tt>--gene-report</tt>), or
+  <li> Result and annotation files (<tt>--annotate</tt>), or
+  <li> Maps for CNVs (<tt>--cfile</tt>, <tt>--cnv-list</tt>), or
+  <li> Binary filset (<tt>--bfile</tt>), or
+  <li> PED fileset (<tt>--file</tt>), or
+  <li> LGEN fileset (<tt>--lfile</tt>), or
+  <li> Transposed fileset (<tt>--tfile</tt>), or
+  <li> Maps for generic variants (<tt>--gfile</tt>), or
+  <li> Map and dosage files (<tt>--dosage</tt>)
+ </ul>
+
+</p>
+
+ <li> For commands not involving basic SNP or CNV data directly (e.g. <tt>--meta-analysis</tt>, <tt>--annotate</tt>, 
+   <tt>--dosage</tt>, <tt>--gene-report</tt>, etc) then call the corresponding function directly, then <b>QUIT</b>
+</p>
+
+ <li> At this stage, the following filters apply directly when loading
+ (Note: some other filters not mentioned below are done later, e.g. 
+<tt>--snps</tt>, <tt>--extract</tt>, <tt>--remove</tt>, <tt>--filter-males</tt>):
+  <ul>
+   <li> <tt>--chr</tt>
+   <li> <tt>--snp</tt>, <tt>--window</tt>
+   <li> <tt>--from</tt>, <tt>--to</tt>
+   <li> <tt>--from-kb</tt>, <tt>--to-kb</tt>, etc
+ </ul>
+
+</p>
+
+ <li> Check for duplicate individual or SNP names
+
+ <li> Merge one or more filesets (<tt>--merge</tt>, <tt>--bmerge</tt>,
+ <tt>--merge-list</tt>)
+
+ <li> Swap in alternate phenotype file (<tt>--pheno</tt>), or make a
+ new phenotype (<tt>--make-pheno</tt>)
+
+ <li> Remove individuals with missing phenotypes (<tt>--prune</tt>)
+
+ <li> Update SNP information (<tt>--update-map</tt>)
+
+ <li> Update FAM information (<tt>--update-ids</tt>, <tt>--update-sex</tt>, ...)
+        
+ <li> Update allele information (<tt>--update-alleles</tt>)
+
+ <li> Flip strand (<tt>--flip</tt>)
+
+ <li> Recode alleles 1234/ACGT  (<tt>--alleleACGT</tt>, <tt>--allele1234</tt> )
+      
+</p>
+
+ <li>  Either, if (<tt>--exclude-before-extract</tt>), then 
+  <ul>
+   <li> extract any SNPs (<tt>--extract</tt>)
+   <li> then exclude any SNPs (<tt>--exclude</tt>)
+  </ul>
+
+ <li> otherwise
+  <ul> 
+  <li> exclude any SNPs (<tt>--exclude</tt>)
+  <li> then extract any SNPs (<tt>--extract</tt>)
+ </ul>
+
+ <li>  Either, if (<tt>--keep-before-remove</tt>), then 
+  <ul>
+   <li> keep any individuals (<tt>--keep</tt>)
+   <li> then remove any individuals (<tt>--remove</tt>)
+  </ul>
+ <li> otherwise
+  <ul> 
+  <li> remove any individuals (<tt>--remove</tt>)
+  <li> then keep any individuals (<tt>--keep</tt>)
+ </ul>
+
+</p>
+
+ <li> Filter SNPs based on attributes (<tt>--attrib</tt>)
+
+ <li> Filter individuals based on attributes (<tt>--attrib-indiv</tt>)
+
+ <li> Filter SNPs based on quality scores (<tt>--qual-scores</tt>)
+
+ <li> Filter genotypes based on quality scores (<tt>--qual-geno-scores</tt>)
+
+ <li> Random thinning of SNPs (<tt>--thin</tt>)
+
+ <li> Read <tt>--genome-lists</tt>
+
+ <li> Read list of obligatory missing genotypes (<tt>--oblig-missing</tt>)
+
+ <li> Filter based on a variable (<tt>--filter</tt>)
+
+ <li> Filter based on sex, phenotype, etc (<tt>--filter-males</tt>, <tt>--filter-cases</tt>, ...)
+
+ <li> Read covariate file (<tt>--covar</tt>)
+
+ <li> Read cluster file (<tt>--within</tt>)
+
+ <li> Zero-out specific genotypes (<tt>--zero-cluster</tt>)
+
+</p>
+
+ <li> Process rare CNV data
+   <ul>
+    <li> Read CNV list, map to genomic positions
+    <li> Filter on genes, sizes, types, etc (<tt>--cnv-intersect</tt>, <tt>--cnv-del</tt>, <tt>--cnv-kb</tt>, etc)
+    <li> Write back any genes, regions intersected (<tt>--cnv-report-regions</tt>)
+    <li> Filter CNVs based on frequency (<tt>--cnv-freq-exclude-above</tt>, etc)
+    <li> Report basic count of CNVs in LOG file
+    <li> Write a new CNV list, map file (<tt>--cnv-write</tt>, <tt>--cnv-make-map</tt>)
+    <li> Calculate per-individual CNV summary statistics
+    <li> Calculate per-position CNV summaries
+    <li> Make summary displays(<tt>--cnv-track</tt>, <tt>--cnv-seglist</tt>)
+    <li> Find overlapping CNVs as pools (<tt>--segment-group</tt>)
+    <li> Perform association / genome-wide burden test (<tt>--mperm</tt>, <tt>--cnv-indiv-perm</tt>)
+    <li> <b>QUIT</b>
+   </ul>
+
+ <li> Process generic variant data (<tt>--gfile</tt>)
+   <ul>
+    <li> Read GVAR data (might be on top of existing, standard file)
+    <li> Calculate frequency statistics for each allele, CNP state
+    <li> Perform linear/logistic regression of phenotype on CNP states
+    <li> <b>QUIT</b>
+   </ul>
+  
+</p>
+
+ <li> Main SNP filters
+ <ul>
+ <li> Count founders and nonfounders
+ <li> Calculate per-individual genotyping rate, remove individuals below threshold (<tt>--missing</tt>, <tt>--mind</tt>)
+ <li> Calculate (or read from file (<tt>--read-freq</tt>) allele frequencies
+ <li> Determine per SNP missing genotype rate, <b>after removing individuals</b>, exclude below threshold (<tt>--geno</tt>)
+ <li> Determine minor (reference) allele
+ <li> List of heterozygous hets found, by default set to missing
+ <li> List SNPs with no founder genotypes observed
+ <li> Write allele frequencies to file (<tt>--freq</tt>) 
+ <li> Calculate HWE statistics per SNP (<tt>--hardy</tt>, <tt>--hwe</tt>); after <tt>--hardy</tt>, then <b>QUIT</b>
+ <li> Report genotyping rate per SNP and per individual as calculated above (<tt>--missing</tt>)
+ <li> Remove SNPs below the MAF filter (<tt>--maf</tt>)
+ </ul>
+</p>
+
+  <li> Re-report basic case/control counts to LOG
+
+  <li> Re-specify reference alleles (<tt>--reference-allele</tt> )
+
+  <li> Make family units, if needed; perform Mendel checks
+  (<tt>--mendel</tt>, <tt>--me</tt>, <tt>--tdt</tt>, etc)
+
+  <li> Reset pat and mat codes of non-founders if parents not present (<tt>--make-founders</tt>)
+
+  <li> Perform sex-check (<tt>--check-sex</tt>)
+
+  <li> Create pseudo case/control units from trio data (<tt>--tucc</tt>)
+
+</p>
+
+  <li> Write permuted phenotype file (<tt>--make-perm-pheno</tt>), <b>QUIT</b>
+
+  <li> Write table of SNPs/set scoring (<tt>--set-table</tt>), <b>QUIT</b>
+
+  <li> Write covariate file (<tt>--write-covar</tt>), then <b>QUIT</b>
+
+  <li> Write cluster file (<tt>--write-cluster</tt>), then <b>QUIT</b>
+
+  <li> Write snplist file (<tt>--write-snplist</tt>), then <b>QUIT</b>
+
+  <li> Write binary fileset file (<tt>--make-bed</tt>), then <b>QUIT</b>
+
+  <li> Write other file formats for genotype data (<tt>--recode</tt>,
+  <tt>--recodeA</tt>, <tt>--list</tt>, <tt>--two-locus</tt>, etc), then <b>QUIT</b>
+
+  <li> Create and output a SET file given ranges (<tt>--make-set</tt>), then <b>QUIT</b>
+
+</p>
+
+  <li> LD-based clumping of association results, (<tt>--clump</tt>), then <b>QUIT</b>
+
+  <li> Generate lists of SNPs tagging other SNPs (<tt>--show-tags</tt>), then <b>QUIT</b>
+
+  <li> Generate haplotype blocks (<tt>--blocks</tt>), then <b>QUIT</b>
+</p>
+
+  <li> Determine if conditioning SNPs used (<tt>--condition</tt>)
+
+  <li> Perform IBS, cluster analysis and MDS analysis
+  (<tt>--cluster</tt>, <tt>--mds-plot</tt>, <tt>--neighbour</tt>),
+  then <b>QUIT</b>
+
+  <li> Test for differences in IBS between groups (<tt>--ibs-test</tt>), then <b>QUIT</b>
+
+  <li> Calculate genome-wide IBS and IBD (<tt>--genome</tt>), then <b>QUIT</b>
+
+  <li> Calculate F inbreeding statistic (<tt>--het</tt>)
+  
+  <li> Calculate runs of homozygosity (<tt>--homozyg</tt>), then <b>QUIT</b>
+
+  <li> Perform LD-based pruning of SNP (<tt>--indep</tt>, <tt>--indep-pairwise</tt>), then <b>QUIT</b>
+
+  <li> Perform LD-based scan for strand flips (<tt>--flipscan</tt>), then <b>QUIT</b>
+
+  <li> Calculate and display pairwise LD (<tt>--r2</tt>, <tt>--ld</tt>), then <b>QUIT</b>
+   
+  <li> General haplotype estimation, (association, phase reports, frequencies) <tt>--hap</tt>)
+    <ul>
+    <li> Phasing
+    <li> Report haplotype frequencies
+    <li> Report hapotype phases
+    <li> Perform mis-hap test for non-missing randomness
+    <li> Proxy association and imputation
+    <li> <b>QUIT</b>
+   </ul>
+
+</p>
+
+  <li> SNP-by-SNP epistasis tests (<tt>--epistasis</tt>), then <b>QUIT</b>
+
+  <li> Score per-individual risk profiles (<tt>--score</tt>), then <b>QUIT</b>
+
+  <li> Run R-plugin on dataset (<tt>--R</tt>), then <b>QUIT</b>
+
+
+</p>
+
+  <li> For main association tests, loop over all phenotypes, (<tt>--all-pheno</tt>) 
+   <ul> 
+    
+    <li> Perform assocaition test (<tt>--mh</tt>, <tt>--model</tt>,
+    <tt>--assoc</tt>, <tt>--fisher</tt>, <tt>--linear</tt>,
+    <tt>--logistic</tt>, <tt>--homog</tt>, <tt>--qfam</tt>,
+    <tt>--tdt</tt>, <tt>--poo</tt>, <tt>--dfam</tt>, <tt>--gxe</tt>, etc)
+      
+     <li> Perform haplotype association test (<tt>--hap-assoc</tt>, <tt>--hap-tdt</tt>)
+
+    <li> Perform conditional haplotype test (<tt>--chap</tt>), then <b>QUIT</b>
+    
+     <li> Perform <tt>--test-missing</tt>
+
+     <li> If specified, repeat the above tests with permuted datasets
+
+     <li> Go to next phenotype
+    </ul>
+
+</p>
+
+<li> Perform PLINK segmental sharing test
+
+</p>
+
+ <li> Definitely <b> QUIT</b>
+
+</ul>
+
+
+
+
+
+
+<!--#include file="end.html"-->
+
+<hr>
+<em>
+ This document last modified <!--#flastmod file="flow.shtml" -->
+</em>
+
+
+</body>
+
+<HEAD>
+<META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
+</HEAD>
+</html>

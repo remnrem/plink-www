@@ -1,0 +1,133 @@
+
+<html>
+<body>
+
+<head>
+<link rel="stylesheet" href="plink.css" type="text/css">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<title>PLINK: Whole genome data analysis toolset</title>
+</head>
+
+
+<!--#include file="start.html"-->
+
+<blockquote>IBS/IBD estimation</blockquote>
+
+As well as the standard summary statistics described above,
+<tt>PLINK</tt> offers some more novel ones such as estimated
+inbreeding coefficients for each individual and genome-wide
+identity-by-state and identity-by-descent estimates for all pairs of
+individuals. The later can be used to detect sample contaminations,
+swaps and duplications as well as pedigree errors and unknown familial
+relationships (e.g. sibling pairs in a case/control population-based
+sample). 
+
+</p>
+<warn>All these analyses require a large number of SNPs!</warn>
+</p>
+<hr>
+
+<strong>Pairwise IBD estimation</strong>
+</p>
+
+In a homogeneous sample, it is possible to calculate genome-wide IBD
+given IBS information, as long as a large number of SNPs are available
+(probably 1000 independent SNPs at a bare minimum; ideally 100K or
+more).
+
+</p><type>
+	plink --file mydata --genome 
+</type></p>
+which create the file
+<pre>
+     plink.genome	
+</pre>
+Current output has columns:
+<pre>
+     ID (family, individual) for individual 1 (2 cols)
+     ID (family, individual) for individual 2 (2 cols)
+     P(IBD=0)
+     P(IBD=1)
+     P(IBD=2)
+     pi-hat = proportion of alleles shared IBD = P(IBD1)/2 + P(IBD2) 
+     Number of IBS 0 loci
+     Number of IBS 1 loci 
+     Number of IBS 2 loci
+</pre>
+Therefore, on a *nix system, 
+
+</p><type>
+    sort -nr --key=9 plink.genome | head -n 50 
+</type></p>
+is a good way of getting the top 50 most relateds. 
+
+</p>
+<warn>Hint</warn> Calculating the average pi-hat for each individual
+and looking for outliers is also useful (in particular, sample
+contamination will lead to too many hets, which leads to fewer IBS 0
+calls, which leads to over-estimated IBD with all other people in the
+sample). [this example to be described in more detail].
+
+
+<hr></p>
+<strong>Inbreeding coefficients</strong>
+</p>
+
+Given a large number of SNPs, in a homogeneous sample, it is possible
+to calculate inbreeding coefficients (i.e. based on the observed
+versus expected number of homozygous genotypes).
+</p><type>
+	plink --file mydata --inbreeding
+</type></p>
+Output is in 
+<pre>
+     plink.het
+</pre>
+and contains the fields
+<pre>
+     Family ID
+     Individual ID
+     # observed homozygous genotypes
+     # expected homozygous genotypes
+     # non-missing genotypes
+     F inbreeding coefficient
+</pre>
+
+<warn>Warning</warn> Only perform this analysis for autosomal markers:
+this can be achieved by having a MAP file with the X/Y markers with
+negative values in the 4th column to exclude them. 
+
+</p>
+<warn>TODO</warn> Set to automatically exclude these sex-chromosome markers.
+
+
+<hr></p>
+<strong>Runs of homozygosity</strong>
+</p>
+
+A simple screen for runs of homozygous genotypes within any one individual is provided by the command:
+</p><type>
+  plink --file mydata --homo-run-snps 500
+</type></p>
+which will output, to the file
+<pre>
+     plink.ihet
+</pre>
+all regions with 500 or more contiguous SNPs that do not have a heterozygote.</p>
+
+Longer than expected stretches might be consistent with a deletion
+(i.e. individual is actually hemizygous for this region) or with
+autozygosity due to recent inbreeding.
+
+</p>
+<warn>TODO</warn> Describe format of output for this analysis. 
+
+
+<!--#include file="end.html"-->
+
+<em>
+ This document last modified <!--#flastmod file="ibdibs.shtml" -->
+</em>
+
+</body>
+</html>

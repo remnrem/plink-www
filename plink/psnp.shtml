@@ -1,0 +1,261 @@
+<html>
+<title>PLINK</title>
+<body>
+
+<head>
+<link rel="stylesheet" href="plink.css" type="text/css">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<title>PLINK: Whole genome data analysis toolset</title>
+</head>
+
+<!--#include file="start.html"-->
+
+
+<h1>SNP annotation database lookup</h1>
+
+This page describes PLINK's ability to output basic annotation information 
+on SNPs on common WGAS genotyping platforms, via a web-based lookup 
+function. 
+</p>
+The SNP annotation data were compiled by 
+<a href="http://genetics.unc.edu/faculty/sullivan.htm">Patrick Sullivan's lab</a>; 
+the original data files are available <a href="https://slep.unc.edu/evidence/">here</a>.
+
+</p><strong>NOTE</strong> All gene names must be HUGO standard gene
+names .  For example, the serotonin transporter is SLC6A4 (not HTT or
+SERT).
+</p>
+
+If you use these annotations in a publication, include the following 
+sentence and corresponding references:
+<pre>
+     Using the PLINK retrieval interface, SNP annotations were created using 
+     the TAMAL database (1) based chiefly on UCSC genome browser files (2), 
+     HapMap (3), and dbSNP (4).
+</pre>
+<ol>
+ <li> Hemminger BM, Saelim B, Sullivan PF. TAMAL: An integrated approach to 
+choosing SNPs for genetic studies of human complex traits. 
+Bioinformatics 2006;22:626-7.
+<li> Hinrichs AS, Karolchik D, Baertsch R, Barber GP, Bejerano G, Clawson 
+H, Diekhans M, Furey TS, Harte RA, Hsu F, Hillman-Jackson J, Kuhn RM, 
+Pedersen JS, Pohl A, Raney BJ, Rosenbloom KR, Siepel A, Smith KE, Sugnet 
+CW, Sultan-Qurraie A, Thomas DJ, Trumbower H, Weber RJ, Weirauch M, 
+Zweig AS, Haussler D, Kent WJ. The UCSC Genome Browser Database: update 
+2006. Nucleic Acids Res 2006;34:D590-8.
+<li> Altshuler D, Brooks LD, Chakravarti A, Collins FS, Daly MJ, Donnelly 
+P. A haplotype map of the human genome. Nature 2005;437:1299-320.
+<li> Wheeler DL, Barrett T, Benson DA, Bryant SH, Canese K, Chetvernin V, 
+Church DM, DiCuccio M, Edgar R, Federhen S, Geer LY, Helmberg W, 
+Kapustin Y, Kenton DL, Khovayko O, Lipman DJ, Madden TL, Maglott DR, 
+Ostell J, Pruitt KD, Schuler GD, Schriml LM, Sequeira E, Sherry ST, 
+Sirotkin K, Souvorov A, Starchenko G, Suzek TO, Tatusov R, Tatusova TA, 
+Wagner L, Yaschenko E. Database resources of the National Center for 
+Biotechnology Information. Nucleic Acids Res 2006;34:D173-80.
+
+</ol>
+
+<a name="psnp1">
+<h2>Basic usage for SNP lookup function</h2></a>
+</p>
+
+The basic command is, for example,
+<p><h5>
+ plink --lookup rs1475515
+</h5></p>
+which outputs to the LOG file the following information
+<pre>
+PLINK-SNP (WGAS SNP annotation courtesy of Patrick Sullivan)
+Connecting to web... 
+
+SNP ID                          : rs1475515
+Affy ID                         :
+Affy 5.0                        : no
+Affy 6.0                        : no
+Perlegen ID                     :
+Perlgen 600                     : no
+Illumina 650                    : yes
+Illumina 550                    : no
+Non-syn SNP                     : no
+SNP Error                       : no
+SNP Pos Duplication             : no
+Chromosome                      : 1
+Strand                          : -
+HG17 Position (bp)              : 228459232
+HG18 Position (bp)              : 230219120
+Pseudo-autosomal region?        : N/A
+NCBI reference allele           : T
+UCSC reference allele           : A
+Observed alleles                : C/T
+Human alleles                   : C/T
+Predominant human allele        : A
+Chimp allele                    : T
+Macaque allele                  : T
+dbSNP MAF                       : 0.038
+HapMap CEU MAF                  : 0
+HapMap ASI MAF                  : 0
+HapMap YRI MAF                  : 0.15
+HapMap CEU Strand               : -
+HapMap CEU Allele               : C
+HapMap ASI Allele               : C
+HapMap YRI Allele               : C
+In gene transcript              :
+In gene coding region           :
+Nearby Genes(KB distance)       :
+Segmental duplication?          : no
+Copy Number Variant?            : no
+Conservation >95% pctile?       : no
+Conservation >99% pctile?       : no
+Disease-causing region?         : no
+miRNA target? (TargetScan)      : no
+miRNA target? (PicTAR)          : no
+Regulatory potential?           : yes
+Promotor region? (Stanford)     : no
+Promotor region? (firstEF)      : no
+Transfactor binding site        : no
+Enhancer?                       : no
+Exon?                           : no
+Consensus splice site?          : no
+5' UTR?                         : no
+3' UTR?                         : no
+------------------------------------------------
+
+</pre>
+
+
+</p>
+To perform a lookup query on a batch of SNPs rather than 1 at a time, use the 
+command 
+<p><h5>
+ plink --lookup-list hits.list 
+</h5></p>
+where <tt>hits.list</tt> is just a list of SNP IDs (RS numbers); this will  
+generate a file
+<pre>
+     plink.snp.annot
+</pre>
+containing multiple reports of the above kind. There is a limit to the number of 
+SNPs that can be submitted at one time (currently 200).
+
+<a name="psnp2">
+<h2>Gene-based SNP lookup</h2></a>
+</p>
+
+It is possible to dump all SNPs in a gene with the command
+<h5>
+plink --lookup-gene DISC1
+</h5></p>
+which does two things: writes some gene-centric informationto the LOG file, and 
+lists all the SNPs that feature on common WGAS platforms to the file 
+<pre>
+     plink.snp.list
+</pre>
+By default, SNPs within 20kb upstream and downstream of the gene are recorded. To change this, 
+add the command
+<pre>
+     --lookup-gene-kb 0
+</pre>
+or
+<pre>
+     --lookup-gene-kb 100
+</pre>
+for example.
+</p>
+In the information written to the LOG file, there is a strong bias
+towards neuropsychiatrically-relevant information, reflecting the
+research interests of the creator. For example, the output
+for <tt>DISC1</tt> is: (note: there are a few relatively redundant or
+uninformative fields currently that will be removed in future
+releases)
+
+<pre>
+  Looking up gene information (and SNPs +/- 20 kb)
+  Connecting to web... Writing SNP details to [ plink.snp.list ]
+
+  Gene Name                               : DISC1
+  Product                                 : disrupted in schizophrenia 1 isoform Es
+  Entry                                   : 1
+  CCDS Name                               : CCDS31056.1
+  KG ID                                   : uc001hux.1
+  SwissProt ID                            : Q9NRI5-4
+  Hugo ID                                 : 2888
+  Hugo alias                              :
+  Hugo old gene names                     :
+  Has gene name?                          : no
+  HG18 strand                             : +
+  HG18 chrom                              : 1
+  HG18 TX Start                           : 229829236
+  HG18 TX End                             : 229924970
+  HG18 CDS Start                          : 229829236
+  HG18 CDS End                            : 229924970
+  HG18 TX Length                          : 95734
+  HG18 TX Length Percentile               : 96
+  HG17 strand                             : -
+  HG17 chrom                              : 0
+  HG17 TX Start                           : 0
+  HG17 TX End                             : 0
+  HG17 CDS Start                          : 0
+  HG17 CDS End                            : 0
+  HG17 TX Length                          : 0
+  Has HG17 pos                            : no
+  mRNA accession numbers                  : NM_001012958.1 ENST00000317586 OTTHUMT00000092355
+  Protein accession numbers               : NP_001012976.1 ENSP00000320784 OTTHUMP00000035959
+  Pseudoautosomal HG18                    : no
+  Pseudoautosomal HG17                    : no
+  Brain expressed 50th percentile         : yes
+  Brain expressed 75th percentile         : yes
+  Correlated cortex expression            : NA
+  Correlated lymphoblastoid expression    : yes
+  Number association studies from SZGene  : 20
+  Annotation from SLEP database           : ? Schizophrenia [PMID=16033310]/{Schizoaffective 
+                                          : disorder, susceptibility to}, 181500 (3) [OMIM=605210]
+                                          : /{Schizophrenia, susceptibility to}, 604906 (3) [OMIM=605210]
+  Association studies from GAD database   : psych (16)
+  ----------------------------------------------------------
+</pre>
+
+It is possible to supply a list of genes to lookup, with the command 
+<h5>
+plink --lookup-gene-list mygenes.txt
+</h5></p> 
+
+that will dump the SNPs from multple genes in
+a <a href="data.shtml#sets">SET file</a> format, e.g. where the file
+<pre>
+     mygenes.txt
+</pre>
+is something like
+<pre>
+     COMT
+     DISC1
+     CACNA1C
+     ...
+</pre>
+
+These could then be subsequently extracted with the command 
+<pre>
+     --extract plink.snp.list
+</pre>
+as the <tt>END</tt> comments and gene names will just be ignored if
+these are not SNP IDs in the MAP file.
+
+<a name="psnp3">
+<h2>Description of the annotation information</h2></a>
+</p>
+
+For a detailed description of the annotation fields and how they were compiled, 
+please see Patrick Sullivan's <a 
+href="https://slep.unc.edu/evidence/files/README_annotations.pdf">PDF</a>
+
+<!--#include file="end.html"-->
+
+<em>
+ This document last modified <!--#flastmod file="misc.shtml" -->
+</em>
+
+</body>
+
+<HEAD>
+<META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
+</HEAD>
+</html>

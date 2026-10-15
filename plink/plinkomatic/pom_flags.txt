@@ -1,0 +1,324 @@
+build_command.php:// --- Input/Output Section --------------------------------------------------------------
+build_command.php: if ($file) { $cmdline .= " --file ".$file; }
+build_command.php: elseif ($bfile) { $cmdline .= " --bfile ".$bfile; }
+build_command.php: elseif ($ped && $map) { $cmdline .= " --ped ".$ped." --map ".$map; }
+build_command.php: elseif ($bed && $bim && $fam) { $cmdline .= " --bed ".$bed." --bim ".$bim." --fam ".$fam; }
+build_command.php: 	{ $cmdline .= " --out ".$out;}
+build_command.php:// --- End of Input/Output Section -------------------------------------------------------  
+build_command.php:// --- Data Management Section -----------------------------------------------------------
+build_command.php: if ($m=="recode") $cmdline .= " --recode";
+build_command.php: if ($m=="recode12") $cmdline .= " --recode12";
+build_command.php: if ($m=="recodeAD") $cmdline .= " --recodeAD";
+build_command.php: if ($m=="makebed") $cmdline .= " --make-bed";
+build_command.php: 	$cmdline .= " --merge ".$mergeped." ".$mergemap." --merge-mode ".$mmode;
+build_command.php: if ($m=="extract") $cmdline .= " --extract ".$extract; 
+build_command.php: if ($m=="exclude") $cmdline .= " --exclude ".$exclude;
+build_command.php: if ( $m=="keep") $cmdline .= " --keep ".$keep; 
+build_command.php: if ($m=="remove") $cmdline .= " --remove ".$remove; 
+build_command.php: if ($m=="flip") $cmdline .= " --flip ".$flip;
+build_command.php: 	if ($p=="1") $cmdline .= " --recode";
+build_command.php: 	if ($p=="2") $cmdline .= " --make-bed";
+build_command.php:// --- End of Data Management Section ----------------------------------------------------
+build_command.php:// --- Summary Stats Section -------------------------------------------------------------
+build_command.php: if ($m=="missing") { $cmdline .= " --missing"; }
+build_command.php: if ($m=="test-missing") { $cmdline .= " --test-missing"; }
+build_command.php: if ($m=="freq") { $cmdline .= " --freq"; }
+build_command.php: if ($m=="hardy") { $cmdline .= " --hardy "; }
+build_command.php: if ($m=="mendel") { $cmdline .= " --mendel ";}
+build_command.php:// --- End of Summary Stats Section ------------------------------------------------------
+build_command.php:// --- Population Stratification Section--------------------------------------------------
+build_command.php: 	$cmdline .= " --cluster";
+build_command.php: 	if ($pmerge) {$cmdline .= " --pmerge ".$pmerge;}
+build_command.php: 	if ($matrix) $cmdline .= " --matrix";
+build_command.php: 		if ($match) {$cmdline .= " --match ".$match;}
+build_command.php: 		if ($matchtype) {$cmdline .= " --match-type".$matchtype;}
+build_command.php:		if ($qmatch && $qt) {$cmdline .= " --qmatch ".$qmatch." --qt ".$qt;}
+build_command.php: if ($m=="genome") $cmdline .= " --genome --min " .$min;
+build_command.php: if ($m=="inbreeding") $cmdline .= " --het ";
+build_command.php: if ($m=="homo-run-snps")  $cmdline .= " --homo-run-snps " .$homo_run_snps;
+build_command.php:// --- End of Population Stratification Section-------------------------------------------
+build_command.php:// --- Linkage Disequilibrium Section--------------------------------------------------
+build_command.php:		{ $cmdline .= " --r"; }
+build_command.php:		{ $cmdline .= " --r2"; }
+build_command.php: 	if ($hap) {$cmdline .= " --hap ".$hap;}
+build_command.php: 		{ $cmdline .= " --hapfreq"; }
+build_command.php: 		{ $cmdline .= " --phase"; }
+build_command.php: 		{ $cmdline .= " --hapfreq"; }
+build_command.php: 		$cmdline .= " --impute --pp ".$pp; 
+build_command.php:// --- End of Linkage Disequilibrium Section-------------------------------------------
+build_command.php:// --- Association Analysis/Single SNP Section-----------------------------------------
+build_command.php: if ($m=="assoc") { $cmdline .= " --assoc"; }
+build_command.php: if ($m=="model") { $cmdline .= " --model"; }
+build_command.php: if ($m=="qt") { $cmdline .= " --assoc"; }
+build_command.php:		$cmdline .= " --perm";
+build_command.php:		//$cmdline .= " --aperm ".$minperm." ".$maxperm." ".$alpha." ".$ci." ".$intercept." ".$slope;
+build_command.php:		$cmdline .= " --mperm ".$mperm;
+build_command.php: if ($m=="mh1") { $cmdline .= " --mh1"; }
+build_command.php: if ($m=="mh2") { $cmdline .= " --mh2"; }
+build_command.php: 	if ($homog==1) { $cmdline .= " --bd"; }
+build_command.php: 	elseif ($homog==2) { $cmdline .= " --homog"; }
+build_command.php: 	if ($within && !$family) { $cmdline .= " --within ".$within; }
+build_command.php: 	elseif ($family && !$within) { $cmdline .= " --family"; }
+build_command.php: 	else {$errcnt++; echo "<strong>Error: choose exactly one of --within or --family.</strong><br />";}
+build_command.php:		{ $cmdline .= " --tdt"; }
+build_command.php:		{ $cmdline .= " --parentdt1"; }
+build_command.php:		{ $cmdline .= " --parentdt2"; }
+build_command.php: if ($m=="qtdt") { $cmdline .= " --genedrop"; }
+build_command.php:// --- End of Association Analysis/Single SNP Section----------------------------------
+build_command.php:// --- Association Analysis/Epistatic Analysis Section---------------------------------
+build_command.php:	$cmdline .= " --epistasis";
+build_command.php:		$cmdline .= " --case-only"; 
+build_command.php:		{ $cmdline .= " --set ".$set;}
+build_command.php:		{ $cmdline .= " --set ".$set ." --set-by-all";}
+build_command.php:	 	{ $cmdline .= " --set ".$set;}
+build_command.php:	$cmdline .= " --epi1 ".$epi1;
+build_command.php:	$cmdline .= " --epi2 ".$epi2;	 
+build_command.php:	$cmdline .= " --genepi --R";
+build_command.php:	if ($p==1) { $cmdline .= " --case-only"; }
+build_command.php:	$cmdline .= " --set ".$set;
+build_command.php:	$cmdline .= " --perm ".$perm;
+build_command.php:// --- End of Association Analysis/Epistatic Analysis Section--------------------------
+build_command.php:// --- Sel Global Variable Section ----------------------------------------------------
+build_command.php:	if ($mind) {$cmdline .= " --mind " .$mind;}
+build_command.php:	if ($geno) {$cmdline .= " --geno " .$geno;}
+build_command.php:	if ($maf) {$cmdline .= " --maf " .$maf;}
+build_command.php:		$cmdline .= " --cell " .$cell;
+build_command.php:		$cmdline .= " --hwe " .$hwe;
+build_command.php:		$cmdline .= " --me ".$ime ." " .$fme;		
+build_command.php:// --- End Sel Global Variable Section ------------------------------------------------
+desc_analysis.php:		$input .= "-->Create new PED/MAP fileset (reordered)<br />";
+desc_analysis.php:		$input .= "---->Preserve original allele coding<br />";
+desc_analysis.php:		$input .= "-->Create new PED/MAP fileset (reordered)<br />";
+desc_analysis.php:		$input .= "---->Recode genotypes 11, 12 and 22 (00 missing)<br />";
+desc_analysis.php:		$input .= "-->Create a binary bED fileset<br />";
+desc_analysis.php:		$input .= "-->Merge two PED files<br />";
+desc_analysis.php:		$input .= "-->Extract a subset of SNPs<br />";
+desc_analysis.php:		$input .= "-->Exclude a subset of SNPs<br />";
+desc_analysis.php:		$input .= "-->Extract a subset of individuals<br />"; 
+desc_analysis.php:		$input .= "-->Exclude of subset of individuals<br />"; 
+desc_analysis.php:		$input .= "-->Flip SNP strand<br />";
+desc_analysis.php:		if ($p==1) {$input .= "---->Output standard PED/MAP fileset<br />";}
+desc_analysis.php:		elseif ($p==2) {$input .= "---->Output a binary bED fileset<br />";}
+desc_analysis.php:	 	$input .= "-->Missingness rates<br />";
+desc_analysis.php:	 	$input .= "---->SNP and individual missing rates<br />";
+desc_analysis.php:	 	$input .= "-->Missingness rates<br />";
+desc_analysis.php:	 	$input .= "---->Test for different rates between cases and controls<br />";
+desc_analysis.php:	 	$input .= "-->Allele frequencies<br />"; 
+desc_analysis.php:	 	$input .= "-->Hardy-Weinberg equilibrium tests<br />";
+desc_analysis.php:	 	$input .= "---->Ignore phenotype<br />";   
+desc_analysis.php:	 	$input .= "-->Hardy-Weinberg equilibrium tests<br />";
+desc_analysis.php:	 	$input .= "---->Stratify by case/control statues<br />";  
+desc_analysis.php:	 	$input .= "-->Mendel error rates for nuclear family data<br />";    
+in_and_out.php:		$input .= "-->Create new PED/MAP fileset (reordered)<br />";
+in_and_out.php:		$input .= "----><a href=http://pngu.mgh.harvard.edu/~purcell/plink/dataman.shtml#recode>Preserve original allele coding</a><br />";
+in_and_out.php:		$input .= "-->Create new PED/MAP fileset (reordered)<br />";
+in_and_out.php:		$input .= "----><a href=http://pngu.mgh.harvard.edu/~purcell/plink/dataman.shtml#recode>Recode genotypes 11, 12 and 22 (00 missing)</a><br />";
+in_and_out.php:		$input .= "-->Create new PED/MAP fileset (reordered)<br />";
+in_and_out.php:		$input .= "----><a href=http://pngu.mgh.harvard.edu/~purcell/plink/dataman.shtml#recode>Recode genotypes as additive and dominant components</a><br />";
+in_and_out.php:		$input .= "--><a href=http://pngu.mgh.harvard.edu/~purcell/plink/dataman.shtml#makebed>Create a binary bED fileset</a><br />";
+in_and_out.php:		$input .= "--><a href=http://pngu.mgh.harvard.edu/~purcell/plink/dataman.shtml#merge>Merge two PED files</a><br />";
+in_and_out.php:		$input .= "--><a href=http://pngu.mgh.harvard.edu/~purcell/plink/dataman.shtml#extract>Extract a subset of SNPs</a><br />";
+in_and_out.php:		$input .= "--><a href=http://pngu.mgh.harvard.edu/~purcell/plink/dataman.shtml#exclude>Exclude a subset of SNPs</a><br />";
+in_and_out.php:		$input .= "--><a href=http://pngu.mgh.harvard.edu/~purcell/plink/dataman.shtml#keep>Extract a subset of individuals</a><br />"; 
+in_and_out.php:		$input .= "--><a href=http://pngu.mgh.harvard.edu/~purcell/plink/dataman.shtml#remove>Exclude of subset of individuals</a><br />"; 
+in_and_out.php:		$input .= "--><a href=http://pngu.mgh.harvard.edu/~purcell/plink/dataman.shtml#flip>Flip SNP strand</a><br />";
+in_and_out.php:			$input .= "---->Output standard PED/MAP fileset<br />";
+in_and_out.php:			$input .= "---->Output a binary bED fileset<br />";
+in_and_out.php:	 	$input .= "--><a href=http://pngu.mgh.harvard.edu/~purcell/plink/summary.shtml#missing>Missingness rates</a><br />";
+in_and_out.php:	 	$input .= "---->SNP and individual missing rates<br />";
+in_and_out.php:	 	$input .= "--><a href=http://pngu.mgh.harvard.edu/~purcell/plink/summary.shtml#missing>Missingness rates</a><br />";
+in_and_out.php:	 	$input .= "---->Test for different rates between cases and controls<br />";
+in_and_out.php:	 	$input .= "--><a href=http://pngu.mgh.harvard.edu/~purcell/plink/summary.shtml#freq>Allele frequencies</a><br />"; 
+in_and_out.php:	 	$input .= "--><a href=http://pngu.mgh.harvard.edu/~purcell/plink/summary.shtml#hwd>Hardy-Weinberg equilibrium tests</a><br />";
+in_and_out.php:	 	if ($p==1) {$input .= "---->Ignore phenotype<br />"; }
+in_and_out.php:	 	elseif ($p==2) {$input .= "---->Stratify by case/control statues<br />";}  
+in_and_out.php:	 	$input .= "--><a href=http://pngu.mgh.harvard.edu/~purcell/plink/summary.shtml#mendel>Mendel error rates for nuclear family data</a><br />";    
+in_and_out.php:		$input .= "--><a href=http://pngu.mgh.harvard.edu/~purcell/plink/strat.shtml>IBS distance-based clustering</a><br />";
+in_and_out.php:		$input .= "---->Cluster on genome-wide IBS<br />";   
+in_and_out.php:		$input .= "--><a href=http://pngu.mgh.harvard.edu/~purcell/plink/strat.shtml>IBS distance-based clustering</a><br />";
+in_and_out.php:		$input .= "---->Cluster on genome-wide IBS and external matching criteria<br />"; 
+in_and_out.php:		$input .= "--><a href=http://pngu.mgh.harvard.edu/~purcell/plink/ibdibs.shtml#genome>IBD estimation (genome-wide)</a><br />";    
+in_and_out.php:		$input .= "--><a href=http://pngu.mgh.harvard.edu/~purcell/plink/ibdibs.shtml#genome>Heterozygosity / inbreeding coefficients</a><br />";   
+in_and_out.php:		$input .= "--><a href=http://pngu.mgh.harvard.edu/~purcell/plink/ibdibs.shtml#genome>Runs of homozygosity</a><br />";   
+in_and_out.php:		$input .= "--><a href=http://pngu.mgh.harvard.edu/~purcell/plink/misc.shtml#ld>Pairwise r and r-squared</a><br />";
+in_and_out.php:		$input .= "--><a href=http://pngu.mgh.harvard.edu/~purcell/plink/haplo.shtml>haplotype inference</a><br />";
+in_and_out.php:		$input .= "---->Calculate haplotype frequencies<br />";
+in_and_out.php:		$input .= "--><a href=http://pngu.mgh.harvard.edu/~purcell/plink/haplo.shtml>haplotype inference</a><br />";
+in_and_out.php:		$input .= "---->List individuals' haplotype phases<br />";	
+in_and_out.php:		$input .= "--><a href=http://pngu.mgh.harvard.edu/~purcell/plink/haplo.shtml>haplotype inference</a><br />";
+in_and_out.php:		$input .= "---->Test case/control haplotype association<br />";
+in_and_out.php:		$input .= "--><a href=http://pngu.mgh.harvard.edu/~purcell/plink/haplo.shtml>haplotype inference</a><br />";
+in_and_out.php:		$input .= "---->Create imputed most-likely haplotype dataset<br />";
+in_and_out.php:		$input .="-->Single SNP analyses<br />";
+in_and_out.php:		$input .="---->Population based sample<br />"; 
+in_and_out.php:		$input .="------>Disease trait<br />";
+in_and_out.php:		$input .="--------><a href=http://pngu.mgh.harvard.edu/~purcell/plink/anal.shtml#cc>Basic allelic test</a><br />"; 
+in_and_out.php:			$input .="---------->Without permutation<br />";
+in_and_out.php:			$input .="----------><a href=http://pngu.mgh.harvard.edu/~purcell/plink/perm.shtml#aperm>With adaptive permutation</a><br />";
+in_and_out.php:			$input .="----------><a href=http://pngu.mgh.harvard.edu/~purcell/plink/perm.shtml#mperm>With maxT permutation</a><br />";
+in_and_out.php:		$input .="-->Single SNP analyses<br />";
+in_and_out.php:		$input .="---->Population based sample<br />"; 
+in_and_out.php:		$input .="------>Disease trait<br />";
+in_and_out.php:		$input .="--------><a href=http://pngu.mgh.harvard.edu/~purcell/plink/anal.shtml#model>Cochran-Armitage trend test and genotypic test</a><br />";
+in_and_out.php:			$input .="---------->Without permutation<br />";
+in_and_out.php:			$input .="----------><a href=http://pngu.mgh.harvard.edu/~purcell/plink/perm.shtml#aperm>With adaptive permutation</a><br />";
+in_and_out.php:			$input .="----------><a href=http://pngu.mgh.harvard.edu/~purcell/plink/perm.shtml#mperm>With maxT permutation</a><br />";
+in_and_out.php:		$input .="-->Single SNP analyses<br />";
+in_and_out.php:		$input .="---->Population based sample<br />"; 
+in_and_out.php:		$input .="------>Disease trait<br />";
+in_and_out.php:		$input .="--------><a href=http://pngu.mgh.harvard.edu/~purcell/plink/anal.shtml#strat>Stratified/clustered sample tests</a><br />";
+in_and_out.php:		$input .="---------->Within-cluster permutation<br />";
+in_and_out.php:			$input .="--------><a href=http://pngu.mgh.harvard.edu/~purcell/plink/perm.shtml#aperm>With adaptive permutation</a><br />";
+in_and_out.php:			$input .="--------><a href=http://pngu.mgh.harvard.edu/~purcell/plink/perm.shtml#mperm>With maxT permutation</a><br />";
+in_and_out.php:		$input .="-->Single SNP analyses<br />";
+in_and_out.php:		$input .="---->Population based sample<br />"; 
+in_and_out.php:		$input .="------>Disease trait<br />";
+in_and_out.php:		$input .="--------><a href=http://pngu.mgh.harvard.edu/~purcell/plink/anal.shtml#strat>Stratified/clustered sample tests</a><br />";  
+in_and_out.php:		$input .="---------->Cochran-Mantel-Haenszel tests<br />";
+in_and_out.php:		$input .="------------>SNP-disease association conditional on cluster<br />";  
+in_and_out.php:		$input .="-->Single SNP analyses<br />";
+in_and_out.php:		$input .="---->Population based sample<br />"; 
+in_and_out.php:		$input .="------>Disease trait<br />";
+in_and_out.php:		$input .="--------><a href=http://pngu.mgh.harvard.edu/~purcell/plink/anal.shtml#strat>Stratified/clustered sample tests</a><br />";  
+in_and_out.php:		$input .="---------->Cochran-Mantel-Haenszel tests<br />";
+in_and_out.php:		$input .="------------>SNP-cluster association conditional on disease<br />"; 
+in_and_out.php:		$input .="-->Single SNP analyses<br />";
+in_and_out.php:		$input .="---->Population based sample<br />"; 
+in_and_out.php:		$input .="------>Disease trait<br />";
+in_and_out.php:		$input .="--------><a href=http://pngu.mgh.harvard.edu/~purcell/plink/anal.shtml#strat>Stratified/clustered sample tests</a><br />";  
+in_and_out.php:		$input .="---------->Homogeneity of odds ratio tests<br />";   
+in_and_out.php:		$input .="-->Single SNP analyses<br />";
+in_and_out.php:		$input .="---->Population based sample<br />";
+in_and_out.php:		$input .="------><a href=http://pngu.mgh.harvard.edu/~purcell/plink/anal.shtml#qt>Quantitative trait</a><br />"; 
+in_and_out.php:			$input .="-------->Without permutation<br />";
+in_and_out.php:			$input .="-------->With adaptive permutation<br />";
+in_and_out.php:			$input .="-------->With maxT permutation<br />";
+in_and_out.php:		$input .="-->Single SNP analyses<br />";
+in_and_out.php:		$input .="---->Population based sample<br />";	  
+in_and_out.php:		$input .="------>Within-cluster permutation<br />";
+in_and_out.php:			$input .="--------><a href=http://pngu.mgh.harvard.edu/~purcell/plink/perm.shtml#aperm>With adaptive permutation</a><br />";
+in_and_out.php:			$input .="--------><a href=http://pngu.mgh.harvard.edu/~purcell/plink/perm.shtml#mperm>With maxT permutation</a><br />";
+in_and_out.php:// --- Association Analysis/Single SNP analyses/Family-based Sample -----------------
+in_and_out.php:		$input .= "-->Single SNP analyses<br />";
+in_and_out.php:		$input .= "---->Family-based sample<br />";    
+in_and_out.php:		$input .= "------><a href=http://pngu.mgh.harvard.edu/~purcell/plink/anal.shtml#tdt>Disease traits: TDT analysis</a><br />"; 
+in_and_out.php:		if ($set=="no") {	$input .= "-------->Single SNP TDT only<br />";}
+in_and_out.php:		elseif ($set=="true") {	$input .= "-------->Single SNP and set-based TDT<br />";}
+in_and_out.php:		$input .= "-->Single SNP analyses<br />";
+in_and_out.php:		$input .= "---->Family-based sample<br />";
+in_and_out.php:		$input .= "------><a href=http://pngu.mgh.harvard.edu/~purcell/plink/perm.shtml#genedropmodel>Quantitative trait: gene-dropping permutation</a><br />"; 
+in_and_out.php:		if ($p==1) {$input .= "-------->Gene-drop from founders<br />";}
+in_and_out.php:		if ($p==2) {$input .= "-------->Gene-drop from parents<br />";}
+in_and_out.php:// ----- Epistatic Analysis -------------------------------------------------
+in_and_out.php:		$input .= "-->Epistatic analyses<br />";
+in_and_out.php:		$input .= "----><a href=http://pngu.mgh.harvard.edu/~purcell/plink/epi.shtml#snp>SNP x SNP epistasis</a><br />";
+in_and_out.php:		$input .= "-->Epistatic analyses<br />";
+in_and_out.php:		$input .= "----><a href=http://pngu.mgh.harvard.edu/~purcell/plink/epi.shtml#gene>Gene-based epistasis</a><br />";
+in_and_out.php: 		if ($p==1) {$input .= "------>Case-only analysis<br />";}
+in_and_out.php: 		elseif ($p==2) {$input .= "------>Case/control analysis<br />";}
+pom1a.php:<!--
+pom1a.php://-->
+pom1b.php:<!--
+pom1b.php://-->
+pom1.php:<!--
+pom1.php://-->
+pom2.php:<!-- _____Input Files section______________________________________________ -->
+pom2.php:<td width=15%> <tt> --file </tt> </td>
+pom2.php:<td><tt> --ped </tt> </td>
+pom2.php:<td><tt> --map </tt> </td>
+pom2.php:<td width=15%><tt> --bfile </tt> </td>
+pom2.php:exist. These files are created by the <tt>--make-bed</tt> (create binary PED file) 
+pom2.php:<td><tt> --bed </tt> </td>
+pom2.php:<td><tt> --map </tt> </td>
+pom2.php:<td><tt> --fam </tt> </td>
+pom2.php:<!-- _____End Input Files Section________________________________________________-->
+pom2.php:<!-- _____Output Files Section___________________________________________________-->
+pom2.php:<td width=15%><tt> --out </tt> </td>
+pom2.php:<!-- _____End Output Files Section_______________________________________________ -->
+pom2.php:<!-- _____SEL parameter Section__________________________________________________ -->
+pom2.php:<td width=15%> <tt> --mind </tt> </td>
+pom2.php:<td><tt> --geno </tt> </td>
+pom2.php:<td><tt> --maf </tt> </td>
+pom2.php:<td><tt> --cell </tt> </td>
+pom2.php:with fewer than this many genotypes in the 2x3 genotypic table (<tt>--model</tt> option) 
+pom2.php:<!--We only want the --hwe option for [[change later!]] -->
+pom2.php:<td><tt> --hwe </tt> </td>
+pom2.php:<!--We only want the --me options for family-based tests -->
+pom2.php:<td><tt> --me </tt> </td>
+pom2.php:<!-- _____End SEL Parameter Section__________________________________________  -->
+pom2.php:<!-- _____Data Management Section____________________________________________ -->
+pom2.php:<!--m=recode, m=recode12, m=recodeAD and m=makebed require no special input.-->
+pom2.php:<td width=15%> <tt> --merge </tt> </td>
+pom2.php:<td> <tt> --merge-mode </tt> </td>
+pom2.php:<td><b>Merge mode.</b> This option specifies the behavior of the <tt>--merge</tt> 
+pom2.php:all mismatching calls (diff mode -- do not merge); 7) Report mismatching non-missing 
+pom2.php:calls (diff mode -- do not merge)
+pom2.php:<td width=15%> <tt> --extract </tt> </td>
+pom2.php:<td width=15%> <tt> --exclude </tt> </td>
+pom2.php:<td width=15%> <tt> --keep </tt> </td>
+pom2.php:<td width=15%> <tt> --remove </tt> </td>
+pom2.php:<td width=15%> <tt> --flip </tt> </td>
+pom2.php:<!--_____End Data Management Section______________________________________________ -->
+pom2.php:<!--_____Summary Stats Section____________________________________________________ -->
+pom2.php:<!--m=missing, m=test_missing, m=freq, m=mendel require no special input -->
+pom2.php:<!-- We don't need these, having changed the flags.
+pom2.php:<td><tt> --mendel </tt> </td>
+pom2.php:<td><tt> --hardy </tt> </td>
+pom2.php:<?php endif; ?> -->
+pom2.php:<!--_____End Summary Stats Section________________________________________________ -->
+pom2.php:<!--_____Population Stratification Section________________________________________ -->
+pom2.php:<!-- m=inbreeding requires no special input -->
+pom2.php:<td width=15%> <tt> --pmerge </tt> </td>
+pom2.php:the <tt>--genome</tt> option. 
+pom2.php:<td><tt> --matrix </tt> </td>
+pom2.php:<td width=15%> <tt> --match </tt> </td>
+pom2.php:<td width=15%> <tt> --match-type </tt> </td>
+pom2.php:<td width=15%> <tt> --qmatch </tt> </td>
+pom2.php:<td width=15%> <tt> --qt </tt> </td>
+pom2.php:<td width=15%> <tt> --min </tt> </td>
+pom2.php:<td width=70%> <b>Minimum pi-hat to output pair.</b> The <tt>--genome</tt> option
+pom2.php:<td width=15%> <tt> --homo-run-snps </tt> </td>
+pom2.php:<!--_____End of Population Stratification Section________________________________ -->
+pom2.php:<!--_____Linkage Disequilibrium Section__________________________________________ -->
+pom2.php:<td width=15%> <tt> --r </tt> <br><tt> --r2 </tt ></td>
+pom2.php:<!-- The Haplotype inference table only asks for --pp if $p=4 -->
+pom2.php:<td width=15%> <tt> --hap </tt> </td>
+pom2.php:<tr> <td width=15%> <tt> --pp </tt> </td> <td width=15%> <input type="text" size="10" 
+pom2.php:<!--_____End of Linkage Disequilibrium Section_____________________________________ -->
+pom2.php:<!--_____Association Analysis/Single SNP Section___________________________________ -->
+pom2.php:<!-- m=assoc, m=model, m=qt require no extra input (unless permution chosen) -->
+pom2.php:<td><tt> --mperm </tt> </td>
+pom2.php:<td width=15%> <tt> --bd</tt> <br>
+pom2.php:<tt> --homog </tt> </td>
+pom2.php:<td width=70%> <b>Select Odds Ratio Test</b> The <tt>--bd</tt> option selects a 
+pom2.php:"Breslow-Day" homogeneity of odds ratios test and the <tt>--homog</tt> option selects a 
+pom2.php:<td width=15%> <tt> --within </tt> </td>
+pom2.php:<td width=15%> <tt> --family </tt> </td>
+pom2.php:<td width=15%> <tt> --tdt </tt> <br><tt> --parentdt1 </tt> 
+pom2.php:<br> <tt> --parentdt2 </tt> </td>
+pom2.php:<!--_____End of Association Analysis/Single SNP Section____________________________ -->
+pom2.php:<!--_____Association Analysis/Epistatic Analysis Section___________________________ -->
+pom2.php:<td width=15%> <tt> --epi1 </tt> </td>
+pom2.php:<td width=15%> <tt> --epi2 </tt> </td>
+pom2.php:<td width=15%> <tt> --set </tt> </td>
+pom2.php:<td width=15%> <tt> --set </tt> </td>
+pom2.php:<td width=15%> <tt> --perm </tt> </td>
+pom2.php:test is computationally intensive -- it might not be feasible to test a large number 
+pom2.php:<!--_____End of Association Analysis/Epistatic Analysis Section____________________ -->
+pom3.php:<!-- Start Session, set variables -->
+pom3.php:<!-- _____Describe analysis________________________________________ -->
+pom3.php:<!-- Display analysis description and link to documentation.--> 
+pom3.php:<!-- _____End Describe Analysis____________________________________ -->
+pom3.php:<!-- _____Debug____________________________________________________
+pom3.php: _____End Debug________________________________________________ -->
+pom3.php:<!-- _____Build Command____________________________________________ -->
+pom3.php:<!-- _____End Build Command________________________________________ -->
+pom3.php:<!-- _____Output Expected__________________________________________ -->
+pom3.php:<!-- _____End Output Expected______________________________________ -->
+xmltree.orig.php:      $this->treeDepth--; 
+xmltree.orig.php:    $this->xmlDepth[$parser]--; 
+xmltree.orig.php:    for ($i=$this->nodeCount-1; $i>=0; $i--) { 
+xmltree.php:      $this->treeDepth--; 
+xmltree.php:    $this->xmlDepth[$parser]--; 
+xmltree.php:    for ($i=$this->nodeCount-1; $i>=0; $i--) { 
+xmltree.php:    for ($i=$this->nodeCount-1; $i>=0; $i--) { 

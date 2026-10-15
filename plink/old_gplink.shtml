@@ -1,0 +1,462 @@
+<html>
+<title>PLINK</title>
+<body>
+
+<head>
+<link rel="stylesheet" href="plink.css" type="text/css">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
+<title>PLINK: Whole genome data analysis toolset</title>
+</head>
+
+<!--#include file="start.html"-->
+
+
+<h1>gPLINK</h1>
+
+
+<table border=0 width=100%>
+<tr><td width=70%>
+
+<br>
+<tt>gPLINK</tt> is a freely-available, Java-based software 
+package that:
+
+<ul>
+<li> is a GUI that allows construction of many common <tt>PLINK</tt> 
+operations
+<li> provides a simple project management tool and analysis log
+<li> allows for data and computation to be on a separate server (via SSH)
+<li> facilitates intergration with Haploview
+</ul>
+
+This site provides:
+<ul>
+<li> A <a href="gplink_tutorial">quick tour</a> of how <tt>gPLINK</tt>, 
+<tt>PLINK</tt> and <tt>Haploview</tt> integrate
+<li> Some <a href="#doc">documentation</a> for basic use
+<li> Notes on <a href="#down">downloading and installing</a> <tt>gPLINK</tt>
+<li> The obligatory <a href="#ss">screenshots</a>
+</ul>
+
+</p>
+&nbsp;
+</p>
+
+</td><td valign="top" align="center">
+
+<div align="left"
+style="
+border-top:2px solid #225522;
+border-bottom:2px solid #225522;
+padding:5px;
+margin:5px;
+background:  #CCDDFF;
+background:  #f0f5f0;
+width:150px;">
+                                                                                            
+<b><em><font color="darkgreen">Quick links</font></em></b></p>
+<a href="gplink_tutorial/">Take the quick tour</a></p>
+<a href="#doc">gPLINK documentation</a></p>
+<a href="#down">Downloading gPLINK</a></p>
+<a href="#ss">Screenshots</a></p>
+<a href="index.shtml">PLINK</a></p>
+<a href="http://www.broad.mit.edu/mpg/haploview">Haploview</a></p>
+</div>
+
+</td></tr></table>
+
+<strong>IMPORTANT</strong> The <tt>gPLINK</tt> GUI is currently still under 
+development: this current version 
+is for early-adopters only.
+
+</p>
+
+
+<img src="gp_overview.png"><br> 
+<br>
+
+
+
+<a name="doc"></a>
+<h2>Documentation</h2>
+</p>
+
+In this Section, we cover:
+<ul>
+ <li> <a href="#overview">Overview of gPLINK</a>
+ <li> <a href="#locrem">Local versus remote modes</a>
+ <li> <a href="#start">Starting a new project</a>
+ <li> <a herf="#congif">Configuring gPLINK</a>
+ <li> <a href="#plink">Initiating PLINK jobs</a>
+ <li> <a href="#view">Viewing PLINK output</a>
+ <li> <a href="#hv">Integration with Haploview</a>
+</ul>
+
+&nbsp;
+</p>
+
+
+<a name="overview"></a>
+<h1>Overview of <tt>gPLINK</tt></tt></h1>
+</p>
+
+<tt>gPLINK</tt> is a Java program that provides a simple interface to the 
+more commonly-used <tt>PLINK</tt> commands (i.e. instead of using the 
+command line options). <tt>gPLINK</tt> provides menus and dialogs to create valid <tt>PLINK</tt> 
+commands, executes them, keeps a record of all commands run in a 
+project, keeps track of input and output files, allows 
+annotation of result files and facilitates integration with 
+<tt>Haploview</tt>. 
+
+</p>
+
+Alternatively, <tt>gPLINK</tt> can be used to collate previously-generated 
+<tt>PLINK</tt> analyses, organising the results and allowing for easier 
+browsing with Haploview. Using <tt>gPLINK</tt> in this "browse-only" mode, 
+it can provide a means for distributing results of analyses to a wider set 
+of collaborators, for example.
+
+</p>
+
+Please refer to the main <tt>PLINK</tt> <a href="index.shtml">documentation pages</a> 
+for a more detailed description of the different analytic options and the 
+output file formats.
+</p>
+
+<tt>gPLINK</tt> provides can be used to initiate analyses from the five major domains
+of <tt>PLINK</tt> commands; the menu options are shown in the figure below:
+<br>
+
+<img src="gp_overview2.png"><br> 
+<br>
+
+We will be adding new <tt>PLINK</tt> commands to this list; this figure represents 
+only those available in the initial version 0.1 release.
+</p>
+<strong>HINT</strong> It is also possible to enter whole <tt>PLINK</tt> command lines (i.e. 
+bypassing the menus) via <tt>gPLINK</tt>, which can be useful if the exact <tt>PLINK</tt> 
+option has not yet been incorporated into <tt>gPLINK</tt>.
+</p>
+
+
+In <tt>gPLINK</tt>, a project corresponds to a folder, either on the local machine or 
+on a remote machine. All output will be written to that folder. Each operation must 
+be assigned a unique <tt>fileroot</tt> name, which is used to track operations. 
+<tt>gPLINK</tt> keeps track of the commands run, and which files were 
+used for input and which were created as output, storing this information in a 
+<tt>metafile</tt> in the project folder.
+
+</p>
+
+
+
+<a name="locrem"></a>
+<h1>Local versus remote modes</h1>
+</p>
+
+You can run gPLINK in one of two modes: either local or remote. 
+
+</p>
+In local mode, 
+everything resides on the same machine: PLINK, gPLINK, Haploview, the data and all 
+computation. 
+</p>
+
+In remote mode, PLINK, the data files and all computation is assumed to reside on a 
+separate Unix/Linux machine, connected to the local machine via SSH networking. The 
+user runs the two Java-based tools gPLINK and Haploview on the local machine, issuing 
+commands to the remote machine that actually does all the work; select results files 
+can be downloaded to the local machine for subsequent viewing, either using Haploview 
+or any other local software.
+</p>
+In remote mode, gPLINK will use two project folders: one remote folder where all the 
+original data and results are stored, and one local temporary version. Any file in the 
+temporary folder can be deleteted after the session finishes.
+</p>
+
+If the remote server is also the head node of a cluster, and if jobs are sent to the 
+cluster with a simple prefix on a command line, then gPLINK can also send PLINK jobs 
+off to the cluster to be performed.
+</p>
+
+To utilise remote mode, you need 
+<ul>
+ <li> To have a Linux/Unix server with PLINK installed
+ <li> To have access to this server via SSH (secure shell, port 22)
+</ul>
+
+In remote mode, gPLINK can also be used as a browser of precomputed results, 
+providing a simple means to distribute or summarize WGAS results.
+
+<a name="start"></a>
+<h1>Starting a new project</h1>
+</p>
+
+The first step is always to create a local project folder (using the standard 
+operating system, as you would create any other folder/directory). If running in local 
+mode, you will typically want to populate this folder with your datasets.  If running 
+in remote mode, this local folder will typically be empty, and it will just be used as 
+a place to store temporary files.
+</p>
+On opening gPLINK, you first select which local project folder you'll be using, 
+with the <tt>File -> Set project folder</tt> option. 
+</p>
+
+Next, you indicate whether the project will be local or remote. See the <a 
+href="gplink_tutorial">tour</a> for more details on these steps.
+</p>
+
+
+<a name="config"></a>
+<h1>Configuring your project</h1>
+</p>
+
+After you have opened your project folder, a configuration dialog will pop 
+up. Here you should set the <tt>PLINK path</tt> to point to 
+your current copy of PLINK (<tt>plink.exe</tt> in Windows, otherwise 
+<tt>plink</tt>). If in remote mode, you will be pointing to the copy of PLINK
+you wish to use on the remote server. 
+</p>
+
+If you intend to use Haploview, you need to set the <tt>Haploview .jar 
+path</tt> to where the <tt>.jar</tt> file. You need 
+Haploview version 4.0 or later to integrate with <tt>gPLINK</tt>.
+</p>
+
+The <tt>Editor options</tt> allows you to pick what command you wish to 
+call when you view input or output files. This is an advanced feature and 
+the defaults should work fine in most cases.
+
+</p>
+Again, see the <a href="gplink_tutorial">tour</a> for more details on these steps.
+
+
+<a name="plink"></a>
+<h1>Starting <tt>PLINK</tt> jobs</h1>
+</p>
+
+By this stage, you have started the project and configured gPLINK. You only need to 
+configure gPLINK once at the start of each project.
+</p>
+
+To initiate a <tt>PLINK</tt> job, select the appropriate menu option from the 
+<tt>PLINK</tt> menu. A dialog will be shown, in which you must:
+<ul>
+ <li> Specify the binary or standard fileset to be used for input
+ <li> Specify a unique name for the output files
+</ul>
+
+If there are files with the same root and the appropriate extensions, then you can select
+this fileset from the top combo box; alternatively, the files can be specified separately. 
+If you select an alternate phenotype, you must return the panel to either the binary or 
+standard fileset panel before completing the analysis.
+</p>
+Additionally, you can often optionally
+<ul>
+ <li> Select an alternate phenotype file
+ <li> Set filters and thresholds
+ <li> Change other parameters relevant to the requested analysis
+</ul>
+
+After clicking <tt>OK</tt>, you will be shown the corresponding <tt>PLINK</tt>
+command line that <tt>gPLINK</tt> has generated given your choices. You are
+also given the option to add a description to this operation: this can be 
+any text that will help you track what you are doing (i.e. when you return 
+a month later to the project and can't remember what all those cryptic filenames
+mean...)</p>
+
+After adding the description, you will be returned to the main window; the newly
+generated operation will be added to the list of operations. This does not necessarily
+mean that the <tt>PLINK</tt> command will be finished. Depending on the size of the 
+data and the analysis chosen, <tt>PLINK</tt> analyses can take from seconds to 
+days or more. The command will run in the background. You can close <tt>gPLINK</tt> and 
+the <tt>PLINK</tt> command (or commands) will continue to run in the background. 
+When you next open up <tt>gPLINK</tt>, if the analysis has finished, 
+<tt>gPLINK</tt> should automatically detect this and connect up the ouput 
+to the entry in the list of operations. Clicking on the operation will 
+display the log file associated with that <tt>PLINK</tt> 
+run; if the <tt>PLINK</tt> job has finished, then the log file will be complete, ending 
+either in a fatal error message or a line saying when the analysis was finished. 
+
+</p>
+
+
+<a name="view"></a>
+<h1>Viewing output files</h1>
+</p>
+
+You can view the result files by expanding the tree for the desired 
+operation, going to the list of output files and
+right-clicking on the entry. You will be given a choice to view the file in the 
+default viewer or an alternate viewer. The default viewer depends on the machine type:
+it will be <tt>WordPad</tt>, <tt>TextEdit</tt> or <tt>emacs</tt> for Windows, Mac and 
+Linux/other systems respectively. The alternate viewer can be set to anything (e.g. Excel) 
+via the <tt>Configuration</tt> menu option.
+</p>
+
+
+<a name="view"></a>
+<h1>Integration with Haploview</h1>
+</p>
+
+If it is an appropriate file type, and if in the Configuration panel you pointed 
+<tt>gPLINK</tt> to an instance of Haploview (<b>version 4</b>), then an <tt>Open in 
+Haploview</tt> option will also appear.  For results files, this will bring up the 
+results-viewer panel of Haploview. You can filter and sort results here as well as merging
+multiple result files together. You can also generate plots of results very easily 
+(which are interactive in the sense that if you hover the mouse over a point, it 
+will tell you which SNP, or individual, the point represents; clicking on the 
+point will take you to the relevant entry in the results table).
+
+</p>
+It is also possible to extract subsets of your whole genome SNP data files for 
+viewing in Haploview (i.e. viewing data rather than results of PLINK runs). Use the 
+<tt>Data management -> Generate fileset -> Haploview fileset</tt> option for this. Then
+right-clicking on either the <tt>.info</tt> or <tt>.ped</tt> file and selecting to 
+view in Haploview will load the data into Haploview. Note: use the filters to select 
+manageable subsets of the data for viewing in Haploview (i.e. restrict the number of SNPs 
+you wish to include).
+</p>
+
+
+<a name="misc"></a>
+<h1>Miscellanea and known issues</h1>
+</p>
+
+
+<b>How do I kill a PLINK process initiated by gPLINK?</b></p>
+
+When you run a <tt>PLINK</tt> command from <tt>gPLINK</tt> 
+a separate <tt>PLINK</tt> program is started independent of 
+<tt>gPLINK</tt>. This means that you can close <tt>gPLINK</tt> and your 
+operation will run to completion. It also means that if you decide to 
+kill your <tt>PLINK</tt> operation you will need to do so through your 
+operating system (for example <tt>kill</tt> in Linux or through Task 
+Manager in Windows).
+
+</p>
+<b>Manual Rescan folder option</b>
+</p>
+
+The menu option <tt>Rescan folder</tt> checks the project folder 
+for files created by <tt>PLINK</tt> commands. Typically this rescanning
+is performed automatically, for both local and remote projects, every couple 
+of seconds or so.  This option is for the inpatient, therefore.
+
+</p>
+
+<b>Quirks, known issues</b></p>
+
+In no particular order:
+
+<ul>
+
+<li> All input files must have an extension (contain a period <tt>.</tt>) if
+they are to appear in the operation view
+
+<li> Do not attempt to use different machines with different architecture 
+to access a project on a shared network drive that is mapped to the different 
+machines. That is, in this case, PLINK would be running in "local" mode.
+
+<li> Java 1.5 is required to run gPLINK.
+
+</ul>
+
+
+<a name="down"></a>
+<h2>Download and installation</h2>
+
+</p>
+You first need up-to-date versions of Java, PLINK and Haploview on your 
+computer. 
+</p>
+<font color="darkgreen"><b><em>Please follow all 4 of these steps</em></b></font>:
+<ol>
+</p>
+
+<li>
+You will need Java 1.5 installed on your machine: this is freely available from the Sun 
+website, for all common platforms. To download Java, follow <a 
+href="http://www.java.com/en/download/index.jsp">this link</a> 
+and select <tt>Download Now</tt>.
+</p>
+
+<li> You need PLINK <b>version 0.99p</b> or greater to work with <tt>gPLINK</tt>,
+which can be downloaded from <a href="download.shtml">here</a>.
+</p>
+
+<li> Haploview can be 
+obtained from <a 
+href="http://www.broad.mit.edu/mpg/haploview/download.php">this page</a>
+</p>
+
+<li> <b>After</b> completing the above three steps, download the latest <tt>gPLINK</tt> 
+(version 1.05) by clicking <a href="dist/gPLINK-1.05.zip">here for the JAR file</a> (as a 
+zipped archive). <b>Alternatively</b>, you could test version 2.024 by clicking <a href="dist/gPLINK-2.024.zip">here for the JAR file</a>. Note that this is in beta still and potentially more buggie then version 1.05.
+
+</ol>
+
+</p>
+
+If you download this file, please refer to <a href="gplic.txt">the GPL v2 licence</a>.
+
+
+</p>
+
+If you have downloaded the ZIP file, you must first extract the contents (a single JAR 
+file). 
+
+</p>
+In Windows, double-clicking on the <tt>gPLINK.jar</tt> file should probably work</p>
+
+If not (and on all other platforms), typing at the command line prompt
+<pre>
+     java -jar gPLINK.jar
+</pre>
+will start <tt>gPLINK</tt> (you must be in the directory where <tt>gPLINK.jar</tt> is, 
+or specify it's location explicitly; likewise, <tt>java</tt> must be in your path; please
+ask your system administrator if you have problems with this).
+
+</p>
+
+<b> Source Code </b></p>
+For interested developers the source code can be found <a href = "dist/gPLINK2.024-src.zip">here (gPLINK-2.024-src.zip)</a>. Note that most users do not need the source code!
+
+</p>
+<a name="ss"></a>
+<h2>Screenshots</h2>
+
+<b><em>Main interface, tracking a project</em></b>
+
+<img src="gp3.png"><br> 
+</p>
+
+<b><em>Common <tt>PLINK</tt> analysis options available via 
+pull-down menus</em></b></p>
+
+<img src="gp4.png"><br> 
+
+</p>
+
+<b><em>Set analysis parameters, filters and thresholds</em></b>
+</p>
+<img src="gp5b.png"><br> 
+
+
+
+
+
+
+<!--#include file="end.html"-->
+
+<em>
+ This document last modified <!--#flastmod file="gplink.shtml" -->
+</em>
+
+</body>
+
+<HEAD>
+<META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
+</HEAD>
+</html>

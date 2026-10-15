@@ -1,0 +1,282 @@
+<html>
+<body>
+
+<head>
+<link rel="stylesheet" href="plink.css" type="text/css">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<title>PLINK: Whole genome data analysis toolset</title>
+</head>
+
+<!--#include file="start.html"-->
+
+<h1>Result annotation</h1>
+&nbsp;
+</p>
+
+This page describes the utility features in PLINK to apply generic
+<em>annotations</em> to various types of SNP-centric files. To
+automatically apply information about whether SNPs are functional, or
+tag functional variants, and which genes they are in or near, requires
+only to download two files (<a href="res.shtml#attrib">here</a> and <a
+href="res.shtml#glist">here</a>) and run a single <tt>--annotate</tt>
+command as described below. 
+ 
+
+<a name="basic">
+<h2>Basic usage</h2>
+</a></p>
+
+The basic command to annotate a result file is 
+
+<h5>
+ plink --annotate myfile.assoc  attrib=snp129.attrib.gz ranges=glist.txt
+</h5></p>
+which creates a file
+<pre>
+     plink.annot
+</pre>
+which contains all the fields in <tt>myfile.assoc</tt> but with the annotation data appended in the rightmost column.
+</p>
+
+Note that the <tt>--annotate</tt> command takes only a single fixed
+argument: the name of the file to be annotated. All other keywords
+that follow are <em>options</em>. Note how they are listed differently
+in the LOG file: 
+<pre>
+        --annotate tmp.1
+          attrib=snp129.attrib.gz
+          ranges=glist.txt
+</pre>
+See <a href="misc.shtml#opt">this link</a> for more
+details about options.
+</p>
+
+An <tt>attrib</tt> and/or a <tt>ranges</tt> keyword/file pair must be specified.
+</p>
+
+For example, consider a file <tt>myfile.assoc</tt> that contains the following
+information in the first few rows:
+
+<pre>
+  CHR         SNP        BP         P
+    1   rs3094315    792429    0.1521
+    1   rs6672353    817376    0.3649
+    1   rs4040617    819185    0.2315
+    1   rs4075116   1043552    0.3453
+    1   rs9442385   1137258    0.3968
+</pre>
+
+Second, we have a list of <em>attributes</em> in the file
+<tt>snp129.attrib.gz</tt>, which is a compressed file that (when
+uncompressed) is in the format:
+
+<pre>
+    SNP-identifier  attribute1 attribute2 ...
+</pre>
+
+where the attributes are any user-defined text fields. In this
+example, the attributes relate to the functional status of each SNP,
+e.g.  nonsense, missense, frameshift, etc. In this particular case, we
+use upper-case to indicate a SNP is actually coding; lower-case
+indicates that the SNP is in strong linkage disequilibrium with a
+coding SNP. Also, each attribute begins with an equals sign, to make a
+clear distinction between an attribute and any gene names (see
+below). These conventions are not specified in any way by the
+<tt>--annotate</tt> command itself, however. 
+</p>
+
+<pre>
+     rs12568050 =MISSENSE
+     rs443143 =missense
+     rs4758895 =missense
+     rs6497638 =nonsense =missense
+     rs2593389 =missense
+     rs4446721 =frameshift
+     ...
+</pre>
+
+If the attribute file ends in <tt>.gz</tt>, and ZLIB support is
+available to PLINK, then it will be automatically read and
+decompressed on the fly. If the attribute file does not end of
+<tt>.gz</tt>, it is assumed to be a standard plain-text file.
+
+</p>
+<strong>NOTE</strong> The <tt>snp129.attrib.gz</tt> file discussed
+here is <a href="res.shtml#attrib">available from the resources
+page</a>.
+</p>
+
+Third, we have a list of gene names and co-ordinates. This is the file
+specified after the <tt>ranges</tt> keyword, assumed to be in the
+standard <em>range</em> format for PLINK: chromosome, start position,
+stop position, name (and optional group name in the fifth field), e.g.
+
+<pre>
+     19  63549983   63556677  A1BG
+     10  52236330   52315441  A1CF
+     8   43266741   43337485  A26A1
+     15  19305252   19336667  A26B1
+     21  13904368   13935777  A26B3
+     2   131692393 131738886  A26C1A
+     ...
+</pre>
+
+In this example, the ranges correspond to genes, although they could
+in practice correspond to any type of intervals. That is, the
+<tt>--annotate</tt> function can be used with any generic set of
+ranges, as defined by the user (e.g. with regions corresponding to
+linkage peaks, regions under positive selection, etc).
+
+</p>
+<strong>NOTE</strong> The <tt>glist.txt</tt> file discussed here is
+also <a href="res.shtml#glist">available from the resources page</a>.
+</p>
+
+Given these three files, the <tt>--annotate</tt> command will append
+the attribute and range information, where appropriate, to the input
+file, e.g. <tt>plink.annot</tt> might begin:
+
+<pre>
+  CHR         SNP        BP         P   ANNOT
+    1   rs3094315    792429    0.1521   =missense
+    1   rs6672353    817376    0.3649   .
+    1   rs4040617    819185    0.2315   =missense
+    1   rs4075116   1043552    0.3453   C1orf159(+1.953kb)
+    1   rs9442385   1137258    0.3968   TNFRSF4(0)|TNFRSF18(+5.306kb)|SDF4(-4.892kb)
+    ...
+</pre>
+
+for example, indicating that <tt>rs3094315</tt> is in strong LD with a
+missense SNP, and that <tt>rs9442385</tt> is in the gene
+<em>TNFRSF4</em>, about 5kb away from two other genes,
+<em>TNFRSF18</em> and <em>SDF4</em>.
+
+</p>
+
+<strong>NOTE</strong> It is not required for the input file to have <tt>CHR</tt>
+and <tt>BP</tt> fields if ranges are not applied (i.e. attributes are assigned to 
+SNPs based solely on the unique identifier/rs-number, not genomic location). Similarly, 
+the <tt>P</tt> field is not required, unless <tt>--pfilter</tt> has been specified.
+
+
+<a name="opt">
+<h2>Misc. options</h2>
+</a></p>
+
+There are several options that can modify the behavior of <tt>--annotate</tt>.
+</p>
+
+<em><b>Filters</b></em></p>
+
+To filter on regions (so the <tt>plink.annot</tt> file only contains SNPs in those regions) use
+<pre>
+     filter=myreg.txt
+</pre>
+where <tt>myreg.txt</tt> is in the same format as the gene/range list above.
+</p>
+
+To only include a specific set of SNPs from the input file, use
+<pre>
+     snps=mysnps.txt
+</pre>
+
+where <tt>mysnps.txt</tt> is just a list of SNP IDs.
+
+</p>
+
+To only apply a subset of the ranges for annotation, the 
+<pre>
+     subset=myfile.txt
+</pre>
+where <tt>myfile.txt</tt> is a list of range names (i.e. corresponding to the file specified by <tt>ranges=</tt>).
+
+</p>
+
+To ouput only SNPs that have at least some annotation, use the option
+<pre>
+     prune
+</pre>
+</p>
+
+To filter based on p-value, if that field is present (in header, the
+<tt>P</tt> field), use the separate command (i.e. not an option, so
+has <tt>--</tt>):
+<pre>
+     --pfilter 0.05
+</pre>
+</p>
+
+
+<em><b>Output options</b></em></p>
+
+To alter the format of the output file, so that a series of <tt>0</tt>
+and <tt>1</tt> variables are output for each attribute and/or range,
+use the option
+
+<pre>
+     block
+</pre>
+For example, instead of 
+<pre>
+    SNP  CHR    BP   ANNOT 
+  rs001    1  1111   .
+  rs002    1  2222   =NONSENSE
+  rs003    1  3333   =nonsense
+  rs004    1  4444   .
+</pre>
+the <tt>plink.annot</tt> file would contain
+<pre>
+    SNP  CHR    BP   =NONSENSE  =nonsense
+  rs001    1  1111   0          0
+  rs002    1  2222   1          0
+  rs003    1  3333   0          1
+  rs004    1  4444   0          0
+</pre>
+
+To place a <tt>NA</tt> symbol instead of <tt>.</tt> in the <tt>ANNOT</tt> field when no annotation is found, add the option
+<pre>
+     NA
+</pre>
+
+This can make files easier to read into statistic packages, for example. 
+
+</p>
+
+To specify a particular border for genes/ranges (i.e. such that genes/ranges within X kb of the SNP 
+are reported as <em>near</em> that SNP), use the command, e.g. for a 20kb border,
+
+<pre>
+     --border 20
+</pre>
+
+To only list the gene/range name, and not the kb distance following it, add the option:
+<pre>
+     minimal
+</pre>
+
+To generate an additional output field that contains the kb distance
+to the nearest gene, and a field indicating whether the nearest gene 
+is upstream or downstream (<tt>+</tt>, <tt>-</tt>), add the option:
+
+<pre>
+     distance
+</pre>
+
+
+</p>
+
+
+<!--#include file="end.html"-->
+
+<hr>
+<em>
+ This document last modified <!--#flastmod file="annot.shtml" -->
+</em>
+
+
+</body>
+
+<HEAD>
+<META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
+</HEAD>
+</html>

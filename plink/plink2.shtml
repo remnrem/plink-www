@@ -1,0 +1,52 @@
+
+<html>
+<title>PLINK</title>
+<body>
+
+<head>
+<link rel="stylesheet" href="plink.css" type="text/css">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<title>PLINK: Whole genome data analysis toolset</title>
+</head>
+
+<!--#include file="start.html"-->
+
+
+<h1>PLINK 1.9 and 2.0</h1> 
+
+<p>Development of the baseline PLINK toolset has resumed and beta testing for the next (1.90) release has now begun.</p>
+
+<p>The new release, by Chris Chang and colleagues, is a complete rewrite of the original code and represents a very significant improvement in overall speed and functionality.  Moving forward, these changes should enable PLINK to meet the demands of ever-larger genetic datasets.</p>
+
+<p>For download and documentation:  <a href="https://www.cog-genomics.org/plink2">https://www.cog-genomics.org/plink2</a>.</p>
+ 
+<p>New features include:</p>
+
+<ul>
+<li> Very large speed improvements across the board.  Basic data management operations tend to be at least 5x as fast; speedup factors for more CPU-intensive functions such as --blocks, --fast-epistasis, --genome, --indep-pairwise, and --r2 frequently exceed 100x on multicore systems.
+<li> The new O(sqrt(n))-time implementations of SNP-HWE and Fisher's exact test can easily be adapted for inclusion in other software, and may be of particular interest to other tool developers.
+<li> Improved memory efficiency.
+<li> Conveniences such as direct VCF import/export and improved command-line help.
+</ul>
+
+<p>Questions, comments, and bug reports should now be directed to the plink2-users Google group:</p>
+
+<p><a href="https://groups.google.com/d/forum/plink2-users">https://groups.google.com/d/forum/plink2-users</a></p>
+
+<p>The original version of PLINK will continue to be available for download at the <a href="index.shtml">original</a> website.</p>
+
+<p>PLINK 1.9 is currently under heavy active development -- users may wish to check certain results against the original PLINK (1.07) and notify the above list of any discrepancies.</p>
+
+<!--#include file="end.html"-->
+
+<em>
+ This document last modified <!--#flastmod file="cnv.shtml" -->
+</em>
+
+</body>
+
+<HEAD>
+<META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
+</HEAD>
+</html>
+OA

@@ -1,0 +1,176 @@
+<html>
+<title>PLINK</title>
+<body>
+
+<head>
+<link rel="stylesheet" href="plink.css" type="text/css">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<title>PLINK: Whole genome data analysis toolset</title>
+</head>
+
+<!--#include file="start.html"-->
+
+
+<h1>Miscellaneous</h1>
+
+This page details a collection of options and commands that did not
+get proper mention elsewhere.
+
+<a name="opt">
+<h2>Command options/modifiers</h2></a>
+</p>
+
+Certain PLINK commands allow variable <em>options</em> to be passed,
+in addition to the standard arguments. These typically modify the
+behavior of the main command in some way.  The basic syntax is:
+<pre>
+     --command arg1 arg2 <em>option1</em> <em>option2=value</em>  --next-command ...
+</pre>
+
+In this example, the first <tt>--command</tt> takes two arguments,
+<tt>arg1</tt> and <tt>arg2</tt>. Here, this command allows for
+additional options to be passed: for example, <em>option1</em> and
+<em>option2=value</em>. Options are either single keywords, or
+key/value pairs. For example, the usual command to analyse dosage data, 
+only for a given chromosome, is
+<h5>
+ plink --dosage myfile.raw --chr 22 
+</h5></p>
+where <tt>--dosage</tt> expects a single argument. To pass an modifying option to the <tt>--dosage</tt>
+command, it must be listed after the last fixed argument of the command, and before the next command, if any
+(i.e. next command starting <tt>--</tt>). For example, 
+<h5>
+ plink --dosage myfile.raw Zout  --chr 22 
+</h5></p>
+will pass <tt>Zout</tt> as an option to the <tt>--dosage</tt> command
+(this means that the output is written in compressed format, if ZLIB
+support is present.  Unlike normal commands, if options are not
+recognised, they are simply ignored (i.e. no error message is given).
+
+</p>
+
+For some options that take a variable number of arguments
+(e.g. <tt>--meta-analysis</tt>) it is necessary to use a <em>plus</em>
+symbol to distinguish between the arguments and any options. 
+<pre>
+     --command arg1 arg2 + <em>option1</em> <em>option2=value</em>  --next-command ...
+</pre>
+
+For example, a possible option for <tt>--meta-analysis</tt> is
+<tt>qt</tt>, to indicate that the summary statistics are for
+quantitative trait analyses:
+<h5>
+ ./plink --meta-analysis file1.qassoc file2.qassoc file3.assoc.linear + qt 
+</h5></p>
+ 
+</p>
+
+<a name="output">
+<h2>Output modifiers</h2></a>
+</p>
+
+One convenient filter is 
+<pre>
+     --pfilter 1e-3
+</pre>
+which will, for example, only report statistics with p-values less than 1e-3.  
+</p><strong>NOTE</strong> This is operation for the basic association
+tests, but do not expect this to work for all methods that return a p-value.
+</p>
+To obtain -log10(p) values instead of p-values in the <tt>*adjusted</tt> file, add the 
+flag (this does not change the output of p-values in other files)
+<pre>
+     --log10
+</pre>
+</p>
+To fix the value of lambda used for the genomic control in
+the <tt>*adjusted</tt> file, instead of estimating it from the data, use the 
+option, for example
+<pre>
+     --lambda 1.2
+</pre>
+</p>
+To obtain an extra set of columns that facilitates making a Q-Q plot
+in the <tt>*.adjusted</tt> file, add the option
+<pre>
+     --qq-plot
+</pre>
+This will work with either basic p-values, or with <tt>--log10</tt> p-values.
+
+<a name="species">
+<h2>Analyses with different species</h2></a>
+</p>
+
+PLINK differentiates between species only in terms of the number of
+chromosomes and which are sex-linked or haploid. Several non-human
+species are supported, by adding one of the following flags
+<pre>
+     --dog
+     --horse
+     --cow
+     --sheep
+     --rice
+     --mouse
+</pre>
+
+<strong>NOTE</strong> This flag needs to be added to every analysis.  If you work primarily 
+with one of these non-human species, you might want to make a link or wrapper to make, e.g. 
+<tt>myplink</tt> always add the flag, e.g.
+<pre>
+./plink --dog
+</pre>
+or compile PLINK with the option fixed (in options.cpp, edit the appropriate line, by setting one of these to <tt>true</tt>:
+<pre>
+     bool par::species_dog = false;
+     bool par::species_cow = false;
+     bool par::species_horse = false;
+     bool par::species_sheep = false;
+     bool par::species_rice = false;
+</pre>
+
+
+<a name="z">
+<h2>File compression</h2>
+</a></p>
+
+The options
+
+<h5>
+ plink --compress myfile
+</h5></p>
+
+will compress a file (applying gzip compression, if the ZLIB support
+is available for PLINK).  The command
+
+<h5>
+ plink --decompress myfile.gz
+</h5></p>
+will decompres that file, but by default generating a new file. 
+
+
+
+<a name="bugs">
+<h2>Known issues</h2>
+</a></p>
+
+Development of <tt>PLINK</tt> is ongoing: as such, there is always
+likely to be a list of features, listed here, that are only partialy
+implemented, or have known problems not yet fixed. A list of known issues 
+can be found on the <a href="warnings.shtml">warnings page</a>:
+<pre>
+     http://zzz.bwh.harvard.edu/plink/warnings.shtml
+</pre>
+
+
+<!--#include file="end.html"-->
+
+<em>
+ This document last modified <!--#flastmod file="misc.shtml" -->
+</em>
+
+</body>
+
+<HEAD>
+<META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
+</HEAD>
+</html>

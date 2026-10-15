@@ -1,0 +1,98 @@
+<html>
+<body>
+
+<head>
+<link rel="stylesheet" href="../plink.css" type="text/css">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<title>PLINK: Whole genome data analysis toolset</title>
+</head>
+
+<!--#include file="start.html"-->
+
+<table border=0 width=100%>
+<tr><td width=70%>
+
+
+<h1>A basic QC pipeline</h1>
+
+We assume whole genome SNP data, for a case/control, population based study. The basic QC 
+
+<ol>
+<li> Exclude known bad SNPs w/ multiple hits, monomorphic SNPs and SNPs with < 90% genotyping rate
+<li> Sex check
+<li> Per-individual heterozygosity
+<li> Individuals with call rate < 95%
+</p>
+<li> Close relatives, duplications
+<li> Population stratification outliers
+<li> Create homogeneous group
+<li> Genome-wide IBD calculations
+<li> Contamination (too much low-level relatedness)
+</p>
+<li> Exclude SNPs with genotyping rate < 95%
+<li> Exclude SNPs with HWD failure p < 1e-6
+<li> Exclude SNPs with MAF < 0.01
+</p>
+<li> Exclude SNPs with CHI-MISSING p < 1e-3
+<li> Exclude SNPs with MISHAP p < 1e-10
+<li> Exclude SNPs with PLATE-ASSOCIATION p < 1e-10 for at least one plate 
+<li> Perform final cluster solution(s)
+</ol>
+
+
+Notes: Unix-based; refer to main PLINK website for more detailed explanation of commands
+
+
+
+<b><em><font color="green">Bad SNPs</font</em></b></p>
+
+Let's assume you have a list of bad SNPs, in file <tt>remove.snp.list</tt> and wish to remove them, 
+along with monomorphic SNPs. Also, this would be the stage to exclude any known failing SNPs (genotyping 
+less than 90%, for example) or invalid samples (individuals who need to be excluded from the study for 
+other reasons). This latter list of individuals is in <tt>remove.individuals.list</tt>
+
+<h5><pre>
+
+plink --bfile data0 
+      --remove remove.individuals.list 
+      --exclude remove.snp.list 
+      --maf 1e-50 
+      --geno 0.1 
+      --make-bed 
+      --out data1
+<pre>
+</h5>
+
+</p>
+<b><em><font color="green">Incorrect sex assignment?</font</em></b></p>
+
+To check that all individuals are of the sex they are reported to be, we run a 
+check based on X chromosome SNP heterozygosity:
+
+<h5><pre>
+
+plink --bfile data1
+      --check-sex 
+      --out data1-sexcheck
+<pre>
+</h5>
+
+</p><strong>Hint</strong>If the data are generated on two chips per sample, it is worth running this 
+step separately for each chip and ensuring concordance between SNP-based sex calls.
+</p>
+
+
+<!--#include file="end.html"-->
+
+<hr>
+<em>
+ This document last modified <!--#flastmod file="sop2.shtml" -->
+</em>
+
+</body>
+
+<HEAD>
+<META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
+</HEAD>
+</html>
+

@@ -1,0 +1,165 @@
+<html>
+<title>PLINK</title>
+<body>
+
+<head>
+<link rel="stylesheet" href="plink.css" type="text/css">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<title>PLINK: Whole genome data analysis toolset</title>
+</head>
+
+<!--#include file="start.html"-->
+
+
+<h1>SNP scoring routine</h1>
+
+<tt>PLINK</tt> provides a simple means to generate <em>scores</em>
+or <em>profiles</em> for individuals based on an allelic scoring
+system involving one or more SNPs.  One potential use would be
+to assign a single quantitative index of genetic load, perhaps to
+build multi-SNP prediction models, or just as a quick way to
+identify a list of individuals containing one or more of a set of
+variants of interest.
+
+
+</p>
+<a name="prof1">
+<h2>Basic usage</h2>
+</a>
+</p>
+
+The basic command to generate a score is the <tt>--score</tt> option, e.g. 
+
+<h5>
+ ./plink --bfile mydata --score myprofile.raw 
+</h5></p>
+
+which takes as a parameter the name of a file (here <tt>myprofile.raw</tt>) 
+that describes the scoring system.  This file has the format of one or more lines, 
+each with exactly three fields
+<pre>
+     SNP ID
+     Reference allele
+     Score (numeric)
+</pre>
+for example
+<pre>
+     SNPA   A    1.95
+     SNPB   C    2.04
+     SNPC   C   -0.98
+     SNPD   C   -0.24
+</pre>
+
+These scores can be based on whatever you want.  One choice might be the log of the odds ratio for significantly 
+associated SNPs, for example.  Then, running the command above would generate a file
+<pre>
+     plink.profile
+</pre> 
+with one individual per row and the fields:
+<pre>
+     FID     Family ID
+     IID     Individual ID
+     PHENO   Phenotype for that
+     CNT     Number of non-missing SNPs used for scoring
+     CNT2    The number of named alleles
+     SCORE   Total score for that individual
+</pre>
+
+The score is simply a sum across SNPs of the number of reference
+alleles (0,1 or 2) at that SNP multiplied by the score for that SNP.
+For, example,
+
+<pre>
+     Variant(1/2)          A/T         C/G         A/C        C/G   
+     Freq. of allele 1     0.20        0.43        0.02       0.38
+
+     Ind 1 genotype        A/A         G/G         A/C        0/0
+     # ref alleles          2           0           1         2*0.38 (=expectation)
+
+     Score           (  2*1.95    +   0*2.04  +  1*(-0.98) +  2*0.38*(-0.24) ) / 4
+                    =    2.74 / 4   =  0.68
+</pre>
+
+The score 2.74/4 (the average score per non-missing SNP) could then be
+used, e.g. as a covariate, or a predictor of disease if it is scored
+in a sample that is independent from the one used to generate the
+original scoring weights.  Obviously, a score profile based on some
+effect size measure from a large number of SNPs will necessarily be
+highly correlated with the phenotype in the original sample: i.e. this
+in no (straightforward) way provides additional statistical evidence
+for associations <em>in that sample</em>.
+
+
+</p>
+<a name="prof2">
+<h2>Multiple scores from SNP subsets</h2>
+</a>
+</p>
+
+
+To calculate multiple scores from subsets of SNPs in a
+single <tt>--score</tt> file, it is possible to use the
+two commands, each followed by a filename, e.g.
+<pre>
+     --q-score-file snpval.dat
+     --q-score-range q.ranges
+</pre>
+in addition to <tt>--score</tt>, where <tt>snpval.dat</tt> is a file
+that contains for each SNP a number (e.g. that might be the p-value
+from some test)
+<pre>
+     rs00001  0.234
+     rs00002  0.046
+     rs00003  0.887
+     ...
+</pre>
+
+and <tt>q.ranges</tt> is a file in which each row corresponds to a
+different score, containing a label, then a lower and upper bound for
+the values as given in the other file, e.g.
+<pre>
+     S1  0.00 0.01
+     S2  0.00 0.20
+     S3  0.10 0.50
+</pre>
+would create three score files, 
+<pre>
+     plink.S1.profile
+     plink.S2.profile
+     plink.S3.profile
+</pre>
+in which the first only uses SNPs that have a value
+in <tt>snpval.txt</tt> between 0.0 and 0.01; the second uses only SNPs
+which have a value between 0.00 and 0.20, etc.
+
+</p>
+<a name="prof3">
+<h2>Misc. options</h2>
+</a>
+</p>
+
+By default, if a genotype in the score is missing for a particular
+individual, then the expected value is imputed, i.e. based on the
+sample allele frequency. To change this behavior, add the flag
+<pre>
+     --score-no-mean-imputation
+</pre>
+which means the above example would be calculated as
+<pre>
+     Score           (  2*1.95    +   0*2.04  +  1*(-0.98)  ) / 3
+                    =    2.92 / 3   =  0.97
+</pre>
+
+<!--#include file="end.html"-->
+
+
+<em>
+ This document last modified <!--#flastmod file="profile.shtml" -->
+</em>
+
+</body>
+
+<HEAD>
+<META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
+</HEAD>
+</html>

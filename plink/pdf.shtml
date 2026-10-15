@@ -1,0 +1,44 @@
+<html>
+<title>PLINK</title>
+<body>
+
+<head>
+<link rel="stylesheet" href="plink.css" type="text/css">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<title>PLINK: Whole genome data analysis toolset</title>
+</head>
+
+<!--#include file="start.html"-->
+
+
+<h1>PDF version of web documentation</h1>
+
+A PDF version of this website is available for download.  Please note:
+it is automatically generated from the notes on these webpages, and so
+not all characters and formatting have been completely preserved.
+</p>
+Also, it is almost 300 pages long, so please consider this before
+printing. Also please consider that the web is updated fairly
+regularly, inbetween major version releases, so any printed PDF will
+soon become redundant.
+
+</p>
+
+<a href="dist/plink-doc-1.07.pdf">PLINK v1.07 PDF documentation</a> 
+</p>
+<hr>
+
+
+<!--#include file="end.html"-->
+
+
+<em>
+ This document last modified <!--#flastmod file="pdf.shtml" -->
+</em>
+
+</body>
+
+<HEAD>
+<META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
+</HEAD>
+</html>

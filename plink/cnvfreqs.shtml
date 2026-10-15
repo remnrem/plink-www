@@ -1,0 +1,344 @@
+<html>
+<title>PLINK</title>
+<body>
+
+<head>
+<link rel="stylesheet" href="plink.css" type="text/css">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<title>PLINK: Whole genome data analysis toolset</title>
+</head>
+
+<!--#include file="start.html"-->
+
+<a name="groups">
+<h2>Illustration of the different CNV frequency filtering commands</h2>
+</a></p>
+
+To illustrate both the region-based and CNV-based methods of frequency
+filtering, consider this example CNV file, with 18 individuals and
+18 CNVs, which contains a complex set of partially overlapping events:
+<pre>
+     FID IID CHR BP1 BP2 TYPE SCORE SITES
+     1  1  1 10000  20000 1 10 10
+     2  1  1 10000  20000 1 10 10
+     3  1  1  9000  21000 1 10 10
+     4  1  1 10000  32000 1 10 10
+     5  1  1 20000  31000 1 10 10
+     6  1  1  5000  50000 1 10 10
+     7  1  1 40000  51000 1 10 10
+     8  1  1 44000  48000 1 10 10
+     9  1  1 42000  46000 1 10 10
+     10 1  1 41000  49000 1 10 10
+     11 1  1 39000  48000 1 10 10
+     12 1  1 38000  52000 1 10 10
+     13 1  1 80000  85000 1 10 10
+     14 1  1 90000  99000 1 10 10
+     15 1  1 91000  99000 1 10 10
+     16 1  1 89000  98000 1 10 10
+     17 1  1 90000  99000 1 10 10
+     18 1  1 90000  99000 1 10 10
+</pre>
+The files are available for you to download and play with:
+<a href="test1.cnv">test1.cnv</a>, 
+<a href="test1.cnv.map">test1.cnv.map</a> and
+<a href="test1.fam">test1.fam</a>. 
+</p>
+
+The command
+<h5>
+ ./plink --cfile test1 --cnv-seglist
+</h5></p>
+
+gives the following output in <tt>plink.cnv.seglist</tt>, but with the
+rightmost column being the <tt>AFF</tt> CNV count field
+from <tt>plink.cnv.summary</tt> (i.e. all 18 individuals are coded as
+cases; this number represents the number of CNVs spanning that
+particular MAP position):
+
+<pre><font size="-1">
+                             AFF
+  p1-5000             +	       1
+  p1-9000         +   |	       2
+ p1-10000       ++| + |	       5
+ p1-20000       AA|+| |	       6
+ p1-20001         ||| |	       4
+ p1-21000         A|| |	       4
+ p1-21001          || |	       3
+ p1-31000          A| |	       3
+ p1-31001           | |	       2
+ p1-32000           A |	       2
+ p1-32001             |	       1
+ p1-38000            +|	       2
+ p1-39000          + ||	       3
+ p1-40000          |+||	       4
+ p1-41000         +||||	       5
+ p1-42000       + |||||	       6
+ p1-44000       |+|||||	       7
+ p1-46000       A||||||	       7
+ p1-46001        ||||||	       6
+ p1-48000        A|A|||	       6
+ p1-48001         | |||	       4
+ p1-49000         A |||	       4
+ p1-49001           |||	       3
+ p1-50000           ||A	       3
+ p1-50001           ||	       2
+ p1-51000           A|	       2
+ p1-51001            |	       1
+ p1-52000            A	       1
+ p1-52001		       0
+ p1-80000       +	       1
+ p1-85000       A	       1
+ p1-85001		       0
+ p1-89000        +	       1
+ p1-90000        |+++	       4
+ p1-91000       +||||	       5
+ p1-98000       |A|||	       5
+ p1-98001       | |||	       4
+ p1-99000       A AAA	       4
+ p1-99001		       0
+</font></pre>
+
+<h6>Region-based, or locus-based, frequency filtering (default)</h6>
+
+<strong>NOTE</strong> These commands are intended to illustrate how
+the filtering works, rather than provide useful examples of how to
+analyse data in practice.
+</p>
+For example, the command
+<h5>
+ plink --cfile test1 --cnv-seglist --cnv-freq-exclude-above 4 --cnv-overlap 1
+</h5></p>
+will remove CNVs that completely span regions with 5 or more CNVs:
+<pre><font size="-1">
+  p1-5000         +
+  p1-9000     +   |
+ p1-10000     | + |
+ p1-20000     |+| |
+ p1-20001     ||| |
+ p1-21000     A|| |
+ p1-21001      || |
+ p1-31000      A| |
+ p1-31001       | |
+ p1-32000       A |
+ p1-32001         |
+ p1-38000        +|
+ p1-39000      + ||
+ p1-40000      |+||
+ p1-41000     +||||
+ p1-42000     |||||
+ p1-44000     |||||
+ p1-46000     |||||
+ p1-46001     |||||
+ p1-48000     |A|||
+ p1-48001     | |||
+ p1-49000     A |||
+ p1-49001       |||
+ p1-50000       ||A
+ p1-50001       || 
+ p1-51000       A| 
+ p1-51001        | 
+ p1-52000        A 
+ p1-52001          
+ p1-80000     +    
+ p1-85000     A    
+ p1-85001          
+ p1-89000      +   
+ p1-90000      |+++
+ p1-91000     +||||
+ p1-98000     |A|||
+ p1-98001     | |||
+ p1-99000     A AAA
+ p1-99001          
+</font></pre>
+
+The command 
+
+<h5>
+ plink --cfile test1 --cnv-seglist --cnv-freq-exclude-above 6 --cnv-overlap 0
+</h5></p>
+will remove CNVs that completely even partially overlap regions with 7 or more CNVs: ( this removes
+7 CNVs in total)
+<pre><font size="-1">
+  p1-5000          
+  p1-9000       +  
+ p1-10000     ++| +
+ p1-20000     AA|+|
+ p1-20001       |||
+ p1-21000       A||
+ p1-21001        ||
+ p1-31000        A|
+ p1-31001         |
+ p1-32000         A
+ p1-32001          
+ p1-38000          
+ p1-39000          
+ p1-40000          
+ p1-41000          
+ p1-42000          
+ p1-44000          
+ p1-46000          
+ p1-46001          
+ p1-48000          
+ p1-48001          
+ p1-49000          
+ p1-49001          
+ p1-50000          
+ p1-50001          
+ p1-51000          
+ p1-51001          
+ p1-52000          
+ p1-52001          
+ p1-80000     +    
+ p1-85000     A    
+ p1-85001          
+ p1-89000      +   
+ p1-90000      |+++
+ p1-91000     +||||
+ p1-98000     |A|||
+ p1-98001     | |||
+ p1-99000     A AAA
+ p1-99001          
+</font></pre>
+
+
+<h6>Alternative frequency filtering approach</h6>
+
+The standard approach to frequency filtering considers the frequency
+of CNVs at each particular genomic location, defining <em>regions</em>
+with a particular number of CNVs spanning it; CNVs are subsequently
+filtered based on the extent to which each individual CNV overlaps or
+does not overlap with these regions.
+</p>
+
+An alternative approach (invoked with the <tt>--cnv-freq-method2</tt>
+flag) is to define frequency as being a property of a <em>particular
+CNV</em> rather than of a region, which is perhaps more
+intuitive. Here we count for each CNV how many other CNVs overlap
+it. The overlap definition here is forced to be a <em>union
+overlap</em> that isn't allowed to be <em>disruptive</em>
+(<tt>--cnv-disrupt</tt>), in order to ensure symmetry (i.e. if A
+overlaps B, then B must overlap A). The frequency filtering is then
+based on these counts.
+</p>  
+ 
+Below are the frequency counts for each CNV, given different values for the overlap 
+parameter specified in the <tt>--cnv-freq-method2</tt> command:
+
+<pre><font size="-1">
+             --cnv-freq-method2 0  | --cnv-freq-method2 0.5 | --cnv-freq-method2 1
+             ----------------------|------------------------|----------------------
+                                   |                        |
+  p1-5000                   12     |                 1      |                 1     
+  p1-9000           6       12     |         3       1      |         1       1     
+ p1-10000       6 6 6   6   12     |     3 3 3   2   1      |     2 2 1   1   1     
+ p1-20000       6 6 6 6 6   12     |     3 3 3 2 2   1      |     2 2 1 1 1   1     
+ p1-20001           6 6 6   12     |         3 2 2   1      |         1 1 1   1     
+ p1-21000           6 6 6   12     |         3 2 2   1      |         1 1 1   1     
+ p1-21001             6 6   12     |           2 2   1      |           1 1   1     
+ p1-31000             6 6   12     |           2 2   1      |           1 1   1     
+ p1-31001               6   12     |             2   1      |             1   1     
+ p1-32000               6   12     |             2   1      |             1   1     
+ p1-32001                   12     |                 1      |                 1     
+ p1-38000                 7 12     |               4 1      |               1 1     
+ p1-39000             7   7 12     |           4   4 1      |           1   1 1     
+ p1-40000             7 7 7 12     |           4 4 4 1      |           1 1 1 1     
+ p1-41000           7 7 7 7 12     |         6 4 4 4 1      |         1 1 1 1 1     
+ p1-42000       7   7 7 7 7 12     |     2   6 4 4 4 1      |     1   1 1 1 1 1     
+ p1-44000       7 7 7 7 7 7 12     |     2 2 6 4 4 4 1      |     1 1 1 1 1 1 1     
+ p1-46000       7 7 7 7 7 7 12     |     2 2 6 4 4 4 1      |     1 1 1 1 1 1 1     
+ p1-46001         7 7 7 7 7 12     |       2 6 4 4 4 1      |       1 1 1 1 1 1     
+ p1-48000         7 7 7 7 7 12     |       2 6 4 4 4 1      |       1 1 1 1 1 1     
+ p1-48001           7   7 7 12     |         6   4 4 1      |         1   1 1 1     
+ p1-49000           7   7 7 12     |         6   4 4 1      |         1   1 1 1     
+ p1-49001               7 7 12     |             4 4 1      |             1 1 1     
+ p1-50000               7 7 12     |             4 4 1      |             1 1 1     
+ p1-50001               7 7        |             4 4        |             1 1     
+ p1-51000               7 7        |             4 4        |             1 1     
+ p1-51001                 7        |               4        |               1     
+ p1-52000                 7        |               4        |               1     
+ p1-52001                          |                        |                     
+ p1-80000       1                  |     1                  |     1          
+ p1-85000       1                  |     1                  |     1          
+ p1-85001                          |                        |                     
+ p1-89000         5                |       5                |       1 
+ p1-90000         5 5 5 5          |       5 5 5 5          |       1 3 3 3     
+ p1-91000       5 5 5 5 5          |     5 5 5 5 5          |     1 1 3 3 3     
+ p1-98000       5 5 5 5 5          |     5 5 5 5 5          |     1 1 3 3 3     
+ p1-98001       5   5 5 5          |     5   5 5 5          |     1   3 3 3     
+ p1-99000       5   5 5 5          |     5   5 5 5          |     1   3 3 3       
+ p1-99001                          |                        |
+             ----------------------|------------------------|----------------------
+                                   |                        |
+</font></pre>
+
+Any additional commands such as <tt>--cnv-freq-exclude-above 5</tt>
+would work in a straightforward manner based on these counts. For example
+
+<h5><pre>
+plink --cfile test1 
+      --cnv-freq-method2 0 
+      --cnv-freq-include-exact 5 
+      --cnv-write 
+      --cnv-write-freq
+</pre></h5></p>
+will include just the group of segments starting after position 89000
+<pre>
+     Filtering segments based on frequencies
+     Will remove 13 CNVs based on frequency (after other filters)
+     18 mapped to a person, of which 18 passed filters 
+     5 of 18 mapped as valid segments
+</pre>
+e.g. as shown in file
+<pre>
+     plink.cnv
+</pre>
+which contains
+<pre>
+    FID  IID  CHR          BP1          BP2   TYPE        SCORE    SITES     FREQ 
+     14    1    1        90000        99000      1           10       10        5 
+     15    1    1        91000        99000      1           10       10        5 
+     16    1    1        89000        98000      1           10       10        5 
+     17    1    1        90000        99000      1           10       10        5 
+     18    1    1        90000        99000      1           10       10        5 
+</pre>  
+
+                                   
+
+<h6>In summary</h6>
+
+For a complex set of partially overlapping CNVs, any attempt to
+collapse CNVs into discrete groups or counts will inevitably be
+somewhat artificial. Nonetheless, the commands presented here provide
+a range of options, to either strictly or loosely filter as
+desired. This made-up example dataset is particularly complex -- in
+most real cases, these frequency filters will yield sensible results.
+</p>
+
+To select CNVs below some overall frequency (e.g. 1%, which if there
+are 1000 individuals would mean 10 events) the option
+<pre>
+     --cnv-freq-exclude-above 10 
+     --cnv-overlap 0.5
+</pre>
+would be a good default. 
+</p>
+To select strictly defined singleton CNVs (those seen only once in a dataset), use
+<pre>
+     --cnv-freq-exclude-above 1
+</pre>
+&nbsp;
+</p>
+
+
+<!--#include file="end.html"-->
+
+<em>
+ This document last modified <!--#flastmod file="cnvfreqs.shtml" -->
+</em>
+
+</body>
+
+<HEAD>
+<META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
+</HEAD>
+</html>

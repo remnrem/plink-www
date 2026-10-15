@@ -1,0 +1,24 @@
+in_and_out.php:		$output .= "<tr><td>[[]]</td>";
+in_and_out.php:		$output .= "<tr><td>[[]]</td>";
+in_and_out.php:		$output .= "<td>[[]]</td></tr>";	
+in_and_out.php:			$output .= "<tr><td>" .$file."[[]] </td>";
+in_and_out.php:			$output .= "<tr><td>" .$file."[[]] </td>";
+in_and_out.php:		$output .= "<tr><td>" .$file."[[]] </td>";
+in_and_out.php:			$output .= "<tr><td>" .$file."[[]] </td>";
+in_and_out.php:			$output .= "<tr><td>" .$file."[[]] </td>";
+in_and_out.php:			$output .= "<tr><td>" .$file."[[]] </td>";
+in_and_out.php:			$output .= "<tr><td>" .$file."[[]] </td>";
+in_and_out.php:		$output .= "<tr><td>" .$file."[[.tdt.perm???]] </td>";
+in_and_out.php:		$output .= "<tr><td>" .$file."[[]]</td>";
+pom2.php:<!--We only want the --hwe option for [[change later!]] -->
+pom2.php:the main documentation, contains the haplotypes to be inferred. [[]]</td> </tr>
+pom2.php:<td> <b>Minimum number of permutations per SNP.</b> [[]] </td>
+pom2.php:<td> <b>Minimum number of permutations per SNP.</b> [[]] </td>
+pom2.php:<td> <b>Alpha level threshold.</b> [[]] </td>
+pom2.php:<td> <b>Confidence interval on empirical p-value.</b> [[]] </td>
+pom2.php:<td> <b>Interval to prune test list (intercept).</b> [[]] </td>
+pom2.php:<td> <b>Interval to prune test list (slope).</b> [[]] </td>
+pom2.php:<td><tt> [[--mperm]] </tt> </td>
+pom2.php:<td> <b>Number of Permutations</b> Maximum number of permutations to run. [[]] </td>
+pom2.php:"Partitioning chi-square" homogeneity of odds ratios test.  [[]]
+pom2.php:<td width=70%> <b>Cluster based on families.</b> [[]]

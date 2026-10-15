@@ -1,0 +1,12 @@
+PLINK-VERSION 1.00
+
+Old versions of PLINK (<1.00) contain bugs fixed in 1.00 \n
+
+MESSAGE-ALL \n *** Pre-Release Version: patch available (p2) *** \n  
+
+END-MESSAGE
+
+FATAL --update-sex
+FATAL --update-parents
+
+END

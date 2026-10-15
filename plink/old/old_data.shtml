@@ -1,0 +1,314 @@
+<html>
+<body>
+
+<head>
+<link rel="stylesheet" href="plink.css" type="text/css">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<title>PLINK: Whole genome data analysis toolset</title>
+</head>
+
+<!--#include file="start.html"-->
+
+
+<blockquote>Basic usage / data formats</blockquote
+
+<tt>PLINK</tt> is a command line program written in C/C++. All
+commands involve typing <tt>plink</tt> at the command prompt (e.g. DOS
+window or Unix terminal) followed by a number of options (all starting
+with <tt>--<em>option</em></tt>) to specify the data files / methods
+to be used.
+</p>
+
+All results are written to files with various extensions. The name of
+the file is by default <tt>plink.ext</tt> where <tt>.ext</tt> will
+change depending on the content of the file. Often these files will be
+large: using a package such as R is suggested for visualising and
+tabulating output. As such, as output files will be in standard
+plain text 'rectangular' format, with one header row and a fixed
+number of columns per line. 
+The reference section gives a complete list of all options and 
+output file types. 
+
+<hr>
+<a name="plink"></a>
+<strong>Running PLINK</strong>
+</p>
+
+<plink>PLINK</plink> is a command-line program: clicking on an icon
+will get you nowhere. Open up a command prompt or terminal window and
+perform all analyses by typing commands as described below.
+
+</p><type>
+
+	plink --file mydata
+</type></p>
+
+
+where we expect two files: in this case, <tt>mydata.ped</tt> and
+<tt>mydata.map</tt>; alternatively, the PED and MAP files can be
+specified separately, if they have different names:
+
+</p><type>
+	plink --ped mydata.ped --map autosomal.map 
+</type></p>
+&nbsp;
+</p>
+
+<warn>Note</warn> Loading a large file (100K+ SNPs) can take a
+while. <tt>PLINK</tt> will give an error message in most circumstances
+when something has gone wrong.
+
+</p>
+
+<hr>
+<a name="ped"></a>
+<strong>PED/MAP files</strong>
+</p>
+
+The PED file is a white-space (space or tab) delimited file: the first six 
+columns are mandatory:
+<pre>
+     Family ID
+     Individual ID
+     Paternal ID
+     Maternal ID
+     Sex (1=male; 2=female)
+     Phenotype
+</pre>
+
+The IDs are alphanumeric: the combination of family and individual ID
+should uniquely identify a person. A PED file must have 1 and only 1
+phenotype in the sixth column. The phenotype can be either a
+quantitative trait or an affection status column. Affection status is
+coded:
+
+<pre>
+     0 missing
+     1 unaffected
+     2 affected
+</pre>
+
+The missing phenotype value for quantitative traits is, by default, -9. It can be reset by including the <tt>--missing-phenotype</tt> option:
+
+</p><type>
+plink --file mydata --missing-phenotype 99
+</type></p>
+
+Genotypes (column 7 onwards) should also be white-space delimited; they 
+can be any character (e.g. 1,2,3,4 or A,C,G,T or anything else), but all 
+markers should be biallelic. No header row should be given. For example, 
+here are two individuals typed for 3 SNPs (one row = one person): 
+<pre>
+     FAM001  1  0 0  1  2  A A  G G  A C 
+     FAM001  2  0 0  1  2  A A  G G  A C 
+     ...
+</pre>
+
+Each line of the MAP file describes one markers and must contain exactly 4 
+columns: 
+<pre>
+     chromosome (1-22, X, Y or 0 if unplaced)
+     rs# or snp identifier
+     Genetic distance (morgans)
+     Base-pair position
+</pre>
+
+</p>
+<warn>HINT</warn> To exclude a SNP from analysis, set the 4th column
+(physical base-pair position) to any negative value.
+</p>
+
+<pre>
+     1  rs123456  0  1234555
+     1  rs234567  0  1237793
+     1  rs224534  0  -1237697        <-- exclude this SNP
+     1  rs233556  0  1337456
+     ...
+</pre>
+
+The MAP file must therefore contain as many markers as are in the PED
+file. The markers in the PED file do not need to be in genomic order:
+(i.e. the order MAP file should align with the order of the PED file
+markers). For basic association testing, the genetic distance column
+can be set at 0.
+
+</p><hr>
+
+<a name="bed"></a>
+<strong>Binary PED files</strong>
+</p>
+To save space and time, you can make a binary ped file (*.bed). This
+will store the pedigree/phenotype information in separate file (*.fam)
+and create an extended MAP file (*.bim) (which contains information
+about the allele names, which would otherwise be lost in the BED
+file). To create these files
+</p><type>
+	plink --file mydata --make-bed
+</type></p>
+which creates (by default) 
+<pre>
+     plink.bed      ( binary file, genotype information )
+     plink.fam      ( first six columns of mydata.ped ) 
+     plink.bim      ( extended MAP file: two extra cols = allele names)
+</pre>
+
+The <tt>.fam</tt> and <tt>.bim</tt> files are still plain text files:
+these can be viewed with a standard text editor. Do not try to view
+the <tt>.bed</tt> file however: it is a compressed file and you'll
+only see lots of strange characters on the screen...
+</p>
+You can specify a different output root file name (i.e. different to "plink")
+by using the <tt>--output</tt> (or <tt>--out</tt>) option:
+
+</p><type>
+	plink --file mydata --output mydata --make-bed
+</type></p>
+
+which will create 
+<pre>
+     mydata.bed
+     mydata.fam
+     mydata.bim
+</pre>
+
+To subsequently load a binary file, just use <tt>--bfile</tt> instead
+of <tt>--file</tt>
+
+</p><type>
+	plink --bfile mydata 
+</type></p>
+&nbsp;
+</p><warn>HINT</warn> For large files, first creating a binary PED
+file can save a lot of time and disk space!
+
+</p>
+When creating a binary ped file, the MAF and missingness filters are
+set to include everybody and all SNPs. If you want to change these,
+use <tt>--maf</tt>, <tt>--geno</tt>, etc, to manually specify these
+options: for example,
+
+</p><type>
+	plink --file mydata --make-bed --maf 0.02 --geno 0.1 
+</type></p>
+
+</p><hr>
+<a name="pheno"></a>
+<strong>Alternate phenotype files</strong>
+</p>
+
+To specify an alternate phenotype for analysis, i.e. other than the one in the PED/BED file, use the <tt>--pheno</tt> option: 
+
+</p><type>
+	plink --file mydata --pheno pheno.txt
+</type></p>
+
+where <tt>pheno.txt</tt> is a file that contains 3 columns (one row per 
+individual):
+<pre>
+     Family ID
+     Individual ID
+     Phenotype
+</pre>
+
+If an individual is in the original file but not listed in the
+alternate phenotype file, that person's phenotype will be set to
+missing. If a person is in the alternate phenotype file but not in the
+original file, that entry will be ignored. The order of the alternate
+phenotype file need not be the same as for the original file.
+</p>
+If the phenotype file contains more than one phenotype, then use the <tt>--mpheno N</tt> option to specify the <em>Nth</em> phenotype is the one to be used:
+
+</p><type>
+	plink --file mydata --pheno pheno2.txt --mpheno 4
+</type></p>
+
+where <tt>pheno2.txt</tt> contains 5 different phenotypes (i.e. 7
+columns in total), this command will use the 4th for analysis (phenotype D):
+
+<pre>
+     Family ID
+     Individual ID
+     Phenotype A
+     Phenotype B
+     Phenotype C
+     Phenotype D
+     Phenotype E
+</pre>
+
+
+</p><hr>
+<a name="covar"></a>
+<strong>Covariate files</strong>
+</p>
+
+<warn>TODO</warn> Covariates are not currently used in any analysis:
+when the GxE option is fully functional, this will be the way to
+specify the environmental term.
+</p>
+To load a covariate use the option:
+
+</p><type>
+	plink --file mydata --covar c.txt
+</type></p>
+
+In a similar manner to the alternate phenotype file, described above,
+an <tt>--mcovar N</tt> option can be used to select the <em>Nth</em>
+covariate if the file contains more than one. 
+</p>
+The covariate file should be formatted in a similar manner to the
+phenotype file.
+
+</p>
+<warn>Warning!</warn> Missing values are not supported for covariates.
+
+</p>
+
+</p><hr>
+<a name="clst"></a>
+<strong>Cluster files</strong>
+</p>
+
+To load a cluster solution, which will be used in the permutation 
+procedure, use the <tt>--within-file</tt> option:
+
+</p><type>
+	plink --file mydata --within-file f.txt
+</type></p>
+
+See the section on association analysis to see how this feature can be
+used to control for potential confounders in analysis (by only
+permuting within groups).
+</p>
+This file should have a similar structure to the alternate phenotype
+file. The clusters should be numerically coded:
+<pre>
+     F1 I1  1
+     F2 I1  1
+     F3 I1  2
+     F4 I1  2
+     F5 I1  1
+     F6 I1  3
+     F7 I1  3
+     ...
+</pre>
+Here, individuals would be grouped:
+<pre>
+     Cluster 1: F1/I1  F2/I1   F5/I1
+     Cluster 2: F3/I1  F4/I1
+     Cluster 3: F6/I1  F7/I1
+     ...
+</pre>
+
+<warn>TODO</warn> Specify behavior if an individual is not listed in
+the cluster file: specify numeric coding details.
+
+<!--#include file="end.html"-->
+
+<hr>
+<em>
+ This document last modified <!--#flastmod file="data.shtml" -->
+</em>
+
+
+</body>
+</html>

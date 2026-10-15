@@ -1,0 +1,186 @@
+<html>
+<body>
+
+<head>
+<link rel="stylesheet" href="plink.css" type="text/css">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<title>PLINK: Whole genome data analysis toolset</title>
+</head>
+
+<!--#include file="start.html"-->
+
+<table border=0 width=100%>
+<tr><td width=70%>
+
+<p><font color="red"><b>New (15-May-2014)</font>: PLINK 1.9 is now <a href="plink2.shtml">available</a> for beta-testing!</b></p><hr>
+
+<tt><font color="darkgreen"><b>PLINK</b></font></tt> is a free, 
+open-source whole genome association analysis toolset, designed to perform 
+a range of basic, large-scale analyses in a computationally efficient 
+manner. 
+
+</p>
+
+The focus of <tt><font color="darkgreen"><b>PLINK</b></font></tt> 
+is purely on <em>analysis</em> of genotype/phenotype data, so
+there is no support for steps prior to this (e.g. study design 
+and planning, generating genotype or CNV calls from raw data). 
+Through integration with <a href="gplink.shtml">gPLINK</a> and 
+<a href="http://www.broad.mit.edu/mpg/haploview">Haploview</a>, 
+there is some support for the subsequent visualization, annotation 
+and storage of results. 
+
+</p>
+
+<tt><font color="darkgreen"><b>PLINK</b></font></tt> (one syllable) is
+being developed by <a href="http://zzz.bwh.harvard.edu">Shaun Purcell</a> whilst at the 
+Center for Human Genetic Research (<a href="http://chgr.mgh.harvard.edu">CHGR</a>),
+Massachusetts General Hospital (<a 
+href="http://www.mgh.harvard.edu">MGH</a>), and the <a 
+href="http://www.broad.mit.edu">Broad Institute</a> of Harvard & MIT,
+with the <a href="credits.shtml">support of others</a>. 
+&nbsp;
+</p>
+
+&nbsp;
+</p>
+<b><em>New in 1.07</em></b>: <a href="metaanal.shtml">meta-analysis</a>, <a href="annot.shtml">result annotation</a> 
+and analysis of <a href="dosage.shtml">dosage data</a>.
+
+&nbsp;
+</p>
+
+</td><td valign="top" align="center">
+                                                                                                     
+<div align="left"
+style="
+border-top:2px solid #225522;
+border-bottom:2px solid #225522;
+padding:5px;
+margin:5px;
+background:  #CCDDFF;
+background:  #f0f5f0;
+width:150px;">
+
+<b><em><font color="darkgreen">Quick links</font></em></b></p>
+<a href="tutorial.shtml"><tt>PLINK</tt> tutorial</a> </p>
+<a href="gplink.shtml"><tt>gPLINK</tt></a> </p>
+<a href="http://amber.mgh.harvard.edu/mailman/listinfo/plink-list">Join e-mail list</p></a>
+<a href="res.shtml">Resources</a></p>
+<a href="faq.shtml">FAQs</a> | <a href="pdf.shtml">PDF</a></p>
+<a href="contact.shtml#cite">Citing <tt>PLINK</tt></a></p>
+<a href="contact.shtml#probs">Bugs, questions?</a> </p>
+</div>
+
+</td></tr></table>
+
+
+ <h1> Data management</h1>
+  <ul>
+   <li> Read data in a variety of formats
+   <li> Recode and reorder files
+   <li> Merge two or more files
+   <li> Extracts subsets (SNPs or individuals) 
+   <li> Flip strand of SNPs
+   <li> Compress data in a binary file format
+  </ul>
+
+<h1>Summary statistics for quality control</h1>
+<ul>
+  <li> Allele, genotypes frequencies, HWE tests
+  <li> Missing genotype rates
+  <li> Inbreeding, IBS and IBD statistics for individuals and pairs of individuals
+  <li> non-Mendelian transmission in family data
+  <li> Sex checks based on X chromosome SNPs
+  <li> Tests of non-random genotyping failure
+</ul>
+
+
+ <h1> Population stratification detection</h1>
+  <ul>
+    <li> Complete linkage hierarchical clustering
+    <li> Handles virtually unlimited numbers of SNPs
+    <li> Multidimensional scaling analysis to visualise substructure
+    <li> Significance test for whether two individuals belong to the same population
+    <li> Constrain cluster solution by phenotype, cluster size and/or external matching criteria
+    <li> Perform subsequent association analyses conditional on cluster solution 
+  </ul> 
+
+ <h1> Basic association testing</h1>
+  <ul>
+
+    <li> Case/control
+    <ul>
+     <li> Standard allelic test
+     <li> Fisher's exact test
+     <li> Cochran-Armitage trend test
+     <li> Mantel-Haenszel and Breslow-Day tests for stratified samples
+     <li> Dominant/recessive and general models
+     <li> Model comparison tests (e.g. general versus multiplicative)
+    </ul>
+    <li> Family-based association (TDT, sibship tests)
+    <li> Quantitative traits, association and interaction
+    <li> Association conditional on one or more SNPs
+    <li> Asymptotic and empirical p-values
+    <li> Flexible clustered permutation scheme
+    <li> Analysis of genotype probability data and fractional allele coounts (post-imputation)
+  </ul>
+
+ <h1> Multimarker predictors, haplotypic tests</h1>
+   <ul>
+    <li> Suite of flexible, conditional haplotype tests
+    <li> Case/control and TDT association on the probabilistic haplotype phase
+    <li> A set of proxy associaiton" methods to study single SNP associations in their local haplotypic context
+    <li> Imputation heuristic, to test untyped SNPs given a reference panel
+ </ul>
+
+ <h1> Copy number variant analysis</h1>
+   <ul>
+    <li> Joint SNP and CNV tests for common copy number variants
+    <li> Filtering and summary procedures for segmental (rare) CNV data
+    <li> Case/control comparison tests for global CNV properties
+    <li> Permutation-based association procedure for identifying specific loci
+ </ul>
+
+ <h1> Additional tests</h1>
+  <ul>
+   <li> Gene-based tests of association
+   <li> Screen for epistasis
+   <li> Gene-environment interaction with continuous and dichotomous environments
+  </ul>
+
+ <h1>Meta-analysis</h1>
+  <ul>
+    <li> Automatically combine several generically-formatted summary files, for millions of SNPs
+    <li> Fixed and random effects models
+  </ul>
+
+ <h1>Result annotation and reporting</h1>
+  <ul>
+    <li> Post-analysis annotation of result files
+    <li> LD-based and region-based grouping of results across multiple studies
+  </ul>
+
+ <h1> Additional features</h1>
+   <ul>
+    <li> Extensible with via R function plug-ins 
+    <li> Web-based SNP and gene annotation lookup feature
+    <li> Simple SNP simulation feature
+    <li> ID helper tools, for tracking and working with project data
+    <li> See the main documentation for full list of features
+   </ul>
+
+<!--#include file="end.html"-->
+
+<hr>
+<em>
+ This document last modified <!--#flastmod file="index.shtml" -->
+</em>
+
+</body>
+
+<HEAD>
+<META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
+</HEAD>
+</html>
+

@@ -1,0 +1,319 @@
+<html>
+<title>PLINK</title>
+<body>
+
+<head>
+<link rel="stylesheet" href="plink.css" type="text/css">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<title>PLINK: Whole genome data analysis toolset</title>
+</head>
+
+<!--#include file="start.html"-->
+
+
+<h1>Rare variant burden tests</h1>
+
+This page describes the methods currently in PLINK to evaluate genes
+or sets of SNPs for association with disease, with a focus on the
+burden of rare and low-frequency mutations as assayed by resequencing
+studies. </p>
+
+<p>The primary method, the <em>variable-threshold test</em>, is
+described in Price <em>et al</em> (American Journal of Human Genetics,
+2010). Please refer to that manuscript for methodological details, and
+cite that manuscript as well as PLINK if you use this test in a
+publication.</p>
+
+<a name="vttest">
+<h2>Variable threshold test</h2></a>
+</p>
+
+This test is appropriate for samples of unrelated individuals, to
+assess association between multiple rare and low-frequency variants in
+one or more genes (or, more generically, any <em>set</em> of variants)
+and a dichotomous or quantitative phenotype.</p>
+
+<p>For each set tested, the threshold for including variants in the
+test (e.g. all variants below 1% minor allele frequency) is
+automatically optimised. False positive rates are controlled by use of
+a permutation procedure, that repeats the same optimisation for each
+permuted dataset. Weights for each variant (e.g. from PolyPhen2) can
+be included. Currently other covariates are not supported. </p>
+
+<p>To perform a variable-threshold burden test, the basic command is
+<tt>--vt-test</tt>, along with the number of permutations to be
+performed:</p>
+
+<p><h5>
+  plink --bfile mydata  --vt-test  --mperm 10000
+</h5></p>
+
+<p>As with all PLINK commands, the genotype data can be loaded into PLINK
+from a variety of formats: in this example we've loaded a binary
+fileset (<tt>--bfile</tt>), but we could also use any of the formats
+described <a href="data.shtml">here</a>.</p>
+
+<p><strong> Note</strong> The <tt>--mperm</tt> command, which
+specifies permutations to be applied, is required for this test.</p>
+
+This analysis produces three output files: the file
+
+<pre>
+     plink.vt     
+</pre>
+has the fields (for a quantitative trait):
+<pre>
+      SET   Name of the set (or <em>ALL</em> if no sets specified)
+     NSNP   Total number of SNPs in the set
+       TC   Threshold for inclusion, number of minor alleles
+       TF   Threshold for inclusion, as minor allele frequency
+    NSNP2   Number of SNPs included in the test (i.e. below threshold)
+     CNT1   Number of individuals with at least 1 included rare variant
+     CNT0   Number of individuals with no included rare variants
+    MEAN1   Phenotypic mean for individuals with 1 or more rare variants
+    MEAN0   Phenotypic mean for individuals with no included rare variants
+</pre>
+
+<p>whereas for a case/control outcome would list <tt>CNTA</tt> and
+<tt>CNTU</tt> instead, which are the number of alleles from included
+variants for cases and controls respectively.</p>
+
+<p>For each set, the variants included in the test (i.e. passing the
+frequency threshold) are listed in the file:
+<pre>
+     plink.vt.var
+</pre>
+which contains the fields
+<pre>
+      SET   Name of set
+      SNP   Name of each included SNP
+      WGT   Weight (if any) for this variant
+      CNT   Number of minor alleles observed in sample
+        F   Minor allele frequency of this variant
+   ATTRIB   Any attributes specified (see below)
+</pre>
+
+Finally, the file
+
+<pre>
+     plink.vt.mperm
+</pre>
+contains the fields
+<pre>
+     SET    Set name
+    EMP1    Empirical p-value for this set
+</pre>
+
+
+<strong>NOTE</strong> By default, the test is 1-sided test, and
+assumes that a risk allele increases a quantitative score (or
+increases risk for disease). The command
+<pre>
+     --vt-test-low
+</pre>
+will reverse this.</p>
+
+<strong>HINT</strong> As with other PLINK tests, for stratified
+samples the <tt>--within</tt> command (that takes a <a
+href="data.shtml#clst">cluster file</a>) can be used to constrain the
+permutation (swapping of phenotypes) to be only between individuals
+within the same cluster (thereby preserving any between cluster
+association with phenotype and or genotype).
+
+
+<a name="sets">
+<h2>Defining sets</h2></a>
+</p>
+
+Sets define the groups of SNPs to which the test is applied, which
+will commonly be genes or groups of genes. As described <a
+href="data.shtml#sets">here</a> and <a
+href="dataman.shtml#makeset">here</a>, any PLINK option for this can
+be used, e.g.
+
+<pre>
+     --set myset.set 
+</pre>
+where <tt>myset.set</tt> is a file
+<pre>
+  GENE1
+   snp1
+   snp2
+  END
+
+  GENE2
+   snp2
+   snp3
+   snp4
+  END
+</pre>
+or, alternatively,
+<pre>
+  --make-set  myset.dat
+</pre>
+ where <tt>myset.dat</tt> is in format of each line containing four fields:
+<pre>
+  CHR  BP1 BP2  GENE-NAME
+</pre>
+
+This second form can be combined with <tt>--make-set-border</tt> to
+specify a kb interval around each gene to be included.</p>
+
+<p>If no sets are specified, then all SNPs in the file will be
+included in the test; otherwise, the test will be performed separately
+for each set.</p>
+
+
+<a name="weights">
+<h2>Variant weights</h2></a>
+</p>
+
+Weights can be applied to each variant, for example, to represent the
+probability that a missense variant has a deleterious impact on
+protein function. 
+
+<p><h5>
+  plink --bfile mydata  --vt-test  --mperm 10000  --weights myweights.txt
+</h5></p>
+
+<p>We assume weights are coded on scale of 0 to 1, with a lower number
+meaning a lower weight. Weights will be censored at these values. If
+the <tt>--weights</tt> command is included, then variants in the
+dataset but not listed in the weight file will be assigned a defaul
+weight of 0.</p>
+
+The format of the weights file is a text file with exactly two entries
+per line:</p>
+<pre>
+   SNP  WEIGHT
+</pre>
+
+If the command
+<pre>
+   --ppweights
+</pre>
+is used instead of <tt>--weights</tt>, the behavior is
+identical except that PLINK will assume these are weights from
+PolyPhen2 and apply an adjustment to the weight for common SNPs (above
+1% MAF), by setting it equal to 0.5 if the weight is less than 1.0.
+
+<a name="attrib">
+<h2>Attributes</h2></a>
+</p>
+
+Optionally, attributes can be used to filter the dataset (described <a
+href="dataman.shtml#attrib">here</a>), or to append information to the
+results for the <em>variable-threshold test</em>. Specifically: 
+<pre>
+  --attrib {file}                   Include attrib info as column in plink.vt.var
+  --filter-attrib {file} {attrib}   Pre-filter on attributes, e.g. only missense SNPs
+</pre>
+
+Attribute files should have the format of one SNP per line, starting with the SNP ID and then a list of whitespace-delimited attributes:
+<pre>
+     SNP  attrib1  attrib2 ...
+</pre>
+
+For example, with the file <tt>mysnps.txt</tt>
+<pre>
+   rs00001   missense
+   rs00002   missense
+   rs00003   synon
+   rs00005   nonsense 
+</pre>
+
+the command 
+
+<p><h5>
+  plink --bfile mydata  --vt-test  --mperm 10000  --attrib mysnps.txt
+</h5></p>
+would append to the <tt>plink.vt.var</tt> file this information where present
+<pre>
+     SET      SNP      WGT      CNT            F   ATTRIB
+     ALL  rs00001        1        2    0.0002877   missense
+     ALL  rs00002        1        1    0.0001438   missense
+     ALL  rs00003        1        1    0.0001438   synon
+     ALL  rs00004        1        1    0.0001438
+     ALL  rs00005        1        3    0.0004315   nonsense
+     ALL  rs00006        1       10     0.001438
+     ...
+</pre>
+whereas adding the option
+<pre>
+     --filter-attrib myssnps.txt missense
+</pre>
+would only include SNPs with the missense atttribute in analysis.</p>
+
+<p>Attributes are defined by the user rather than being hard-coded
+into PLINK (i.e. and so could represent any type of meta-information
+or be coded differently, i.e the labels <em>Mis</em>, <em>M</em>, etc,
+could be used instead of, or as well as, <em>missense</em>).</p>
+
+
+
+<a name="altinp">
+<h2>An example of alternative input formats</h2></a>
+</p>
+
+Here we illustrate an alternate input format for the rare variant
+tests (but that is also applicable to any PLINK analysis): the case in
+which one only has a list of minor/non-reference allele counts, for
+example, where each line of a file represents the fields:
+<pre>
+   FID    IID    SNP-ID     ALLELE-COUNT 
+</pre>
+Here, one could use the following:
+</p><h5>
+ ./plink --lfile data1  --reference data1.ref --allele-count <em> { etc ... } </em> 
+</h5></p>
+
+where we expect a <tt>FAM</tt>, <tt>MAP</tt>, <tt>LGEN</tt> and
+reference file as described <a href="data.shtml#long">here</a>. 
+
+<a name="altinp">
+<h2>Other rare-variant burden tests</h2></a>
+</p>
+
+Two other tests that are similar to the variable-threshold test are also
+available in this same framework. If, instead of <tt>--vt-test</tt>, you specify
+<pre>
+     --fw-test
+</pre>
+then PLINK will perform the <em>frequency-weighted</em> Madsen/Browning
+test. If you instead specify,
+<pre>
+     --rv-test 0.01
+</pre>
+
+then PLINK will perform a <em>fixed-threshold</em> rare-variant test:
+in this example, all minor alleles with sample frequency below 1%
+would be included.</p>
+
+<p>The <tt>--weights</tt> (or <tt>--ppweights</tt>) command can be
+combined with both of these tests. For the frequency-weighted test,
+the weight for each variant becomes the product of the
+frequency-weight and the user-specified weight. The
+<tt>--vt-test-low</tt> command still applies for these two tests,
+also. </p>
+
+<p>Currently, these commands only produce an empirical p-value output
+file, named either <tt>plink.fw.mperm</tt> or <tt>plink.rv.mperm</tt>.
+
+
+
+
+
+
+
+<!--#include file="end.html"-->
+
+<em>
+ This document last modified <!--#flastmod file="rfunc.shtml" -->
+</em>
+
+</body>
+
+<HEAD>
+<META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
+</HEAD>
+</html>

@@ -1,0 +1,77 @@
+<html>
+<title>PLINK</title>
+<body>
+
+<head>
+<link rel="stylesheet" href="plink.css" type="text/css">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<title>PLINK: Whole genome data analysis toolset</title>
+</head>
+
+<!--#include file="start.html"-->
+
+
+<h1>Warnings & Known Issues</h1>
+
+Development of <tt>PLINK</tt> is ongoing: as such, there is always
+likely to be a list of features that are only partialy implemented, or
+have problems of some kind.  Our policy is to release a web-based
+warning for these as soon as any problems are identified, and, for
+more major problems, to release a patched version on the main download
+page as soon as possible.
+
+</p>
+
+Note that any new patched verions will still give the web-based
+warning message (i.e.  that is based solely on version number, rather
+than patch).
+
+</p>
+
+Want to ignore a warning and run the analysis anyway? Then run 
+PLINK with the <tt>--noweb</tt> flag to disable the web-check. Not 
+recommended...
+
+</p>
+
+Often, the issues flagged here are fixed in the development source
+code, available from <a href="download.shtml#latest"here</a>, which
+you will need to compile yourself.
+
+</p>
+
+
+<h2>Format issue with <tt>--hardy</tt> option </h2></p>
+<b>Date:</b> Sep 1 2008</p>
+<b>Version:</b> 1.04 </p>
+<b>Problem:</b> The output of the <tt>--hardy</tt> command has the fields in 
+the wrong order, with the <tt>TEST</tt> and <tt>A1</tt>, <tt>A2</tt> fields
+swapped. Also, the <tt>A2</tt> field always equal the <tt>A1</tt>. This is 
+fixed in development source code available online; will be fixed in 
+next release </p>
+
+<h2>Problem with <tt>--chap</tt> and missing genotype data</h2></p>
+<b>Date:</b> Oct 20 2008</p>
+<b>Version:</b> 1.04 </p>
+<b>Problem:</b> A serious problem emerged with the conditional
+haplotype tests: when there is a reasonable amount of missing genotype
+data, the p-values calculated can be very liberal. This is because
+individuals were included under the null model likelihood calculations
+but not the alternate model calculations under these scenarios. Fixed
+in development source code; will be fixed in next release. As an
+approximate, temporary fix, add the option <tt>--hap-miss 2</tt> (this
+will mean that all individuals are phased and included in the test, no
+matter how much missing genotype data they have) </p>
+
+<!--#include file="end.html"-->
+
+<em>
+ This document last modified <!--#flastmod file="warnings.shtml" -->
+</em>
+
+</body>
+
+<HEAD>
+<META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
+</HEAD>
+</html>

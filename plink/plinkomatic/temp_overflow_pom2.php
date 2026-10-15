@@ -1,0 +1,176 @@
+<!--	"window.location.href=window.location.href";  -->
+
+<input type="button" name="default" value="Reset to default">
+
+
+function UndoForm()
+{
+
+	foreach ($_SESSION as $VarName => $Value)  
+	{
+	   unset ($_SESSION[$VarName]);
+	}
+
+	$_SESSION['fmt1'] = $fmt1;
+	$_SESSION['fmt2'] = $fmt2;
+	$_SESSION['sel1'] = $sel1;
+	$_SESSION['sel2'] = $sel2;
+	$_SESSION['m'] = $m;
+	$_SESSION['p'] = $p; 
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+function GrayOut(obj_checkbox,field,new_val, check_val)
+{
+  if(obj_checkbox.checked)
+  {
+  	 obj_checkbox.form.elements[check_val].value="yes";
+    obj_checkbox.form.elements[field].disabled = false;
+    
+  } 
+  else
+  {
+  	 obj_checkbox.form.elements[check_val].value="no";
+    obj_checkbox.form.elements[field].value = new_val; 
+    obj_checkbox.form.elements[field].disabled = true;  
+  }
+} 
+
+
+
+
+
+
+
+
+
+if($ch_missg=="yes") {echo "value=".$missg;} else {echo "value='0' ReadOnly";} 
+
+<?php if (!isset($mmode)) {$mmode="1";}?>
+
+function SetRadio($flag, $value)
+{
+	if ($flag==$value)
+		{echo "checked";}
+}
+
+
+
+input[disabled]
+{
+	background-color: #f0f5f0;
+}
+
+input[readonly]
+{
+	background-color: #f0f5f0;
+	color: GrayText;	
+}
+
+
+
+function FlagDispCheck($check, $flag, $default)
+{ 
+	if($check=="yes")
+		{ echo "value=".$flag; }
+	else 
+		{ echo "value=".$default. " <script type='text/javascript'> Reading();</script> "; }
+}
+
+
+
+
+
+img
+        {
+                border:                 0;
+		text-decoration:        none;
+        }
+
+
+
+input[type="submit"]
+        {
+                background:              #eae8e3;
+        }
+input[type="button"]
+{
+	background: #eae8e3;
+}
+
+
+input 
+{
+		background-color: #ffffee;
+		border: 1px dotted #004400;
+}
+
+input[disabled]
+{
+	background-color: #f0f5f0;
+}
+
+input[readonly]
+{
+	background-color: #f0f5f0;
+	color: GrayText;	
+}
+
+
+function Reading(obj_checkbox,field)
+{
+	obj_checkbox.form.elements[field].readOnly = true; 
+   obj_checkbox.form.elements[field].className='notouch';
+}
+
+// Set optional form element value to the saved value if available, 
+// otherwise set to default and make readonly.  (See Optional Flag example) 
+function FlagDispCheck($check, $flag, $default)
+{  
+	if($check=="yes")
+		{ echo "value=".$flag." class='normal'"; }
+	else 
+	{ 
+		echo "value=".$default. " readOnly class='notouch' "; 
+	}
+}
+
+
+		echo "<script language=javascript>Reading('out')</script> test";
+		
+		
+		
+		<script type='text/javascript'>
+//document.write('hello world') 
+//Reading('out')
+</script>
+
+
+
+// Set optional form element value to the saved value if available, 
+// otherwise set to default and make readonly.  (See Optional Flag example) 
+function FlagDispCheck($check, $flag, $default)
+{  
+	if($check=="yes")
+		{ echo "value=".$flag." class='normal'"; }
+	else 
+	{ 
+		echo "value=".$default. " readOnly ";
+//		echo " class='notouch' ";
+//		?> <script language=javascript>Reading('out')</script> <?php;
+	}
+} 
+
+<script language=javascript>document.write("yes")</script>
+<script language=javascript>Reading('out')</script>

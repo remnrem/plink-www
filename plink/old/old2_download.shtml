@@ -1,0 +1,51 @@
+<html>
+<body>
+
+<head>
+<link rel="stylesheet" href="plink.css" type="text/css">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<title>PLINK: Whole genome data analysis toolset</title>
+</head>
+
+<!--#include file="start.html"-->
+
+<tt><font color="darkgreen"><b>PLINK</b></font></tt> is currently
+only available for MGH and Broad users at the following locations:
+
+<pre>
+
+  lead.broad.mit.edu:~shaun/pipeline/src/plink
+
+  pnguapp.mgh.harvard.edu:~shaun/plink/plink
+
+</pre>
+
+Note: log into lead (linux machine) after logging into phosphorous: just use 
+<pre>
+     ssh lead
+</pre>
+
+</p>
+
+<!-- A temporary MS-DOS version is available for download <a
+href="plink.exe">plink.exe</a> and the same as a ZIP file <a
+href="plink.zip">plink.zip</a>. -->
+ 
+</p>
+
+Just copy the <tt>plink</tt> executable file to your working
+directory/path and start.
+
+<hr>
+
+A public version will be made freely available within a few weeks, 
+after testing of the initial release has been completed. 
+
+<!--#include file="end.html"-->
+
+<em>
+ This document last modified <!--#flastmod file="download.shtml" -->
+</em>
+
+</body>
+</html>

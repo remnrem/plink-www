@@ -1,0 +1,287 @@
+
+
+<h5>
+plink --file hapmap1
+</h5></p>
+
+<pre>
+@----------------------------------------------------------@
+|         PLINK!       |    v0.99e     |    4/Jun/2006     |
+|----------------------------------------------------------|
+|  (C) 2006 Shaun Purcell, GNU General Public License, v2  |
+|----------------------------------------------------------|
+|       http://pngu.mgh.harvard.edu/purcell/plink/         |
+@----------------------------------------------------------@
+  
+Writing this text to log file [ plink.log ]
+Analysis started: Mon Jun  5 16:00:28 2006
+ 
+Options in effect:
+        --file hapmap1
+ 
+83534 (of 83534) markers to be included from [ hapmap1.map ]
+89 individuals read from [ hapmap1.ped ]
+89 individuals with nonmissing phenotypes
+Assuming a binary trait (1=unaff, 2=aff, 0=miss)
+Missing phenotype value is also -9
+Before frequency and genotyping pruning, there are 83534 SNPs
+Applying filters (SNP-major mode)
+89 founders and 0 non-founders found
+0 of 89 individuals removed for low genotyping ( MIND > 0.1 )
+Removing rare ( MAF < 0.01 ), low-genotyping ( MISS > 0.1 ) markers
+After frequency and genotyping pruning, there are 65803 SNPs
+Analysis finished: Mon Jun  5 16:00:38 2006
+</pre>
+
+
+
+
+------------------------------------------------------------
+
+/plink --file hapmap1 --make-bed --out hapmap1
+
+83534 (of 83534) markers to be included from [ hapmap1.map ]
+89 individuals read from [ hapmap1.ped ]
+89 individuals with nonmissing phenotypes
+Assuming a binary trait (1=unaff, 2=aff, 0=miss)
+Missing phenotype value is also -9
+Before frequency and genotyping pruning, there are 83534 SNPs
+Applying filters (SNP-major mode)
+89 founders and 0 non-founders found
+Removing rare ( MAF < 0 ), low-genotyping ( MISS > 1 ) markers
+After frequency and genotyping pruning, there are 83534 SNPs
+Writing pedigree information to [ hapmap1.fam ]
+Writing map (extended format) information to [ hapmap1.bim ]
+Writing genotype bitfile to [ hapmap1.bed ]
+Using (default) SNP-major mode
+Analysis finished: Mon Jun  5 16:01:33 2006
+
+
+------------------------------------------------------------
+
+plink --bfile hapmap
+
+@----------------------------------------------------------@
+|         PLINK!       |    v0.99e     |    4/Jun/2006     |
+|----------------------------------------------------------|
+|  (C) 2006 Shaun Purcell, GNU General Public License, v2  |
+|----------------------------------------------------------|
+|       http://pngu.mgh.harvard.edu/purcell/plink/         |
+@----------------------------------------------------------@
+ 
+     ***   PRE-RELEASE TRIAL VERSION   ***
+ 
+  Please visit the above website to check for
+  more recent versions. Although this version
+  is quite stable, there will inevitably still
+  be a number of bugs that will be fixed (and
+  features addded) in subsequent releases...
+ 
+Writing this text to log file [ plink.log ]
+Analysis started: Mon Jun  5 16:02:19 2006
+ 
+Options in effect:
+        --bfile hapmap1
+ 
+Reading map (extended format) from [ hapmap1.bim ]
+83534 markers to be included from [ hapmap1.bim ]
+Reading pedigree information from [ hapmap1.fam ]
+89 individuals read from [ hapmap1.fam ]
+89 individuals with nonmissing phenotypes
+Reading genotype bitfile from [ hapmap1.bed ]
+Detected that binary PED file is in SNP-major mode
+Before frequency and genotyping pruning, there are 83534 SNPs
+Applying filters (SNP-major mode)
+89 founders and 0 non-founders found
+0 of 89 individuals removed for low genotyping ( MIND > 0.1 )
+Removing rare ( MAF < 0.01 ), low-genotyping ( MISS > 0.1 ) markers
+After frequency and genotyping pruning, there are 65803 SNPs
+Analysis finished: Mon Jun  5 16:02:21 2006
+
+
+------------------------------------------------------------
+
+plink --bfile hapmap1 --missing
+
+89 founders and 0 non-founders found
+0 of 89 individuals removed for low genotyping ( MIND > 0.1 )
+Writing individual missingness information to [ plink.imiss ]
+Writing locus missingness information to [ plink.lmiss ]
+Analysis finished: Mon Jun  5 16:02:57 2006
+
+
+
+------------------------------------------------------------
+
+plink --bfile hapmap1 --freq
+
+
+------------------------------------------------------------
+
+plink --bfile hapmap1 --assoc --adjust
+
+
+------------------------------------------------------------
+
+plink --bfile hapmap1 --assoc --adjust
+
+
+
+------------------------------------------------------------
+
+plink --bfile hapmap1 --assoc --pheno qt.phe --perm --within uncon.cluster2
+
+[shaun@faff asian]$ ~/src/plink2/plink --bfile hapmap1 --assoc --pheno qt.phe --perm --within uncon.cluster2
+ 
+@----------------------------------------------------------@
+|         PLINK!       |    v0.99e     |    4/Jun/2006     |
+|----------------------------------------------------------|
+|  (C) 2006 Shaun Purcell, GNU General Public License, v2  |
+|----------------------------------------------------------|
+|       http://pngu.mgh.harvard.edu/purcell/plink/         |
+@----------------------------------------------------------@
+ 
+     ***   PRE-RELEASE TRIAL VERSION   ***
+ 
+  Please visit the above website to check for
+  more recent versions. Although this version
+  is quite stable, there will inevitably still
+  be a number of bugs that will be fixed (and
+  features addded) in subsequent releases...
+ 
+Writing this text to log file [ plink.log ]
+Analysis started: Mon Jun  5 18:31:57 2006
+ 
+Options in effect:
+        --bfile hapmap1
+        --assoc
+        --pheno qt.phe
+        --perm
+        --within uncon.cluster2
+ 
+Reading map (extended format) from [ hapmap1.bim ]
+83534 markers to be included from [ hapmap1.bim ]
+Reading pedigree information from [ hapmap1.fam ]
+89 individuals read from [ hapmap1.fam ]
+89 individuals with nonmissing phenotypes
+Reading genotype bitfile from [ hapmap1.bed ]
+Detected that binary PED file is in SNP-major mode
+Reading alternate phenotype from [ qt.phe ]
+Assuming a quantitative trait for alternate phenotype
+Missing phenotype is -9
+89 individuals with non-missing alternate phenotype
+Reading clusters from [ uncon.cluster2 ]
+89 of 89 individuals assigned to 45 cluster(s)
+Before frequency and genotyping pruning, there are 83534 SNPs
+Applying filters (SNP-major mode)
+89 founders and 0 non-founders found
+0 of 89 individuals removed for low genotyping ( MIND > 0.1 )
+Removing rare ( MAF < 0.01 ), low-genotyping ( MISS > 0.1 ) markers
+After frequency and genotyping pruning, there are 65803 SNPs
+Set to permute within 45 cluster(s)
+Writing QT association results to [ plink.qassoc ]
+Adaptive permutation: 1000000 of (max) 1000000 : 25 SNPs left
+ 
+Writing permutation association results to [ plink.assoc.perm ]
+Analysis finished: Mon Jun  5 19:22:02 2006
+
+ CHR          SNP        CHISQ            P         EMP1           NP
+   2    rs2222162        42.01    9.083e-11        1e-06      1000000
+   6    rs1606447        5.869      0.01541    5.206e-05        38415
+  10    rs1393829        16.34    5.288e-05    0.0001896        10549
+  21     rs219746        27.49    1.581e-07    0.0001896        10549
+   2    rs2304287        9.021      0.00267    0.0001896        10549
+   6    rs2326873        6.659     0.009865    0.0001896        10549
+   2    rs1385855         7.59      0.00587    0.0002227        13468
+   2    rs6543704        8.131      0.00435    0.0002227        13468
+   2    rs6752439        16.88    3.976e-05    0.0002227        13468
+   5    rs1651350        4.522      0.03347    0.0002227        13468
+   9    rs1434874        4.104      0.04278    0.0002484        16099
+  11   rs11226452        3.809      0.05099    0.0002699        18525
+  11    rs7119997        3.809      0.05099    0.0002699        18525
+  12    rs1347015        5.727      0.01671    0.0002883        20811
+  12    rs2520567        5.153       0.0232    0.0002883        20811
+  14    rs1190968        5.461      0.01945    0.0002883        20811
+   2    rs2176427        11.52      0.00069    0.0003188        25090
+   6    rs9400564        4.902      0.02682    0.0003317        27132
+   2    rs4853112        5.811      0.01592    0.0003544        31040
+  15    rs4777075        5.535      0.01864    0.0003644        32934
+   7    rs2288970        12.46    0.0004161    0.0003737        34790
+  13    rs7999500         13.1    0.0002958    0.0003822        36630
+  18    rs6506386        17.48    2.896e-05    0.0003905        38415
+   9     rs324517        8.219     0.004145    0.0004754        63104
+  10   rs10795055         8.83     0.002964    0.0005146        79680
+  10     rs705458         8.83     0.002964    0.0005146        79680
+   9   rs10780262        8.602     0.003358    0.0005146        79680
+  10    rs4934208        2.744       0.0976    0.0005174        81180
+  11   rs11028504        2.943      0.08625    0.0005174        81180
+  17    rs3760219        3.983      0.04595    0.0005464        97000
+  11     rs748923         5.03      0.02491    0.0005551       102691
+   3    rs6792701        3.172      0.07493    0.0005594       105470
+   4    rs6840352        4.902      0.02683    0.0005613       106893
+   2    rs1374163        12.19    0.0004806    0.0005873       126000
+  14    rs8010088        4.111      0.04259    0.0005889       127360
+   8     rs951702        9.204     0.002415    0.0006209       157842
+   9    rs1332473        9.652     0.001892    0.0006356       174650
+  19     rs998900        2.998      0.08337    0.0006506       195216
+  13    rs4242927        13.48    0.0002411     0.000684       250000
+  19     rs277444        4.293      0.03826    0.0006996       284430
+   3    rs3908140        9.998     0.001567     0.000742       407000
+   8    rs7008494         9.35      0.00223    0.0007492       435128
+  10    rs7081349        2.631       0.1048    0.0007655       509490
+  22    rs5748391        5.229      0.02222     0.000774       553000
+   1    rs2312237        6.628      0.01004    0.0007916       667000
+
+
+------------------------------------------------------------
+
+plink --bfile hapmap1 --from rs222612 --to rs222612 --recodeAD
+
+
+
+-------------------------------------------------------------
+
+simulation 
+
+
+rs2222162 is key SNP 
+
+
+> table(x , d$rs2222162_A , k )
+, , k = 1
+ 
+    
+x    0  1  2
+  1  7 21  6
+  2  0  0 11
+ 
+, , k = 2
+ 
+    
+x    0  1  2
+  1 10  1  0
+  2  3 19 11
+ 
+>
+>
+> table(x , k, d$rs2222162_A  )
+, ,  = 0
+ 
+   k
+x    1  2
+  1  7 10
+  2  0  3
+ 
+, ,  = 1
+ 
+   k
+x    1  2
+  1 21  1
+  2  0 19
+ 
+, ,  = 2
+ 
+   k
+x    1  2
+  1  6  0
+  2 11 11

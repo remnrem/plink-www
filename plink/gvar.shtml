@@ -1,0 +1,211 @@
+
+<html>
+<title>PLINK</title>
+<body>
+
+<head>
+<link rel="stylesheet" href="plink.css" type="text/css">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<title>PLINK: Whole genome data analysis toolset</title>
+</head>
+
+<!--#include file="start.html"-->
+
+
+<h1>Common copy number polymorphism (CNP) data</h1>
+
+This page describes some basic file formats, convenience functions and
+analysis options for common copy number polymorphism (CNP)
+data. Support for rare copy number variant (CNV) data is
+described <a href="cnv.shtml">here</a>.
+
+</p>
+
+Common copy number variation is represented for specific SNP
+genotypes, for example, allowing <tt>A</tt>, <tt>AAB</tt>
+or <tt>AABB</tt> calls (being copy number 1,3 and 4 respectively) as
+well as the canonical <tt>AA</tt>, <tt>AB</tt> and <tt>BB</tt>
+genotypes. These formats are specified via the "generic variant"
+(<tt>--gfile</tt>) option.
+</p>
+
+Here we assume that some other software package such as
+the <a href="http://www.broad.mit.edu/mpg/birdsuite/">Birdsuite</a>
+package has previously been used to make calls for either specific
+copy-number variable genotypes or to identify particular genomic
+regions in individuals that are deletions or duplications, based on
+the raw data. That is, PLINK only offers functions for downstream
+analysis of CNV data, not for identifying CNVs in the first place,
+i.e. similar to the distinction between SNP genotype calling versus
+the subsequent analysis of those calls.
+</p>
+
+
+<a name="cnv2">
+<h2>Format for common CNVs (generic variant format)</h2>
+</a></p>
+
+For common CNVs, that might also have meaningful allelic/SNP
+variation, it can be desirable to represent and analyse these not as
+segments. The rest of the page considers non-segmental specification
+of CNVs: that is, copy-number variable specific genotype calls, such
+as <tt>A</tt> or <tt>AAB</tt>. 
+</p>
+
+Such data are represented with the <em>generic variant</em> file format,
+and read into PLINK with the command:
+<h5>
+  plink --gfile mydata
+</h5></p>
+where three files are assumed to exist
+<pre>
+     mydata.fam     (describes individuals, as usual)
+     mydata.map     (describes variants, as usual)
+     mydaya.gvar    (new file format)     
+</pre>
+
+The <tt>.gvar</tt> file is in long-format: always with 7 fields, one
+row per genotype (note that the reference to the first and second
+parents above does not imply that paternal or maternal origin should
+be known or is used)
+<pre>
+  FID       Family ID
+  IID       Individual ID  (i.e. person should appear in .fam file)
+  NAME      Variant name (should appear in .map file)
+  ALLELE1   Code for allele from first parent
+  DOSAGE1   Copy number for first allele
+  ALLELE2   Code for allele from second parent
+  DOSAGE2   Copy number for second allele
+</pre>
+
+Some example of using this format to represent different genotypes are shown here:
+<pre>
+     1 1  var1  A 1  C 1    -> normal het
+     1 1  var2  A 2  C 1    -> AAC genotype
+     1 1  var3  0 1  0 1    -> missing individual
+     1 1  var4  0 0  0 0    -> homozygous deletion
+
+     1 1  var5  4 1  7 1    -> e.g. 4/7 genotype
+     2 1  var5  4 1  8 1    -> e.g. 4/8 genotype
+
+     1 1  var6  A 0.95 C 1.05  -> expected allele dosage (e.g. from imputation)
+</pre>
+
+As currently implemented, all the codings below would be equivalent,
+i.e. specifying an <tt>AA</tt> homozygote:
+<pre>
+     1 1  var7  A 1 A 1
+     2 1  var7  A 0 A 2
+     3 1  var7  A 2 A 0
+     4 1  var7  X 0 A 2
+     5 1  var7  0 0 A 2
+</pre>
+
+That is, for a missing (null) genotype, <tt>ALLELE1</tt>
+and <tt>ALLELE2</tt> should both be set to 0, and by
+convention, <tt>DOSAGE1</tt> and <tt>DOSAGE2</tt> should be 1
+(indicating a <tt>0 0</tt> genotype). But if a <tt>DOSAGE</tt> value
+is 0, then the value of the corresponding <tt>ALLELE</tt> column does
+not matter. Thus, genotypes can have <tt>DOSAGE >= 1</tt> for one
+allele, and <tt>DOSAGE</tt> for the other allele: <tt>A 0 B 3</tt>
+means 3 copies of allele B and no copies of A; <tt>X 0 B 3</tt> means
+the same thing because the <tt>X</tt> is ignored when <tt>DOSAGE=0</tt>.
+
+</p>
+When loading this kind of file, <tt>PLINK</tt> will parse allelic and
+copy number variation; currently by default it looks for integer
+dosage calls in this part of the process. There are currently no
+functions implemented yet for fractional counts, but the datatype
+exists.
+
+</p>
+Alleles and CNVs are then appropriately counted.  <tt>PLINK</tt>
+assesses and records for each variant whether there is allelic and/or
+copy number variation, and this influences downstream analysis.
+Currently variation is defined as at least one individual varying, but
+in the future thresholds will be added (e.g. to treat a site of a CNV
+only if, say, 1% of all individuals have a non-canonical copy number).
+</p>
+The basic summary output is also in "long format": in the future this
+will be expanded and reformated, e.g. to include specific allelic/CNV
+frequncies or counts; stratification by phenotype, etc. This summary file 
+is called
+<pre>
+     plink.gvar.summary
+</pre>
+and always contains three columns, as illustrated here 
+<pre>
+            NAME        FIELD        VALUE
+            var1          CHR            1
+            var1           BP            1
+            var1          CNV          yes
+            var1      ALLELIC          yes
+            var1       GCOUNT         1000
+            var1            B       0.6031
+            var1            A       0.3969
+            var1          [2]         0.56
+            var1          [3]        0.378
+            var1          [4]        0.062
+            var1          B/B        30:38
+            var1         BB/B        66:60
+            var1        BB/BB        42:20
+            var1          A/B      142:101
+            var1         A/BB       161:91
+            var1          A/A       162:87
+</pre>
+
+The CN counts are always in [x] to distingush from allele codes, if
+they are also numeric.  e.g. in this example, 37.5% of sample have the
+deletion for example. There can be more than 2 CN states for a given
+variant.
+</p>
+
+If the trait is binary, then the counts for copy-number specific
+genotypes (e.g. <tt>A/BB</tt>) will be given separately for cases and
+controls, separated by a colon.
+
+<a name="cnv2b">
+<h2>Association models for combined SNP and common CNV data</h2>
+</a></p>
+
+<tt>PLINK</tt> has implemented the following regression models
+(logistic or linear) currently applicable to biallelic SNPs residing
+within CNPs:
+
+<pre>
+  Y ~ b0 + b1.(A+B) + b2.(A-B)
+</pre>
+
+When an association test is performed, extra lines will be appended to the <tt>plink.gvar.summary</tt> file
+<pre>
+            var1       B(SNP)     -0.05955
+            var1       P(SNP)      0.09085
+            var1       B(CNP)      0.09314
+            var1       P(CNP)       0.3809
+            var1   B(CNP|SNP)       0.5638
+            var1   P(CNP|SNP)    0.0006768
+            var1   B(SNP|CNP)      -0.2042
+            var1   P(SNP|CNP)    0.0002242
+            var1   P(SNP&CNP)    0.0007413
+</pre>
+
+Covariates can be added with <tt>--covar</tt> as with <tt>--linear</tt> or <tt>--logistic</tt>. The coefficients and 
+p-values for the SNP and CNP will reflect this, although the specific coefficients and p-values for the covariates 
+themselves are not shown in the output.
+</p>
+
+<b><em>This section is not finished -- more details will be added online presently. </em></b>
+
+<!--#include file="end.html"-->
+
+<em>
+ This document last modified <!--#flastmod file="cnv.shtml" -->
+</em>
+
+</body>
+
+<HEAD>
+<META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
+</HEAD>
+</html>
+OA

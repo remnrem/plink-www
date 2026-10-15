@@ -1,0 +1,12 @@
+PLINK-VERSION 1.07
+
+Old versions of PLINK (<1.07) contain bugs fixed in 1.07. \n
+
+END-MESSAGE
+
+MESSAGE-ALL \n +++ PLINK 1.9 is now available! See above website for details +++ \n
+END-MESSAGE
+
+FATAL --none
+
+END

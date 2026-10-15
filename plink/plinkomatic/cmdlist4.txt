@@ -1,0 +1,174 @@
+"Data management"
+
+ "Create new PED/MAP fileset (reordered)"
+  "Preserve original allele coding" 
+   <link>pom2.php?m=recode</link>  
+  "Recode genotypes 11, 12 and 22 (00 missing)"
+   <link>pom2.php?m=recode12</link> 
+
+ "Create a binary bED fileset" 
+    <link>pom2.php?m=makebed</link>
+ 
+ "Merge two PED files"
+   "Output standard PED/MAP fileset"
+   <link>pom2.php?m=merge&amp;p=1</link>   
+   "Output a binary bED fileset"
+    <link>pom2.php?m=merge&amp;p=2</link> 
+  
+ "Extract a subset of SNPs" 
+   "Output standard PED/MAP fileset"
+    <link>pom2.php?m=extract&amp;p=1</link>
+   "Output a binary bED fileset"
+    <link>pom2.php?m=extract&amp;p=2</link>
+ 
+ "Exclude a subset of SNPs" 
+   "Output standard PED/MAP fileset"
+    <link>pom2.php?m=exclude&amp;p=1</link>
+   "Output a binary bED fileset"
+    <link>pom2.php?m=exclude&amp;p=2</link>
+   
+ "Extract a subset of individuals" 
+   "Output standard PED/MAP fileset"
+    <link>pom2.php?m=keep&amp;p=1</link>   
+   "Output a binary bED fileset"
+    <link>pom2.php?m=keep&amp;p=2</link>
+   
+ "Exclude of subset of individuals" 
+   "Output standard PED/MAP fileset"
+    <link>pom2.php?m=remove&amp;p=1</link>   
+   "Output a binary bED fileset"
+    <link>pom2.php?m=remove&amp;p=2</link>
+   
+ "Flip SNP strand"
+   "Output standard PED/MAP fileset"
+    <link>pom2.php?m=flip&amp;p=1</link>
+   "Output a binary bED fileset"
+    <link>pom2.php?m=flip&amp;p=2</link>
+
+
+"Summary statistics"
+
+ "Missingness rates" 
+  "SNP and individual missing rates" 
+  <link>pom2.php?m=missing</link>  
+  "Test for different rates between cases and controls" 
+  <link>pom2.php?m=test-missing</link>
+  
+ "Allele frequencies" 
+  <link>pom2.php?m=freq</link>    
+ 
+ "Hardy-Weinberg equilibrium tests"
+  "Ignore phenotype" 
+   <link>pom2.php?m=hardy&amp;p=1</link>      
+  "Stratify by case/control statues" 
+   <link>pom2.php?m=hardy&amp;p=2</link>    
+  
+ "Mendel error rates for nuclear family data"
+   <link>pom2.php?m=mendel</link>    
+
+
+"Population stratification and matching"
+  "IBS distance-based clustering"
+   "Cluster on genome-wide IBS"
+   <link>pom2.php?m=cluster&amp;p=1</link>    
+   "Cluster on genome-wide IBS and external matching criteria"
+   <link>pom2.php?m=cluster&amp;p=2</link>    
+ 
+  "IBD estimation (genome-wide)"
+   <link>pom2.php?m=genome</link>    
+        
+  "Heterozygosity / inbreeding coefficients"
+    <link>pom2.php?m=inbreeding</link>    
+  
+  "Runs of homozygosity"
+    <link>pom2.php?m=homo-run-snps</link>    
+
+
+"Linkage disequilibrium and haplotype inference"
+ "Pairwise r and r-squared"
+  <link>pom2.php?m=ld-r</link>
+ 
+ "Haplotype inference"
+   "Calculate haplotype frequencies"
+   <link>pom2.php?m=hap&amp;p=1</link>
+   "List individuals' haplotype phases"
+   <link>pom2.php?m=hap&amp;p=2</link>
+   "Test case/control haplotype association"
+   <link>pom2.php?m=hap&amp;p=3</link>
+   "Create imputed most-likely haplotype dataset"
+   <link>pom2.php?m=hap&amp;p=4</link>
+
+"Association analysis" 
+"Single SNP analyses"
+ "Population based sample"
+  "Disease trait"
+    "Basic allelic test" 
+      "Without permutation" 
+       <link>pom2.php?m=assoc&amp;p=1</link>
+      "With adaptive permutation" 
+       <link>pom2.php?m=assoc&amp;p=2</link>
+      "With maxT permutation" 
+       <link>pom2.php?m=assoc&amp;p=3</link>
+      
+    "Cochran-Armitage trend test and genotypic test"
+      "Without permutation" 
+       <link>pom2.php?m=model&amp;p=1</link>
+      "With adaptive permutation" 
+       <link>pom2.php?m=model&amp;p=2</link>
+      "With maxT permutation" 
+       <link>pom2.php?m=model&amp;p=3</link>
+      
+  "Stratified/clustered sample tests"
+    "Within-cluster permutation"
+    <link>pom2.php?m=within-file</link>    
+    
+    "Cochran-Mantel-Haenszel tests"
+      "SNP-disease assocation conditional on cluster"
+       <link>pom2.php?m=mh1</link>        
+      "SNP-cluster association conditional on disease"
+       <link>pom2.php?m=mh2</link>    
+      
+    "Homogeneity of odds ratio tests"
+       <link>pom2.php?m=homog</link>    
+
+   "Quantitative trait" 
+      "Without permutation" 
+       <link>pom2.php?m=qt&amp;p=1</link>
+      "With adaptive permutation" 
+       <link>pom2.php?m=qt&amp;p=2</link>      
+      "With maxT permutation" 
+       <link>pom2.php?m=qt&amp;p=3</link>
+   
+   "Within-cluster permutation"
+     "With adaptive permutation" 
+      <link>pom2.php?m=qt-within-file&amp;p=2</link>
+     "With maxT permutation" 
+      <link>pom2.php?m=qt-within-file&amp;p=3</link>
+
+
+  "Family-based sample"
+    "Disease traits: TDT analysis" 
+          "Single SNP TDT only"
+          <link>pom2.php?m=tdt&amp;set=no</link>              
+          "Single SNP and set-based TDT"
+          <link>pom2.php?m=tdt&amp;set=true</link>    
+          
+    "Quantitative trait: gene-dropping permutation" 
+          "Gene-drop from founders"
+          <link>pom2.php?m=qtdt&amp;p=1</link>              
+          "Gene-drop from parents"
+          <link>pom2.php?m=qtdt&amp;p=2</link>    
+
+
+"Epistatic analyses"
+ "SNP x SNP epistasis"
+   "Case-only analysis"
+   <link>pom2.php?m=epi&amp;p=1</link>   
+   "Case/control analysis"
+   <link>pom2.php?m=epi&amp;p=2</link>
+   
+ "Gene-based epistasis"
+   "Case-only analysis"
+   <link>pom2.php?m=genepi&amp;p=1</link>
+   "Case/control analysis"
+   <link>pom2.php?m=genepi&amp;p=2</link>

@@ -1,0 +1,1229 @@
+<html>
+<head>
+<link rel="stylesheet" href="plink.css" type="text/css">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<title>PLINK: Whole genome data analysis toolset</title>
+
+<script TYPE="text/javascript">
+<!--
+// The GrayOut Function uses a checkbox to control a specified field.  If
+// a box is unchecked, the value is set to default and the field changed to readOnly.
+// If a box is checked, the field is text-enterable.  
+// See optional flag form element at bottom of page.
+
+function GrayOut(checkbox,field,new_val,hidcheck)
+{ 
+	//alert ("Hidcheck is: " + hidcheck)
+  if(checkbox.checked)
+  {
+    main.elements[hidcheck].value ="yes";
+    main.elements[field].readOnly = false;
+    main.elements[field].className='normal';     
+  } 
+  else 
+  {
+    main.elements[hidcheck].value ="no";
+    main.elements[field].value = new_val; 
+    main.elements[field].readOnly = true; 
+    main.elements[field].className='notouch'; 
+  } 
+}
+
+// The HidCheck function uses a hidden element to maintain a checkbox status.  
+// See checkbox form element at bottom of page.
+function HidCheck(obj_checkbox,hidcheck)
+{ 
+	if (obj_checkbox.checked) 
+		{obj_checkbox.main.elements[hidcheck].value ="yes";}
+	else
+		{obj_checkbox.main.elements[hidcheck].value ="no";}
+}
+ 
+function Reading(field)
+{
+	main.elements[field].readOnly = true; 
+   main.elements[field].className='notouch';
+}
+
+// -->
+</script>
+<noscript>
+	<?php $jscript="no"; ?>
+</noscript>
+
+
+<?php   
+
+// Set regular form element value to saved value ($flag) if available, 
+// otherwise to the default value.
+function FlagDisp($flag, $default)
+{
+	if(isset($flag)) 
+		{echo "value=".$flag;}
+	else
+		{echo "value=".$default;}
+}  
+
+// Set optional form element value to the saved value if available, 
+// otherwise set to default and make readonly.  (See Optional Flag example) 
+function FlagDispCheck($check, $flag, $default)
+{  
+	if($check=="yes")
+		{ echo "value=".$flag." class='normal'"; }
+	else 
+	{ 
+		echo "value=".$default. " readOnly ";
+		echo " class='notouch' ";
+	}
+} 
+
+// Check checkbox form element based on hidden field. (See checkbox example)
+function Check_Display($check)
+{
+	if($check=="yes") 
+		{echo "CHECKED";}
+} 
+
+
+// Check correct radio element.  (See radio example)
+function SetRadio($flag, $value)
+{ 
+	if ($flag==$value)
+		{echo "checked";}
+}
+
+
+?>
+
+
+
+</head>
+
+<?php
+session_start();
+
+if (!isset($errchecked))
+{
+	$m = $_GET['m'];
+	$p = $_GET['p'];
+	
+	$_SESSION['m'] = $m;
+	$_SESSION['p'] = $p;
+}
+
+// CODE FOR DEBUGGING:
+// Display all session variable.
+//foreach($_SESSION as $variable => $value) 
+//{
+//   echo "Variable Name: " . $variable . " Value: $value<br>"; 
+//}
+
+?>
+
+
+<font size="6" color="darkgreen"><b>plink-o-matic...</b></font>
+<h1>We need some extra information...</h1>
+
+<div align=right style="width:87%;">
+<a href="pom1.php">Start over on page 1</a>
+</div>
+
+<div align=right style="width:87%;">
+<a href="pom1b.php">Choose a new test on page 2</a>
+</div>
+
+
+</p>
+
+<div align=left style="width:80%;">
+Before we can create the PLINK command line you require, we need to gather 
+some further details regarding filenames and some specific parameter values.
+</div>
+
+<?php
+if ($errcnt > 0)
+{
+	echo "<center><strong>There are $errcnt errors:</strong></center> <br />";
+	echo "<center>".$errlist."</center>";
+}
+?>
+
+
+<form name="main" action="build_command.php" method="GET">
+
+
+<!-- _____Input Files section______________________________________________ -->
+
+<h1>Input files</h1>
+
+<table class="narrow" border=0 cellpadding=3>
+
+<?php if($fmt1=="ped"): ?>
+
+<tr>
+<td class="row1"></td>
+<td class="row2"> <tt> --file </tt> </td>
+<td class="row3"> <input type="text" class="normal" size="10"  name="file" 
+<?php FlagDisp($file, "''"); ?> > </td>
+<td class="row4"> <b>PED and MAP root file name.</b> e.g. use this if 
+the PED and MAP file have the same file root, e.g. entering 
+<tt>data</tt> implies <tt>data.ped</tt> and <tt>data.map</tt>
+</td> </tr>
+
+<tr>
+<td align=center> <b>OR</b> </td>
+</tr>
+
+<tr>
+<td></td>
+<td><tt> --ped </tt> </td>
+<td> <input type="text" class="normal" size="10"  name="ped" <?php FlagDisp($ped, "''"); ?> > </td>
+<td> <b>PED file name.</b> Individually specify the full PED file, i.e. including any 
+	<tt>.ped</tt> extension, for example. </td>
+</tr>
+
+<tr>
+<td></td>
+<td><tt> --map </tt> </td>
+<td> <input type="text" class="normal" size="10"  name="map" <?php FlagDisp($map, "''"); ?> > </td>
+<td> <b>MAP file name.</b> Individually specify the MAP file, i.e. including any 
+	<tt>.map</tt> extension, for example. </td>
+</tr>
+<?php endif; ?>
+
+<?php if($fmt1=="bed"): ?>
+
+<tr>
+<td class="row1"></td>
+<td class="row2"><tt> --bfile </tt> </td>
+<td class="row3"> 
+	<input type="text" class="normal" size="10"  name="bfile" <?php FlagDisp($bfile, "''"); ?> > </td>
+<td class="row4"> <b> Binary PED file names.</b> e.g. use this if you BED, BIM and FAM 
+files with the same name, <tt>data.bed</tt>, <tt>data.bim</tt> and <tt>data.fam</tt> 
+exist. These files are created by the <tt>--make-bed</tt> (create binary PED file) 
+option.</td>
+</tr>
+
+<tr>
+<td align=center> <b>OR</b> </td>
+</tr>
+
+<tr>
+<td></td>
+<td><tt> --bed </tt> </td>
+<td> <input type="text" class="normal" size="10"  name="bed" <?php FlagDisp($bed, "''"); ?> > </td>
+<td> <b>BED file name.</b> The name of the binary PED (BED) file, which contains genotype 
+information in a compressed format. </td> </tr>
+
+<tr>
+<td></td>
+<td><tt> --map </tt> </td>
+<td> <input type="text" class="normal" size="10"  name="bim" <?php FlagDisp($bim, "''"); ?> > </td>
+<td> <b>BIM file name.</b> This specifies the binary format MAP file. </td>
+</tr>
+
+<tr>
+<td></td>
+<td><tt> --fam </tt> </td>
+<td> <input type="text" class="normal" size="10"  name="fam" <?php FlagDisp($fam, "''"); ?> > </td>
+<td> <b>FAM file name.</b> This file is equivalent to the first six 
+columns of a PED file, containing family and individual IDs and sex and 
+phenotype information. </td>
+</tr>
+<?php endif; ?>
+
+</table>
+
+
+<!-- _____Output Files Section___________________________________________________-->
+<h1>Output files</h1>
+
+<table class="narrow" border=0 cellpadding=3>
+
+<tr>
+<td class="row1"></td>
+<td class="row2"><tt> --out </tt> </td>
+<td class="row3"> <input type="text" class="normal" size="10"  name="out" 
+<?php FlagDisp($out, "plink"); ?> > </td>
+<td class="row4"> <b>Root output file name.</b> All output files will begin with this root 
+name,  e.g. if you enter <tt>proj1</tt> then files <tt>proj1.log</tt>, 
+<tt>proj1.freq</tt>, etc. 
+</td></tr>
+
+</table>
+<!-- _____End Output Files Section_______________________________________________ -->
+
+
+
+<!-- Missing Values____________________________________ -->
+<h1>Missing Values</h1>
+<div align=left style="width:80%;">
+<font size="-1"><em>These parameters are optional.  To change 
+a value, check the box on the right and enter a new value.  
+If no value is given, the default will be used.</em></font>
+</div>
+
+<table class="narrow" border=0 cellpadding=3>
+<tr>
+<td class="row1">
+<input type="hidden" name="ch_missg" value=<?php echo $ch_missg ?> >
+<input type="checkbox" name="checkmissg" <?php Check_Display($ch_missg); ?> 
+onclick=GrayOut(this,"missg","0","ch_missg")></td>
+<td class="row2"><tt> --missing -genotype </tt> </td>
+<td class="row3"><input type="text" size="10" name="missg" 
+<?php FlagDispCheck($ch_missg, $missg, "0");  ?> > </td>
+<td class="row4"> <b>Missing genotype value.</b> The default missing genotype value
+ is 0. </td>
+</tr>
+
+<tr>
+<td>
+<input type="hidden" name="ch_missp" value=<?php echo $ch_missp ?> >
+<input type="checkbox" name="checkmissp" <?php Check_Display($ch_missp); ?> 
+onclick=GrayOut(this,"missp","-9","ch_missp")></td>
+<td><tt> --missing -phenotype </tt></td>
+<td> <input type="text" size="10" name="missp" 
+<?php FlagDispCheck($ch_missp, $missp, "-9"); ?> >  </td>
+<td> <b>Missing phenotype value.</b> The default missing phenotype value is -9.  
+ </td>
+</tr>
+
+</table>
+
+
+<!-- Phenotype Files-->
+<?php if ($fmt2=="mul"): ?>
+<h1>Alternate phenotype files</h1>
+
+<div align=left style="width:80%;">
+<font size="-1"><em>These parameters are optional.  To change 
+a value, check the box on the right and enter a new value.  If no 
+value is given, the default will be used.</em></font>
+</div>
+
+<table class="narrow" border=0 cellpadding=3>
+<tr>
+<td class="row1">
+<input type="hidden" name="ch_pheno" value=<?php echo $ch_pheno ?> >
+<input type="checkbox" <?php Check_Display($ch_pheno); ?> 
+onclick=GrayOut(this,"pheno","","ch_pheno")></td>
+<td class="row2"><tt> --pheno </tt> </td>
+<td class="row3"> <input type="text" class="normal" size="10"  name="pheno" 
+<?php FlagDispCheck($ch_pheno, $pheno, "''"); ?> > </td>
+<td class="row4"> <b>Phenotype file name.</b> File containing three columns: family ID, 
+individual ID and phenotype.
+</td></tr>
+
+
+<tr>
+<td>
+<input type="hidden" name="ch_mpheno" value=<?php echo $ch_mpheno ?> >
+<input type="checkbox" <?php Check_Display($ch_mpheno); ?> 
+onclick=GrayOut(this,"mpheno","","ch_mpheno")></td>
+<td><tt> --mpheno </tt> </td>
+<td> 
+<input type="text" class="normal" size="10"  name="mpheno" <?php FlagDispCheck($ch_mpheno, $mpheno, "''"); ?> > 
+</td>
+<td> 
+<b>Phenotype column.</b> If the file in <tt>--pheno</tt> has multiple phenotype columns,
+enter the desired column here.  For example, to use the second phenotype, enter 2. (Optional)
+</td>
+</tr>
+</table>
+<?php endif; ?>
+
+<!-- _____End Input Files Section________________________________________________-->
+
+<!-- _____SEL parameter Section__________________________________________________ -->
+<?php if($sel1=="yes"): ?>
+
+<h1>Threshhold value filtering</h1>
+
+<div align=left style="width:80%;">
+<font size="-1"><em>These parameters are optional.  To change a value, check the
+box on the right and enter a new value.  If no value is given, the default will 
+be used.
+</em></font>  
+</div>
+
+<table class="narrow" border=0 cellpadding=3>
+
+<tr>
+<td class="row1">
+<input type="hidden" name="ch_mind" value=<?php echo $ch_mind ?> >
+<input type="checkbox" <?php Check_Display($ch_mind); ?> 
+onclick=GrayOut(this,"mind","0.1","ch_mind") ></td>
+<td class="row2"> <tt> --mind </tt> </td>
+<td class="row3"> <input type="text" class="normal" size="10" name="mind" 
+<?php FlagDispCheck($ch_mind, $mind, "0.1"); ?>> </td>
+<td class="row4"> <b>Individual missing genotyping threshold.</b> Individuals with more 
+than this proportion of missing genotypes will be excluded from analysis. 
+A list of these individuals is saved in the <tt>*.irem</tt> file. 
+</td> </tr>
+
+<tr>
+<td>
+<input type="hidden" name="ch_geno" value=<?php echo $ch_geno ?> >
+<input type="checkbox" <?php Check_Display($ch_geno); ?> 
+onclick=GrayOut(this,"geno","0.1","ch_geno")></td>
+<td><tt> --geno </tt> </td>
+<td> <input type="text" class="normal" size="10"  name="geno" 
+<?php FlagDispCheck($ch_geno, $geno, "0.1"); ?> > </td>
+<td> <b>SNP missing genotyping threshold.</b> SNPs with more than this proportion 
+of missing genotypes will be excluded (calculated after removing individuals). 
+</td>
+</tr>
+
+<tr>
+<td>
+<input type="hidden" name="ch_maf" value=<?php echo $ch_maf ?> >
+<input type="checkbox" <?php Check_Display($ch_maf); ?> 
+onclick=GrayOut(this,"maf","0.01","ch_maf")></td>
+<td><tt> --maf </tt> </td>
+<td> <input type="text" class="normal" size="10"  name="maf" 
+<?php FlagDispCheck($ch_maf, $maf, "0.01"); ?> > </td>
+<td> <b>Minor allele frequency.</b> SNPs with a minor allele frequency less than 
+this will be excluded from analysis (based on founders only, after removing 
+individuals with high missing rates).
+</td>
+</tr>
+
+<?php if($m=="model"): ?>
+<tr>
+<td>
+<input type="hidden" name="ch_cell" value=<?php echo $ch_cell ?> >
+<input type="checkbox" <?php Check_Display($ch_cell); ?> 
+onclick=GrayOut(this,"cell","5","ch_cell")></td>
+<td><tt> --cell </tt> </td>
+<td> <input type="text" class="normal" size="10"  name="cell" 
+<?php FlagDispCheck($ch_cell, $cell, "5"); ?> > </td>
+<td> <b>Minimum cell count for genotypic analysis.</b> SNPs with any cell 
+with fewer than this many genotypes in the 2x3 genotypic table (<tt>--model</tt> option) 
+are not included in the genotypic analysis.
+</td>
+</tr>
+<?php endif; ?>
+
+<!--We only want the --hwe option for [[change later!]] -->
+<?php if($m!="hardy"): ?>
+<tr>
+<td>
+<input type="hidden" name="ch_hwe" value=<?php echo $ch_hwe ?> >
+<input type="checkbox" <?php Check_Display($ch_hwe); ?> 
+onclick=GrayOut(this,"hwe","0.001","ch_hwe")></td>
+<td><tt> --hwe </tt> </td>
+<td> <input type="text" class="normal" size="10"  name="hwe" 
+<?php FlagDispCheck($ch_hwe, $hwe, "0.001"); ?> > </td>
+<td> <b>Hardy-Weinberg test p-value.</b> 
+SNPs that show departure from HWE with p-values less than this value will be 
+excluded. 
+</td>
+</tr>
+<?php endif; ?>
+
+<!--We only want the --me options for family-based tests -->
+<?php if($m=="tdt" || $m=="qtdt"): ?>
+<tr>
+<td>
+<input type="hidden" name="ch_me" value=<?php echo $ch_me ?> >
+<input type="checkbox" <?php Check_Display($ch_); ?> 
+onclick=GrayOut(this,"ime","0.1","ch_me");GrayOut(this,"fme","0.1","ch_me")></td>
+<td><tt> --me </tt> </td>
+<td> <input type="text" class="normal" size="10"  name="ime" 
+<?php FlagDispCheck($ch_me, $ime, "0.1"); ?> > <br>
+ <input type="text" class="normal" size="10"  name="fme" 
+ <?php FlagDispCheck($ch_me, $fme, "0.1"); ?> > </td>
+<td> <b>Mendel error rate thresholds (per SNP, per family).</b> 
+SNPs that show in more than this proportion of informative transmissions 
+will be excluded; the second threshold more Mendel 
+error  departure from HWE with p-values less than this value 
+will be 
+excluded. 
+</td>
+</tr>
+<?php endif; ?>
+
+</table>
+
+<?php endif; ?>
+
+
+<?php if ($sel2=="yes"): ?>
+<h1>SNP Location filtering</h1>
+
+<div align=left style="width:80%;">
+<font size="-1"><em>These parameters are optional.  To change a value, 
+check the box on the right and enter a new value.  If no value is given, 
+the default will be used.</font>
+</em>  
+</div>
+
+<table class="narrow" border=0 cellpadding=3>
+<tr>
+<td class="row1">
+<input type="hidden" name="ch_chr" value=<?php echo $ch_chr ?> >
+<input type="checkbox" <?php Check_Display($ch_chr); ?> 
+onclick=GrayOut(this,"chr","","ch_chr")></td>
+<td class="row2"><tt> --chr </tt> </td>
+<td class="row3"> <input type="text" class="normal" size="10" name="chr" 
+<?php FlagDispCheck($ch_chr, $chr, "''"); ?> > </td>
+<td class="row4"> <b>Select chromosome.</b> Enter chromosome from which to pick SNPs.
+</td></tr>
+
+<tr>
+<td align=center> <b>OR</b> </td>
+</tr>
+
+<tr>
+<input type="hidden" name="ch_loc" value=<?php echo $ch_loc ?> >
+<td><input type="checkbox" <?php Check_Display($ch_loc); ?> 
+onclick=GrayOut(this,"from","","ch_loc");GrayOut(this,"to","","ch_loc")></td>
+<td>
+<tt> --from </tt><br /> 
+<tt> --to </tt>
+</td>
+<td> 
+<input type="text" class="normal" size="10"  name="from" <?php FlagDispCheck($ch_loc, $from, "''"); ?> ><br />
+<input type="text" class="normal" size="10"  name="to" <?php FlagDispCheck($ch_loc, $to, "''"); ?> > </td>
+<td> <b>Select range of SNPs</b> Enter two SNP IDs.  This selects the SNPs from the SNP ID
+ listed in --from to the SNP ID listed in --to.  Both SNP IDs must be on a single 
+ chromosome.</td>
+</tr>
+
+</table>
+<?php endif; ?>
+
+<!-- _____End SEL Parameter Section__________________________________________  -->
+
+
+
+
+
+<!-- _____Data Management Section____________________________________________ -->
+
+<!--m=recode, m=recode12, m=recodeAD and m=makebed require no special input.-->
+
+<?php if($m=="merge"): ?>
+<h1>Merge fileset parameters</h1>
+
+
+<table class="narrow" border=0 cellpadding=3>
+
+<tr>
+<td class="row1"></td>
+<td class="row2"> <tt> --merge </tt> </td>
+<td class="row3"> 
+<input type="text" class="normal" size="10" name="mergeped" <?php FlagDisp($mergeped, "''"); ?> > <br>
+<input type="text" class="normal" size="10" name="mergemap" <?php FlagDisp($mergemap, "''"); ?> > </td>
+<td class="row4"> <b>Full PED and MAP filenames.</b> Specify the new to-be-merged-in 
+fileset here; include any <tt>.ped</tt> and <tt>.map</tt> extensions. 
+</td> </tr>
+
+<tr>
+<td></td>
+<td> <tt> --merge -mode </tt> </td>
+<td>
+<?php if (!isset($mmode)) {$mmode="1";}?>
+<input type="radio" class="radio" name="mmode" value="1" <?php SetRadio($mmode,"1"); ?> > 1 <br>
+<input type="radio" class="radio" name="mmode" value="2" <?php SetRadio($mmode,"2"); ?> > 2 <br>
+<input type="radio" class="radio" name="mmode" value="3" <?php SetRadio($mmode,"3"); ?> > 3 <br>
+<input type="radio" class="radio" name="mmode" value="4" <?php SetRadio($mmode,"4"); ?> > 4 <br>
+<input type="radio" class="radio" name="mmode" value="5" <?php SetRadio($mmode,"5"); ?> > 5 <br>
+<input type="radio" class="radio" name="mmode" value="6" <?php SetRadio($mmode,"6"); ?> > 6 <br>
+<input type="radio" class="radio" name="mmode" value="7" <?php SetRadio($mmode,"7"); ?> > 7 <br>
+</td>
+<td><b>Merge mode.</b> This option specifies the behavior of the <tt>--merge</tt> 
+option, as described in the main documentation page. Briefly: 1) consensus (default);
+ 2) Only overwrite calls which are missing in original; 3) Only overwrite calls 
+which are not missing in new file; 4) Never overwrite; 5) Always overwrite; 6) Report 
+all matching calls (diff mode -- do not merge); 7) Report mismatching non-missing 
+calls (diff mode -- do not merge)
+</td>
+</tr>
+</table>
+
+<?php endif; ?>
+
+
+<?php if($m=="mmerge"): ?>
+<h1>Merge multiple filesets </h1>
+<table class="narrow" border=0 cellpadding=3>
+
+<tr>
+<td class="row1"></td>
+<td class="row2"> <tt> --merge-list </tt> </td>
+<td class="row3"> 
+<input type="text" class="normal" size="10" name="mmerge" <?php FlagDisp($mmerge, "''"); ?> > </td>
+<td class="row4"> <b>List of to-be-merged PED and MAP files.</b> Each line should 
+contain a pair of PED and MAP files, as described in the documentation.  These
+files will be merged into the input file listed above.
+</td> </tr>
+</table>
+
+<?php endif; ?>
+
+
+<?php if($m=="extract"): ?>
+<h1>List of SNPs to extract</h1>
+<table class="narrow" border=0 cellpadding=3>
+<tr>
+<td class="row1"></td>
+<td class="row2"> <tt> --extract </tt> </td>
+<td class="row3"> 
+<input type="text" class="normal" size="10"  name="extract" <?php FlagDisp($extract, "''"); ?> > </td>
+<td class="row4"> <b>Filename of list of SNPs to extract.</b> 
+This file should just contain a list of SNP IDs, one per line.
+</td> </tr>
+</table>
+<?php endif; ?>
+
+<?php if($m=="exclude"): ?>
+<h1>List of SNPs to exclude</h1>
+<table class="narrow" border=0 cellpadding=3>
+<tr>
+<td class="row1"></td>
+<td class="row2"> <tt> --exclude </tt> </td>
+<td class="row3"> 
+<input type="text" class="normal" size="10" name="exclude" <?php FlagDisp($exclude, "''"); ?> > </td>
+<td class="row4"> <b>Filename of list of SNPs to exclude.</b> 
+This file should just contain a list of SNP IDs, one per line.
+</td> </tr>
+</table>
+<?php endif; ?>
+
+<?php if($m=="keep"): ?>
+<h1>List of individuals to extract</h1>
+<table class="narrow" border=0 cellpadding=3>
+<tr>
+<td class="row1"></td>
+<td class="row2"> <tt> --keep </tt> </td>
+<td class="row3"> 
+<input type="text" class="normal" size="10" name="keep" <?php FlagDisp($keep, "''"); ?> > </td>
+<td class="row4"> <b>Filename of list of individuals to extract.</b> 
+This file should just contain a list with one individual per line, each line has two 
+columns: family ID and individual ID which should uniquely identify a person.
+</td> </tr>
+</table>
+<?php endif; ?>
+
+<?php if($m=="remove"): ?>
+<h1>List of individuals to exclude</h1>
+<table class="narrow" border=0 cellpadding=3>
+<tr>
+<td class="row1"></td>
+<td class="row2"> <tt> --remove </tt> </td>
+<td class="row3"> 
+<input type="text" class="normal" size="10" name="remove" <?php FlagDisp($remove, "''"); ?> > </td>
+<td class="row4"> <b>Filename of list of individuals to exclude.</b> 
+This file should just contain a list with one individual per line, each line has two 
+columns: family ID and individual ID which should uniquely identify a person.
+</td> </tr>
+</table>
+<?php endif; ?>
+
+
+<?php if($m=="flip"): ?>
+<h1>List of SNPs to flip strand</h1>
+<table class="narrow" border=0 cellpadding=3>
+<tr>
+<td class="row1"></td>
+<td class="row2"> <tt> --flip </tt> </td>
+<td class="row3"> 
+<input type="text" class="normal" size="10" name="flip" <?php FlagDisp($flip, "''"); ?> > </td>
+<td class="row4"> <b>Filename of list of SNPs to flip strand.</b> 
+This file should just contain a list of SNP IDs, one per line.
+</td> </tr>
+</table>
+<?php endif; ?>
+<!--_____End Data Management Section______________________________________________ -->
+
+<!--_____Summary Stats Section____________________________________________________ -->
+
+<!--m=missing, m=test_missing, m=freq, m=hardy, m=mendel require no special input -->
+
+
+<!--_____End Summary Stats Section________________________________________________ -->
+
+
+<!--_____Population Stratification Section________________________________________ -->
+
+<!-- m=inbreeding requires no special input -->
+
+<?php if($m=="cluster"): ?>
+
+<h1>IBS clustering parameters</h1>
+
+<table class="narrow" border=0 cellpadding=3>
+
+<tr>
+<td class="row1"></td>
+<td class="row2"> <tt> --pmerge </tt> </td>
+<td class="row3"> <input type="text" class="normal" size="10" name="pmerge" 
+<?php FlagDisp($pmerge, "''"); ?> > </td>
+<td class="row4"> <b>Pairwise population test threshold.</b> Do not pair individuals 
+in the clustering procedure who have a p-value more significant than this in the 
+binomial pairwise population test. These p-values are available for pairs by using
+the <tt>--genome</tt> option. 
+</td> </tr>
+
+<tr>
+<td align=center> <b>OR</b> </td>
+</tr>
+
+<tr>
+<td></td>
+<td><tt> --matrix </tt> </td>
+<td> 
+<input type="hidden" name="ch_matrix" value=<?php echo $ch_matrix; ?> >
+<input type="checkbox"  name="matrix" <?php Check_Display($ch_matrix); ?> 
+onClick=HidCheck(this,"ch_matrix") > </td>
+<td> <b>Output IBD distance matrix.</b> If 
+this box is checked, then the matrix of pairwise IBD distances will be generated, called
+<tt>*.mdist</tt>
+</td>
+</tr>
+</table>
+
+
+<h1>Case-control clustering</h1>
+
+<div align=left style="width:80%;">
+<font size="-1"><em>These parameters are optional.  To change 
+a value, check the box on the right and enter a new value.  
+If no value is given, the default will be used.</font>
+</em>  
+</div>
+
+<table class="narrow" border=0 cellpadding=3>
+
+<tr>
+<td class="row1"></td>
+<td class="row2"> <tt> --mcc </tt> </td>
+<td class="row3"> 
+<input type="text" class="normal" size="10" name="mcc1" <?php FlagDisp($mcc1, "''"); ?> >
+<input type="text" class="normal" size="10" name="mcc2" <?php FlagDisp($mcc2, "''"); ?> > 
+</td>
+<td class="row4"> <b>Maximum case/controls</b> The maximum number of cases and the 
+maximum number of controls per cluster. (Optional) 
+</td> </tr>
+
+<tr>
+<td align=center> <b>OR</b> </td>
+</tr>
+
+<tr>
+<td></td>
+<td> <tt> --mc </tt> </td>
+<td> 
+<input type="text" class="normal" size="10" name="mc" <?php FlagDisp($mc, "''"); ?> >
+</td>
+<td> <b>Maximum cluster size</b> The maximum number of individuals
+in each cluster. (Optional) 
+</td> </tr>
+
+<tr>
+<td></td>
+<td><tt> --cc </tt> </td>
+<td>
+<input type="hidden" name="ch_cc" value=<?php echo $ch_cc; ?> >
+<input type="checkbox"  name="cc" <?php Check_Display($ch_cc); ?> 
+onClick=HidCheck(this,"ch_cc") > </td>
+<td> <b>Case/control</b> Require at least one case and one control in each cluster. 
+(Optional)
+</td>
+</tr>
+
+</table>
+
+
+
+<?php if($p==2): ?>
+
+<h1>External matching criteria</h1>
+<table class="narrow" border=0 cellpadding=3>
+
+<tr>
+<td class="row1"></td>
+<td class="row2"> <tt> --match </tt> </td>
+<td class="row3"> <input type="text" class="normal" size="10" name="match" 
+<?php FlagDisp($match, "''"); ?> > </td>
+<td class="row4"> <b>File name of categorical matching file.</b> This file contains family 
+ID and individual ID as the first two columns: subsequent columns define whether two 
+individuals can be matched.
+</td> </tr>
+
+<tr>
+<td>
+<input type="hidden" name="ch_matchtype" value=<?php echo $ch_matchtype ?> >
+<input type="checkbox" <?php Check_Display($ch_matchtype); ?> 
+onclick=GrayOut(this,"matchtype","","ch_matchtype") ></td>
+<td> <tt> --match-type </tt> </td>
+<td> <input type="text" class="normal" size="10" name="matchtype" 
+<?php FlagDispCheck($ch_matchtype, $matchtype, "''"); ?>> </td>
+<td> <b>File name of categorical matching direction definition file.</b> This optional
+file contains a series of flags, one per categorical matching variable, that indicate whether
+the match should be positive (+ or 1) or negative (- or 0). That is, this determines whether we 
+allows only individuals with <em>similar</em> (positive) or <em>dissimilar</em> (negative) values
+for the categorical matching criterion. (Optional)
+</td> </tr>
+
+
+
+<tr>
+<td align=center> <b>OR</b> </td>
+</tr>
+
+<tr>
+<td></td>
+<td> <tt> --qmatch </tt> </td>
+<td> <input type="text" class="normal" size="10" name="qmatch" <?php FlagDisp($qmatch, "''"); ?> > </td>
+<td class="row4"> <b>File name of quantitative trait matching file.</b> This file contains 
+family ID and individual ID as the first two columns: subsequent columns define whether two 
+individuals can be matched.
+</td> </tr>
+
+<tr>
+<td></td>
+<td> <tt> --qt </tt> </td>
+<td> <input type="text" class="normal" size="10" name="qt" <?php FlagDisp($qt, "''"); ?> > </td>
+<td> <b>File name of quantitative trait thresholds.</b> The file specifies 
+the threshold for each quantitative matching criteria that defines a match or 
+mismatch. e.g. a value of 5 means that only individuals who differ by 5 or less units 
+on that criterion can be matched.
+</td> </tr>
+
+</table>
+
+<?php endif; ?>
+<?php endif; ?>
+
+<?php if($m=="genome"): ?>
+<h1>Pairwise genome-wide IBD comparisons</h1>
+<table class="narrow" border=0 cellpadding=3>
+<tr>
+<td class="row1"></td>
+<td class="row2"> <tt> --min </tt> </td>
+<td class="row3"> 
+<input type="text" class="normal" size="10" name="min" <?php FlagDisp($min, "0.01"); ?> > </td>
+<td class="row4"> <b>Minimum pi-hat to output pair.</b> The <tt>--genome</tt> option
+considers all pairs of individuals: with large samples this can generate
+very large files. To only output pairs that show IBD above a certain level, use this 
+option, i.e. 0.01 implies pairs that share 1% of their genome or more; pi-hat is
+P(IBD=2) + P(IBD=1)/2</td> </tr>
+</table>
+<?php endif; ?>
+
+
+<?php if($m=="homo-run-snps"): ?>
+<h1>Defining stretches of homozygosity</h1>
+<table class="narrow" border=0 cellpadding=3>
+<tr>
+<td class="row1"></td>
+<td class="row2"> <tt> --homo-run-snps </tt> </td>
+<td class="row3"> 
+<input type="text" class="normal" size="10" name="homo_run_snps" <?php FlagDisp($homo_run_snps, "100"); ?> > </td>
+<td class="row4"> <b>Number of consecutive SNPs required to define a homozygous 
+stretch.</b> Future implementations will allow for genotyping error to break
+homozygous stretches and allow for physical distance thresholds. 
+</td> </tr>
+</table>
+<?php endif; ?>
+
+<!--_____End of Population Stratification Section________________________________ -->
+
+
+<!--_____Linkage Disequilibrium Section__________________________________________ -->
+
+<?php if($m=="ld-r"): ?>
+<h1>Pairwise SNP/SNP linkage disequilibrium</h1>
+<table class="narrow" border=0 cellpadding=3>
+<tr>
+<td class="row1"></td>
+<td class="row2"> <tt> --r </tt> <br><tt> --r2 </tt ></td>
+<td class="row3"> 
+<?php if (!isset($ld)) {$ld="2";}?>
+<input type="radio" class="radio" name="ld" value=1 <?php SetRadio($ld,"1"); ?> > <br>
+<input type="radio" class="radio" name="ld" value=2 <?php SetRadio($ld,"2"); ?> > </td>
+<td class="row4"> <b>Measure of pairwise LD.</b> Specify either the basic correlation 
+coefficient (top button) or the squared coefficient (bottom button). Both measures are 
+calculated from the unphased genotype data. 
+</td> </tr>
+</table>
+<?php endif; ?>
+
+<!-- The Haplotype inference table only asks for --pp if $p=4 -->
+<?php if($m=="hap"): ?>
+<h1>Haplotype inference / multimarker predictors</h1>
+<table class="narrow" border=0 cellpadding=3>
+
+<tr>
+<td class="row1"></td>
+<td class="row2"> <tt> --hap </tt> </td>
+<td class="row3"> 
+<input type="text" class="normal" size="10" name="hap" <?php FlagDisp($hap, "''"); ?> > </td>
+<td class="row4"> <b>Filename of haplotype definition list.</b> This file, described in 
+the main documentation, contains the haplotypes to be inferred. </td> </tr>
+
+
+<?php if($p==4): ?>
+<tr> 
+<td class="row1"></td>
+<td class="row2"> <tt> --pp </tt> </td> 
+<td class="row3"> <input type="text" class="normal" size="10" name="pp" <?php FlagDisp($pp, "0.8"); ?> > </td> 
+<td class="row4"> <b>Posterior probability phase threshold.</b> 
+When imputing alleles based on the most likely haplotype, a missing call will be made if 
+the most likely phase is less likely than the threshold specified here. </td> </tr>
+<?php endif; ?>
+
+</table>
+<?php endif; ?>
+
+<!--_____End of Linkage Disequilibrium Section_____________________________________ -->
+
+
+
+<!--_____Association Analysis/Single SNP Section___________________________________ -->
+
+<!-- m=assoc, m=model, m=qt require no extra input (unless permution chosen) -->
+
+
+
+<?php if(($m=="assoc" || $m=="model" || $m=="qt" || $m=="within-file" || $m=="qt-within-file")&&($p==3)): ?>
+<h1>max(T) Permutation</h1>
+<table class="narrow" border=0 cellpadding=3>
+
+<tr>
+<td class="row1"></td>
+<td class="row2"><tt> --mperm </tt> </td>
+<td class="row3"> <input type="text" class="normal" size="10"  name="mperm" <?php FlagDisp($mperm, "''"); ?>> </td>
+<td class="row4"> <b>Number of Permutations</b> Number of permutations to run when in max(T) mode. </td>
+</tr>
+
+</table>
+<?php endif; ?>
+
+
+<?php if($m=="homog"): ?>
+<h1>Homogeneity of Odds Ratios Tests</h1>
+<table class="narrow" border=0 cellpadding=3>
+<tr>
+<td class="row1"></td>
+<td class="row2"%> 
+<tt> --bd</tt> <br>
+<tt> --homog </tt> 
+</td>
+<td class="row3"> 
+<?php if (!isset($homog)) {$homog="1";}?>
+<input type="radio" class="radio" name="homog" value=1 <?php SetRadio($homog, "1"); ?> > <br>
+<input type="radio" class="radio" name="homog" value=2 <?php SetRadio($homog, "2"); ?> > <br>
+<td class="row4"> <b>Select Odds Ratio Test</b> The <tt>--bd</tt> option selects a 
+"Breslow-Day" homogeneity of odds ratios test and the <tt>--homog</tt> option selects a 
+"Partitioning chi-square" homogeneity of odds ratios test.
+</td> </tr>
+
+</table>
+<?php endif; ?>
+
+
+
+<?php if($m=="within-file" || $m=="mh" || $m=="mh2" || $m=="homog" || $m=="qt-within-file"): ?>
+<h1>Clustering</h1>
+<table class="narrow" border=0 cellpadding=3>
+
+<tr>
+<td class="row1"></td>
+<td class="row2"> <tt> --within </tt> </td>
+<td class="row3"> 
+<input type="text" class="normal" size="10" name="within" <?php FlagDisp($within, "''"); ?>> </td>
+<td class="row4"> <b>Read cluster definitions from a file for stratified analyses.</b> 
+This file should contain three columns: family ID and individual ID followed by the 
+cluster code for that individual.
+</td> </tr>
+
+<tr>
+<td align=center> <b>OR</b> </td>
+</tr>
+
+<tr>
+<td></td>
+<td> <tt> --family </tt> </td>
+<td> 
+<input type="hidden" name="ch_family" value=<?php echo $ch_family; ?> >
+<input type="checkbox"  name="family" <?php Check_Display($ch_family); ?> 
+onClick=HidCheck(this,"ch_family") > </td>
+<td> <b>Cluster based on families.</b> This option uses family ID to define clusters, 
+as used in various stratified analyses and permutation procedures.
+</td> </tr>
+
+
+</table>
+<?php endif; ?>
+
+<?php if($m=="tdt"): ?>
+<h1>Family-based association (TDT)</h1>
+<table class="narrow" border=0 cellpadding=3>
+<tr>
+<td class="row1"></td>
+<td class="row2"> <tt> --tdt </tt> <br><tt> --parentdt1 </tt> 
+<br> <tt> --parentdt2 </tt> </td>
+<td class="row3"> 
+<?php if(!isset($tdt)) {$tdt="1";} ?>
+<input type="radio" class="radio" name="tdt" value=1 <?php SetRadio($tdt, "1"); ?> > <br>
+<input type="radio" class="radio" name="tdt" value=2 <?php SetRadio($tdt, "2"); ?> > <br>
+<input type="radio" class="radio" name="tdt" value=3 <?php SetRadio($tdt, "3"); ?> > </td>
+<td class="row4"> <b>TDT or parenTDT statistic to be used for permutation.</b> These 
+options specify which statistic is used to generate empirical p-values (reported in the 
+<tt>*.perm.tdt</tt> file: basic TDT, parental discordance test, combined TDT and 
+parental discordance test.
+</td> </tr>
+
+</table>
+<?php endif; ?>
+
+
+<?php if($m=="gxe"): ?>
+<h1>Covariate File</h1>
+
+<table class="narrow" border=0 cellpadding=3>
+
+<tr>
+<td class="row1"></td>
+<td class="row2"><tt> --covar </tt> </td>
+<td class="row3"> <input type="text" class="normal" size="10"  name="covar" <?php FlagDisp($covar, "''"); ?>> </td>
+<td class="row4"> <b>Covariate file name.</b> File containing three columns: family ID, 
+individual ID and covariate.
+</td></tr>
+
+<tr>
+<td align=center> <b>OR</b> </td>
+</tr>
+
+<tr>
+<td></td>
+<td><tt> --mcovar </tt> </td>
+<td> <input type="text" class="normal" size="10"  name="mcovar" <?php FlagDisp($mcovar, "''"); ?> > </td>
+<td> <b>Multiple covariate file name.</b> File containing at least three columns: family ID,
+individual ID and at least one covariate. </td>
+</tr>
+
+<tr>
+<td></td>
+<td> </td>
+<td> <input type="text" class="normal" size="10"  name="ncovar" <?php FlagDisp($ncovar, "''"); ?> > </td>
+<td> <b>Covariate column.</b> Select the nth covariate. </td>
+</tr>
+
+</table>
+<?php endif; ?>
+
+
+<!--_____End of Association Analysis/Single SNP Section____________________________ -->
+
+
+
+<!--_____Association Analysis/Epistatic Analysis Section___________________________ -->
+
+<?php if($m=="epi"): ?>
+<h1>SNP x SNP epistasis</h1>
+<table class="narrow" border=0 cellpadding=3>
+
+<tr>
+<td class="row1"></td>
+<td class="row2"> <tt> --epi1 </tt> </td>
+<td class="row3"> 
+<input type="text" class="normal" size="10" name="epi1" <?php FlagDisp($epi1, "0.0001"); ?>> </td>
+<td class="row4"> <b>Threshold (p-value) for reporting a result</b> Testing all pairs of
+SNPs for epistasis can generate very large output files if there are very many SNPs: 
+this option is used to only output tests (to the <tt>*.epi-cc1</tt> or 
+<tt>*.epi-co1</tt> files) that are significant at the specified level.
+</td> </tr>
+
+<tr>
+<td></td>
+<td> <tt> --epi2 </tt> </td>
+<td> 
+<input type="text" class="normal" size="10" name="epi2" <?php FlagDisp($epi2, "0.001"); ?>> </td>
+<td> <b>Threshold (p-value) for summarising results</b> For the the 
+<tt>*.epi-co2</tt> and <tt>*.epi-cc2</tt> files, this option defines a significant 
+epistatic result. 
+</td> </tr>
+
+<tr>
+<td></td>
+<td> <tt> [[?]] </tt> </td>
+<td>
+<?php if (!isset($epi)) {$epi="1";}?> 
+<input type="radio" class="radio" name="epi" value=1 <?php SetRadio($epi, "1"); ?> > <em>N by N</em> <br>
+<input type="radio" class="radio" name="epi" value=2 <?php SetRadio($epi, "2"); ?> > <em> S by S</em> <br>
+<input type="radio" class="radio" name="epi" value=3 <?php SetRadio($epi, "3"); ?> > <em> S by N</em> <br>
+<input type="radio" class="radio" name="epi" value=4 <?php SetRadio($epi, "4"); ?> > <em> S1 by S2</em> </td>
+<td> <b>Mode for epistatic SNP x SNP tests.</b> If there are <em>N</em> SNPs 
+in total; an optional set file may either contain 1 or 2 sets. This option determine 
+whether and how sets are used to select epistatic tests. The first option does not 
+require any sets; the second and third option require a set file with a single set; the 
+fourth option requires a set file with exactly two sets.</td> </tr>
+
+<tr>
+<td></td>
+<td> <tt> --set </tt> </td>
+<td> 
+<input type="text" class="normal" size="10" name="set" <?php FlagDisp($set, "''"); ?> > </td>
+<td> <b>Set filename to define epistatic tests</b> If you are using sets 
+to define which pairs of SNPs to test for epistasis, specify the filename here, 
+otherwise this can be left blank. See the main documentation for details.
+</td> </tr>
+
+</table>
+<?php endif; ?>
+
+
+
+<?php if($m=="genepi"): ?>
+<h1>Gene-based epistasis</h1>
+<tr>
+<td class="row1"></td>
+<td class="row2"> <tt> --perm </tt> </td>
+<td class="row3"> <input type="text" class="normal" size="10" name="perm" <?php FlagDisp($perm, "1000"); ?> > </td>
+<td class="row4"> <b>Number of permutations to perform.</b> Currently, the 
+gene-based test relies on permutation to generate empirical significance levels. This 
+test is computationally intensive -- it might not be feasible to test a large number 
+of genes with a large number of permutations. Future versions will adopt a more 
+efficient gene-based testing procedure.
+</td> </tr>
+
+</table>
+<?php endif; ?>
+
+<?php if(($m=="t2" || $m=="sumstat")&&($p==3)): ?>
+<h1>max(T) Permutation</h1>
+<table class="narrow" border=0 cellpadding=3>
+
+<tr>
+<td class="row1"></td>
+<td class="row2"><tt> --mperm </tt> </td>
+<td class="row3"> <input type="text" class="normal" size="10"  name="mperm" <?php FlagDisp($mperm, "''"); ?>> </td>
+<td class="row4"> <b>Number of Permutations</b> Number of permutations to run when in max(T) mode. </td>
+</tr>
+
+</table>
+<?php endif; ?>
+
+<?php if($m=="genepi" || $m=="t2" || $m=="sumstat"): ?>
+<h1>Set-based Test</h1>
+<table class="narrow" border=0 cellpadding=3>
+
+<tr>
+<td class="row1"></td>
+<td class="row2"> <tt> --set </tt> </td>
+<td class="row3"> 
+<input type="text" class="normal" size="10" name="set" <?php FlagDisp($set, "''"); ?> > </td>
+<td class="row4"> <b>Set file</b> You must 
+specify a set file with at least two sets. See the main documentation for details.
+</td> </tr>
+
+</table>
+<?php endif; ?>
+
+<!--_____End of Association Analysis/Epistatic Analysis Section____________________ -->
+
+
+
+</p>&nbsp;</p>
+
+<div align=right style="width:87%;">
+<input type="submit" class="button" value="Create PLINK command line">
+<input type="button" class="button" value="Restart" OnClick="window.location = 'pom1.php'">
+
+
+</div>
+
+</form>
+
+
+<div align=right style="width:87%;">
+<a href="pom1.php">Start over on page 1</a>
+</div>
+
+<div align=right style="width:87%;">
+<a href="pom1b.php">Choose a new test on page 2</a>
+</div>
+
+
+<!-- _______________________________ EXAMPLE FORM: ___________________________________________ -->
+
+<!-- REMOVE TO SEE FORM
+<h1>Example Form Elements</h1>
+
+<form action="pom2.php" method="GET">
+
+<table class="narrow" border=0 cellpadding=3>
+REMOVE TO SEE FORM -->
+
+<!-- __________ Normal Flag _________________________ -->
+<!-- REMOVE TO SEE FORM
+<tr>
+<td class="row1"></td>
+<td class="row2"> <tt> --regFlag </tt> </td>
+<td class="row3"> 
+<input type="text" class="normal" size="10" name="regFlag" <?php FlagDisp($regFlag, "Default"); ?> > </td>
+<td class="row4"> <b>Normal Flag.</b> Use this format for a normal flag (one without a checkbox to
+select it.)  A user can always enter a value for this sort of flag, though it may result in an error
+message later.
+</td> </tr>
+REMOVE TO SEE FORM -->
+<!-- __________ Optional Flag _________________________ -->
+
+<!-- REMOVE TO SEE FORM
+<tr>
+<td class="row1">
+<input type="hidden" name="ch_optFlag" value=<?php echo $ch_optFlag ?> >
+<input type="checkbox" <?php Check_Display($ch_optFlag); ?> 
+onclick=GrayOut(this,"optFlag","Default","ch_optFlag") ></td>
+<td class="row2"> <tt> --optFlag </tt> </td>
+<td class="row3"> <input type="text" class="normal" size="10" name="optFlag" 
+<?php FlagDispCheck($ch_optFlag, $optFlag, "Default"); ?>> </td>
+<td class="row4"> <b>Optional Flag.</b> Use this format for an optional flag.  
+These flags are off by default, but can be selected by checking the box to 
+the left.  Once selected, a user can enter a value.
+</td> </tr>
+REMOVE TO SEE FORM -->
+
+<!-- __________ Radio Button __________________________ -->
+
+<!-- REMOVE TO SEE FORM
+<tr>
+<td class="row1"></td>
+<td class="row2"> <tt> --radioFlag </tt> </td>
+<td class="row3"> 
+<?php if (!isset($radioFlag)) {$radioFlag="2";}?>
+<input type="radio" class="radio" name="radioFlag" value=1 <?php SetRadio($radioFlag,"1"); ?> > Button 1 <br>
+<input type="radio" class="radio" name="radioFlag" value=2 <?php SetRadio($radioFlag,"2"); ?> > Button 2 </td>
+<td class="row4"> <b>Radio Button Flag</b> Use this format when you want exactly one option
+and have several choices.  The default choice is set in the line just before the buttons.
+</td> </tr>
+REMOVE TO SEE FORM -->
+
+<!-- __________ Checkbox ______________________________ -->
+<!-- Use the ch_checkFlag variable, which stores "yes", "no" or "", depending on 
+if the checkbox is checked, unchecked, or never been checked.  The checkFlag 
+variable is *not* accurate.-->
+<!-- REMOVE TO SEE FORM
+<td></td>
+<td><tt> --checkFlag </tt> </td>
+<td> 
+<input type="hidden" name="ch_checkFlag" value=<?php echo $ch_checkFlag; ?> >
+<input type="checkbox"  name="checkFlag" <?php Check_Display($ch_checkFlag); ?> 
+onClick=HidCheck(this,"ch_checkFlag") > </td>
+<td> <b>Checkbox flag.</b> Use this format for yes/no or on/off questions.  
+NOTE: the actual values is stored in ch_checkFlag, *not* checkFlag. </td>
+</tr>
+
+</table>
+
+<input type="submit" value="Test Form">
+</form>
+REMOVE TO SEE FORM -->
+</body>
+
+</html>
+

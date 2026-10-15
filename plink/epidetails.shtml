@@ -1,0 +1,142 @@
+<html>
+<title>PLINK</title>
+<body>
+
+<head>
+<link rel="stylesheet" href="plink.css" type="text/css">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<title>PLINK: Whole genome data analysis toolset</title>
+</head>
+
+<!--#include file="start.html"-->
+
+
+<h1>Epistasis testing</h1>
+
+This page contains extra details on the test for epistasis implemented
+in the <tt>--fast-epistasis</tt> command, designed for the detection
+of SNPxSNP pairwise interactions in large-scale case-control
+association studies.
+
+</p>
+
+This test is based on a Z-score for the difference in SNP-SNP
+assocation (odds ratio) between cases and controls (or in cases only,
+in a case-only analysis).
+</p>
+
+We follow the procedure for constructing an allelic test of a
+single locus, twice collapsing three genotype categories into two
+allele categories. Specifically, we count the 4N independent alleles
+observed at two loci in a sample of N individuals into a 2x2 table,
+following the logic below, so the allele (not the individual or
+haplotype) is the unit of analysis.
+
+<pre>
+         BB Bb  bb       
+     AA  a  b  c        
+     Aa  d  e  f        
+     aa  g  h  i
+</pre>
+We first count alleles at one locus, e.g. B, conditional on the genotype at A, which can be represented as a 3x2 table:
+<pre>
+         B     b
+     AA  2a+b  2c+b
+     Aa  2d+e  2f+e
+     aa  2g+h  2i+h
+</pre>
+which represents 2N alleles, not N individuals. We again collapse this
+3x2 table into a 2x2 table, as follows
+<pre>
+        B            b	   
+     A  4a+2b+2d+e   4c+2b+2f+e
+     a  4g+2h+2d+e   4i+2h+2f+e
+</pre>
+
+Based on this 2x2 table, the odds ratio between loci A and B and its
+standard error are calculated in the standard manner. When cases and
+controls are present, the above procedure is performed separately in
+cases and controls, and the test for epistasis is the difference of
+the two odds ratios:
+<pre>
+   Z = ( log(R) - log(S) )  / sqrt( SE(R) + SE(S) ) 
+</pre>
+where <tt>R</tt> and <tt>S</tt> are the odds ratios in cases and
+controls respectively, estimated as <tt>ab/cd</tt> with
+variance <tt>1/a+1/b+1/c+1/d</tt> and <tt>a,b,c,d</tt> are the four
+cells of the 2x2 table above. This test follows a standard normal distribution
+under the multiplicative model of no interaction.
+</p>
+
+Note that, despite superficial similarity to a table of 2N haplotypes
+(<tt>AB</tt>, <tt>Ab</tt>, <tt>aB</tt> and <tt>ab</tt>), this table
+ignores phase, i.e. we are not attempting to resolve phase
+for <tt>Aa/Bb</tt> individuals. Rather, given 4N independent alleles
+(assuming Hardy-Weinberg and linkage equilibrium for the two test
+loci), these 4N observations are simply counted following the scheme
+given above, that partitions the 4N counts into a 2x2 table. Whilst an
+inexact heuristic, we observe appropriate type I error rates in
+simulation (see below) and equivalent power to the logistic regression
+test. The correlation with a logistic regression analysis is very high
+(r = 0.995, based on -log10 P-value).
+</p>
+
+This table shows the type-I error of the case-control epistasis
+test. We considered three models that included no interaction between
+two unlinked SNPs and no marginal SNP effect (model 1) or a strong
+effect for one (model 2) or both SNPs (model 3). Type-I error is based
+on the analysis of 100,000 simulated datasets (disease prevalence =
+0.01, minor allele frequency = 0.1 for both loci).
+
+<pre>
+   Model   Marginal SNP effects        Nominal alpha 
+              (Odds Ratio)   
+           SNP A       SNP B           0.05    0.0005
+
+   1       1.0         1.0             0.04750 0.00030
+   2       1.0         1.4             0.04941 0.00030
+   3       1.4         1.4             0.04817 0.00048
+</pre>
+
+The power to detect a large interaction effect (GRR = 2) and no
+marginal single SNP effects was 0.74 (a = 1.2e-12; disease prevalence
+= 0.01, MAF = 0.1 for both loci).  Power for other two-locus models
+can be estimated using the power calculator available through the
+genetic power calculator,
+<a href="http://zzz.bwh.harvard.edu/gpc/">GPC</a>.
+
+Our procedure assumes Hardy-Weinberg and linkage equilibrium for the
+two SNPs hold in the population. However, simulation studies have
+shown the case/control test to be very robust to deviations from the
+linkage equilibrium assumption, whereas a case-only test is not (data
+not shown). Analogous to adopting an allelic single locus test, we
+also assume an allelic mode of gene action where any interaction term
+represents an allele-by-allele effect, not a genotype-by-genotype
+effect.
+
+</p>
+
+<strong>HINT</strong> If you use this to screen a large number of
+SNPs, you should probably report the more standard logistic regression
+test value also.  In practice, both approaches usually give similar
+results, which justifies the use of <tt>--fast-epistasis</tt> as a
+screening tool for a computationally-demanding problem. Of course,
+given a specific (and often extreme) threshold, <tt>--epi1</tt>, the
+exact above-threshold list of SNPs will not always be the same; if you
+choose to use this approach, it is probably wise to apply it to select
+a subset of pairs of SNPs below a reasonably liberal <tt>--epi1</tt>
+threshold to be tested with the more standard <tt>--epistasis</tt>
+command.
+
+<!--#include file="end.html"-->
+
+<em>
+ This document last modified <!--#flastmod file="epidetails.shtml" -->
+</em>
+
+</body>
+
+<HEAD>
+<META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
+</HEAD>
+</html>

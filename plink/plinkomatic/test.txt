@@ -1,0 +1,16 @@
+<parent>
+
+<greeting>
+<name>Another option</name>
+<item>First B item</item>
+<item>Second B item</item>
+</greeting>
+
+<greeting>
+<name>Another option</name>
+<item>First B item</item>
+<item>Second B item</item>
+</greeting>
+
+</parent>
+

@@ -1,0 +1,172 @@
+<html>
+<body>
+
+<head>
+<link rel="stylesheet" href="plink.css" type="text/css">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<title>PLINK: Whole genome data analysis toolset</title>
+</head>
+
+<!--#include file="start.html"-->
+
+
+<blockquote>Epistasis</blockquote>
+
+For the disease-trait population-based samples, it is possible to test
+for epistasis. The epistasis test can either be case-only or
+case-control. Either all pairwise combinations of SNPs can be tested
+(although this is most likely not desirable, it is computationally
+feasible using PLINK -- the 4.5 billion two-locus tests generated from
+a 100K data set took just over 24 hours to run) or sets can be
+specified (e.g. to test only the most significant 100 SNPs against all
+other SNPs, or against themselves, etc). The output consists only
+pairwise epistatic results above a certain significance value; also,
+for each SNP, a summary of all the pairwise epistatic tests is given
+(e.g.  maximum test, proportion of tests significant at a certain
+threshold, etc). A similar methodology allows for testing of
+gene-environment interaction (for dichotomous environmental
+variables). </p>
+
+<hr>
+
+<strong>SNP x SNP epistasis</strong>
+</p>
+
+To test SNP x SNP epistasis, the command
+</p><kbd>
+	plink --file mydaya --epistasis 
+</kbd></p>
+will send output to the files
+<pre>
+     plink.epi-cc1
+     plink.epi-cc2
+</pre>
+where <tt>cc</tt> = case-control.  
+</p>
+There are different modes for specifying which SNPs are tested:
+<pre>ALL x ALL</pre> 
+</p><kbd>
+	plink --file mydata --epistasis
+</kbd></p>
+<pre>SET1 x SET1 <em> { where epi.set contains only 1 set }</em></pre>
+</p><kbd>
+	plink --file mydata --epistasis --set epi.set
+</kbd></p>
+<pre>SET1 x ALL <em> { where epi.set contains only 1 set } </em></pre>
+</p><kbd>
+	plink --file mydata --epistasis --set epi.set --set-by-all
+</kbd></p>
+<pre>SET1 x SET2 <em> { where epi.set contains 2 sets } </em> </pre>
+</p><kbd>
+	plink --file mydata --epistasis --set epi.set
+</kbd></p>
+
+For the 'symmetrical' cases (ALLxALL and SET1xSET1) then only unique pairs 
+are analysed. </p>
+
+For the other two cases (SET1xALL, SET1xSET2) then all pairs are
+analysed (e.g. will perform SNPA x SNPB as well as SNPB x SNPA, if A
+and B are in both SET1 and SET2). It will not try to analysis SNPA x
+SNPA however.</p>
+
+The output can be controlled via 
+</p><kbd>
+	plink --file mydata --epistasis --epi1 0.0001
+</kbd></p>
+
+which means only record results that are significant p<=0.0001. (This
+prevents too much output from being generated). The output is in the form 
+
+<pre>
+     Col 1 : SNP 1
+     Col 2 : SNP 2
+     Col 3 : Interaction odds ratio 
+     Col 4 : z-score
+     Col 5 : p-value
+</pre>
+
+The z-score is a test for difference in SNP1-SNP2 assocation (odds
+ratio) between cases and controls (or in cases only). 
+
+</p>A second part of the output: for each SNP in SET1, or in ALL if no
+sets were specified, is information about the number of significant
+epistatic tests that SNP featured in (i.e. either with ALL other SNPs,
+with SET1, or with SET2).  The threshold <tt>--epi2</tt> determines this: 
+
+</p><kbd>
+	plink --file mydata --epistasis --epi1 0.0001 --epi2 0.05
+</kbd></p>
+
+The output is 
+<pre>
+     Col 1 : Chromosome
+     Col 2 : SNP
+     Col 3 : # significant epistatic tests (p <= "--epi2" threshold)
+     Col 4 : # of valid tests (i.e. non-zero allele counts, etc)
+     Col 5 : proportion significant of valid tests
+</pre>
+
+This will give a rough idea about the extent of epistasis and which
+SNPs seem to be interacting (although, of course, this is a naive
+statistic as we do not take LD into account -- i.e. Col 3 does not
+represent the number of *independent* epistatic results). </p>
+
+
+</p><hr>
+<strong>Case-only epistasis</strong>
+</p>
+
+For case-only epistatic analysis, 
+</p><kbd>
+	plink --file mydata --epistasis --case-only
+</kbd></p>
+sends output to (<tt>co</tt> = case-only)
+<pre>
+     plink.epi-co1
+     plink.epi-co2
+</pre>
+
+All other options are as described above.</p>
+
+<warn>Take note!</warn> Currently, in case-only analysis, all pairs of
+SNPs will be tested (i.e. regardless of whether they are near each
+other on the chromosome -- we probably want an option to just
+automatically skip SNPs that are too close, in terms of physical
+distance).
+
+</p><hr>
+<strong>Gene-based tests</strong>
+</p>
+
+A gene-based test is available: this is performed using the
+statistical package R. The following command will automatically
+generate the script and data file required for the R analysis; if
+possible, it will also directly call <tt>R</tt> and start the analysis
+also.</p> The <tt>--genepi</tt> command initiates this analysis. It is
+always necessary to specify a set-file (<tt>--set
+<em>filename</em></tt>) which contains at least two sets
+(i.e. specifying the SNPs in two or more genes; the analysis is
+pairwise between pairs of genes, not pairs of SNPs).
+
+</p><kbd>
+	plink --file mydata --genepi --R --set gene.set
+</kbd></p>
+
+sends output to 
+<pre>
+     plink.genepi-
+     plink.epi-co2
+</pre>
+
+
+
+
+<!--#include file="end.html"-->
+
+<em>
+ This document last modified <!--#flastmod file="epi.shtml" -->
+</em>
+
+
+</body>
+</html>

@@ -1,0 +1,367 @@
+<html>
+<title>PLINK</title>
+<body>
+
+<head>
+<link rel="stylesheet" href="plink.css" type="text/css">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<title>PLINK: Whole genome data analysis toolset</title>
+</head>
+
+<!--#include file="start.html"-->
+
+
+<h1>Proxy association</h1>
+
+This page describes a convenience function designed to provide a quick
+representation of a single SNP association, in terms of the surrounding 
+haplotypic background. Specifically, given a particular (reference) SNP this 
+approach involves a) finding flanking markers and haplotypes (proxies) 
+that are in strong linkage disequilibrium with the reference SNP, and b) 
+testing these proxies for association with disease, within a haplotype-based
+framework.
+</p>
+There are three main applications of this utility, which are described in more detail and with 
+examples in the main text below:
+<ul>
+
+ <li> technical validation of single SNP results ( by looking for flanking haplotypes involving 
+different markers that also show the same result )
+
+ <li> refining a single SNP association signal ( is there a stronger association with a local haplotype? )
+
+ <li> more robust single SNP tests ( by framing single SNP tests within a haplotypic framework, 
+  some degree of control against non-random genotyping failure can be achieved )
+
+</ul>
+
+
+
+<a name="ld"></a>
+<h2>Proxy association: basic usage</h2>
+</p>
+
+The basic command for a proxy association report for a particular SNP, e.g. <tt>rs6703905</tt>, is
+<p><h5>
+ plink --file mydata --proxy-assoc rs10003
+</h5></p>
+which generates the file
+<pre>
+     plink.proxy.report
+</pre>
+This file contains three main sections:
+<ul>
+ <li> Report of all SNPs in local region (reference and flanking SNPs)
+ <li> Report of haplotypes in local region
+ <li> Report of proxies to reference SNP
+</ul>
+
+For example, this is an example of a proxy association report for this SNP. We will step 
+through each part of this output in detail below.
+
+<pre>
+     *** Proxy haplotype association report for rs6703905 ***
+
+         SNP      MAF     GENO       KB      RSQ       OR    CHISQ        P
+    rs676913    0.333  0.00288    -19.2   0.0412     1.01   0.0347    0.852
+    rs598816     0.31  0.00346    -14.6    0.011    0.951    0.904    0.342
+    rs607131     0.27   0.0222   -0.505  0.00964    0.984   0.0912    0.763
+   rs6703905   0.0255        0        0        *     1.88     14.3 0.000154
+    rs535351    0.245        0     69.8   0.0584    0.983    0.095    0.758
+  rs11587221     0.43 0.000577     73.2   0.0282     1.04     0.71      0.4
+  rs10922605    0.289        0      102 0.000535     1.03    0.393    0.531
+
+
+       ...*...       FREQ         OR      CHISQ          P
+       TGTCGGC      0.034      0.924      0.342      0.559
+       TGTCAGC     0.0575      0.975     0.0579       0.81
+       CACCAAC     0.0736      0.938      0.464      0.496
+       CATCAAC     0.0107       1.32       1.42      0.233
+       TGTCAAC     0.0871      0.971       0.12       0.73
+       CGTTGGT     0.0166      0.605       6.25     0.0124
+       CACCGGT     0.0403       1.15       1.28      0.259
+       TGTCGGT      0.136       1.08       1.28      0.257
+       TGTCAGT      0.105      0.886       2.27      0.132
+       CACCAAT      0.133      0.995    0.00556      0.941
+       CATCAAT     0.0196       1.25       1.65      0.199
+       TGTCAAT      0.244       1.05      0.603      0.437
+
+Haplotype frequency estimation based on 3469 of 3469 founders
+Omnibus haplotype test statistic: 14.9, df = 11, p = 0.188
+
+           HAP       FREQ        RSQ         OR      CHISQ          P
+       CGT ...     0.0233      0.913      0.537       12.9   0.000334
+       CG. ...     0.0235      0.907      0.549       12.1   0.000494
+       CG. G..     0.0217      0.845      0.547       11.3   0.000764
+       CG. .G.     0.0221       0.85      0.553       11.2   0.000832
+       C.T .G.     0.0335      0.564      0.673        7.9    0.00493
+       CG. ..T     0.0181      0.706      0.595       7.23    0.00718
+       C.T G..     0.0266      0.685      0.658       7.01    0.00809
+</pre>
+
+The basic <tt>-proxy-assoc</tt> command selects 3 SNPs either side of the reference SNP. 
+The 6 SNPs and the central reference SNP are listed in the first section. For each SNP, the 
+minor allele frequency (MAF), rate of genotyping failure (GENO), the kilobase distance to the 
+reference SNP (KB) and r-squared to the reference SNP (RSQ) are shown (i.e. note there is always 
+a <tt>*</tt> character here for the reference SNP). Then the single SNP association results are
+given for each SNP: the odds ratio (OR), chi-squared statistic (CHISQ) and asymptotic p-value (P).
+
+</p><strong>Important!</strong>  These single SNP association tests are different to those given by 
+the standard <tt>--assoc</tt> command, as they are based in a haplotypic context. For example, the test 
+of the 3rd SNP would be formed by grouping all haplotypes with <tt>T</tt> at the 3rd position versus all
+haplotypes with <tt>C</tt> at the 3rd position:
+<pre>
+     TG<b>T</b>CGGC  
+     TG<b>T</b>CAGC   
+     CA<b>T</b>CAAC 
+     TG<b>T</b>CAAC   
+     CG<b>T</b>TGGT 
+     TG<b>T</b>CGGT
+     TG<b>T</b>CAGT
+     CA<b>T</b>CAAT
+     TG<b>T</b>CAAT
+
+      <em>versus</em>
+
+     CAC<b>C</b>AAC
+     CAC<b>C</b>GGT
+     CAC<b>C</b>AAT 
+</pre>
+
+(In practice, rarer haplotypes which might not be listed in the main report would also be considered). The test is the 
+same as used by the <tt>--hap-assoc</tt> command: i.e. it is based on the posterior probabilities of haplotype phase 
+given genotype data for each individual, possibily counting fractional haplotypes if phase is ambiguous. Importantly, 
+the E-M algorithm will fill in missing genotype data: the effect of this property with respect to non-random missing
+genotype data is described below.
+</p>
+
+In this example, we see that the reference SNP is highly associated, but that no nearby SNPs show any association. 
+Looking at the RSQ column for each SNP, this is not surprising, as none of these 6 SNPs show strong LD with the proxy.
+Nonetheless, it is possible to look for haplotypes formed by these 6 flanking SNPs that might have high LD with the 
+reference SNP, and ask whether or not these show association with disease.  The next section lists the common 
+haplotypes in this region, phasing all 7 SNPs.  The standard haplotype-specific association results are given next to 
+each haplotype: in this case, no single haplotype is particularly strongly associated with disease.
+
+</p>
+The final section represents the main part of the proxy association method: it represents the results of a systematic 
+search for SNPs or haplotypes in strong LD with the proxy SNP, and lists the association results for each, sorted by 
+strength of association. In this particular case, we see that although no single SNP reflected the association of the 
+reference SNP, there are subhaplotypes that are associated with disease at a similar level of magnitude to the 
+reference SNP. The first row shows the <tt>CGT</tt> haplotype of the first 3 SNPs is in very strong LD with the 
+reference SNP (r-squared of 0.913) and shows a similar magnitude of association:
+ <pre>
+           HAP       FREQ        RSQ         OR      CHISQ          P
+       CGT ...     0.0233      0.913      0.537       12.9   0.000334
+</pre>
+That the same signal is seen more than once (i.e. not just by a single SNP) might be taken to suggest that the 
+association (which might still be due to chance, population stratification, etc) is at least not due to some technical 
+artefact with the genotyping of that one SNP, as the same signal is seen elsewhere.
+
+</p>
+There are a number of parameters that change the specific behavior of the proxy association report, listed here:
+<pre>
+     
+
+</p>
+
+
+</p><strong>Note</strong> A version of <tt>--proxy-tdt</tt> will be 
+implemented in the next release of PLINK -- currently there is only 
+support for basic case/control association tests (i.e. analogous to the
+<tt>--assoc</tt> command). </p>
+
+It is possible to specify how many SNPs are selected, or for specific SNPs to be selected around a particular reference 
+SNP; it is also possible to impose different genotyping and frequency thresholds for proxy SNPs, to change the 
+r-squared threshold for 'strong LD', to change the minor haplotype frequency considered for a proxy haplotype, to 
+specify a kb limit to the flanking region and to change the search over subhaplotypes.
+</p>
+
+By default, 3 SNPs are selected either side, that are above 0.05 MAF and less than 0.05 genotyping failure (in 
+otherwords, we try to look for high genotyping, common SNPs to form proxies with, as lower frequency, low genotyping 
+SNPs are more likely to be biased). By default, the flanking SNPs must be within 250kb of the reference SNP. Haplotypes 
+above 0.01 minor haplotype frequenc
+</p>
+To select a different number of 
+<h5>
+--proxy-window 6
+</h5></p>
+
+--proxy-flanking
+--proxy-maxsnp
+
+--proxy-geno
+--proxy-maf
+--proxy-kb
+
+--proxy-mhf
+--proxy-r2
+
+
+</p><strong>HINT</strong> To speed up the proxy report, you need only load in 
+the relevant chromosomal region: that is, use the <tt>--snp</tt> and <tt>--window</tt> options:
+
+<h5>
+ plink --bfile mydata --proxy-assoc rs12345 --snp rs12345 --window 300 
+</h5></p>
+
+<h2>Proxy-based single SNP association</h2>
+
+
+--proxy-list
+--proxy-assoc all
+--proxy-verbose
+
+
+<h2>Providing some degree of robustness to non-random genotyping failure</h2>
+
+Obviously, the assumption here is that most SNPs do not show strong 
+levels of this kind of non-random genotyping failure, such that the 
+flanking SNPs can be assumed to be valid.
+
+Most SNPs do not show bias, but the few that do might have quite severe bias;
+Relatively rare, can be 
+severe
+
+</pre>
+     AABAB 0.4
+     AABBA 0.2
+     ABBBA 0.2
+     BBBBB 0.1
+     AAABB 0.1
+</pre>
+
+In cases only, the <tt>BB</tt> genotype of <tt>rs10003</tt> only has a 
+genotyping rate of 0.5. The pattern of genotyping failure, which is non-random 
+with respect to both phenotype and genotype, can tend to produce spurious association
+results. 
+
+<pre>
+     CHR  SNP   A1      F_A      F_U   A2        CHISQ            P           OR
+       1 snp1    B    0.102    0.106    A      0.08585       0.7695        0.958
+       1 snp2    B    0.297     0.31    A       0.3997       0.5272       0.9403
+       1 snp3    A   0.1812    0.118    B        12.02    0.0005271        1.654   <---
+       1 snp4    A    0.406    0.383    B        1.107       0.2927        1.101
+       1 snp5    A    0.388    0.393    B      0.05252       0.8187       0.9792
+</pre>
+
+<pre>
+
+     *** Proxy haplotype association report for snp3 ***
+
+ SNP      MAF     GENO       KB      RSQ       OR    CHISQ        P
+snp1    0.104        0   -0.002   0.0145     1.04   0.0859     0.77
+snp2    0.303        0   -0.001   0.0544     1.06      0.4    0.527
+snp3    0.141    0.213        0        *     1.15    0.993    0.319
+snp4    0.394        0    0.001   0.0813    0.908     1.11    0.293
+snp5     0.39        0    0.002     0.08     1.02   0.0525    0.819
+
+
+         ..*..       FREQ         OR      CHISQ          P
+         ABBBA      0.199      0.945      0.254      0.615
+         AABBA      0.191       1.03     0.0518       0.82
+         AABAB      0.394        1.1       1.11      0.293
+         AAABB      0.111      0.868      0.993      0.319
+         BBBBB      0.104      0.958     0.0859       0.77
+
+Haplotype frequency estimation based on 1000 of 1000 founders
+Omnibus haplotype test statistic: 1.88, df = 4, p = 0.759
+
+           HAP       FREQ        RSQ         OR      CHISQ          P
+         A. BB      0.111          1      0.868      0.993      0.319
+</pre>
+
+
+
+with the matrix of r or r^2 values in it. 
+
+</p>
+It is possible to add the <tt>--matrix</tt> option, which creates 
+a matrix of LD values rather than a list.
+</p>
+
+
+</p><strong>TODO</strong> Describe this file; add ability to restrict 
+LD scan (default behavior is to automatically attempt to calculate LD
+between all pairs of SNPs).
+
+<a name="misc2"></a>
+<h2>IBS sharing association tests</h2>
+</p>
+
+These tests are currently being implemented and are not ready for
+general use.
+
+<h5>
+plink --file mydata --sharing
+</h5></p>
+
+
+<a name="todo"></a>
+<h2>Feature to be implemented</h2>
+</p>
+
+</p><strong>TODO</strong> Display heterozygosity and genotype 
+frequencies in the .frq file.
+ 
+
+
+<a name="bugs"></a>
+<h2>Known issues</h2>
+</p>
+
+
+<b><em>Version 0.99n</em></b>
+</p>
+
+<strong>ISSUE</strong> Versions prior to v0.99o will mistakenly include unaffected offspring
+in the haplotype-based TDT test.
+</p>
+
+
+
+<b><em>Version 0.99m</em></b>
+</p>
+
+<strong>ISSUE</strong> If using the <tt>--model</tt>,
+<tt>--model-gen</tt> permutation procedure, the asymptotic 
+p-value in the <tt>plink.model.mperm</tt> file is incorrectly
+based on 1 df rather than 2 df.  The asymptotic p-value in 
+the standard <tt>plink.model</tt> is correct however. This will
+be fixed in v0.99n.
+</p>
+
+<strong>ISSUE</strong> If a non-existent allele tag <tt>--hap</tt> 
+is specified in the haplotype list file, a warning should be
+written to the <tt>plink.mishap</tt> file, and that non-existent 
+haplotype skipped. Currently this is not working -- it will give 
+an incorrect haplotype frequency estimate for the missing haplotype.
+
+<strong>ISSUE</strong> The <tt>--epistasis</tt> command 
+should work be used with haploid data; this will be fixed
+in a future version</p>
+
+</p>
+<strong>ISSUE</strong> A potential issue with DOS and long command 
+lines -- the current length seems to be 127 characters. 
+For a workaround, use the <tt>--script</tt> 
+option described <a href="data.shtml">here</a>; alternatively, see <a 
+href="http://support.microsoft.com/kb/q121059/">this link</a>; this issue will be 
+investigated for future.
+</p>
+
+
+
+
+
+<!--#include file="end.html"-->
+
+<em>
+ This document last modified <!--#flastmod file="misc.shtml" -->
+</em>
+
+</body>
+
+<HEAD>
+<META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
+</HEAD>
+</html>

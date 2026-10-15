@@ -1,0 +1,148 @@
+<html>
+<body>
+
+<head>
+<link rel="stylesheet" href="plink.css" type="text/css">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<title>PLINK: Whole genome data analysis toolset</title>
+</head>
+
+
+<!--#include file="start.html"-->
+
+<strong>Options</strong>
+</p>
+
+<table><tr><td width=25%><em>Option</em></td><td><em>Parameter</em></td><td><em>Description</em></td></tr>
+<td><tt>--file</tt></td><td> {fileroot}         </td><td>  Specify .ped and .map files</td></tr>
+<td><tt>--ped</tt></td><td> {pedfile}           </td><td>  Specify .ped file</td></tr>
+<td><tt>--map</tt></td><td> {mapfile}           </td><td>  Specify .map file</td></tr>
+<td><tt>--bfile</tt></td><td> {fileroot}        </td><td>  Specify .bed, .fam and .map</td></tr>
+<td><tt>--pheno</tt></td><td> {phenofile}       </td><td>  Specify .phe file</td></tr>
+<td><tt>--cov</tt></td><td> {covarfile}         </td><td>  Specify .cov file</td></tr>
+<td><tt>--output</tt></td><td> {fileroot}       </td><td>  Specify output root filename</td></tr>
+<td><tt>--out</tt></td><td> {fileroot}          </td><td>  Specify output root filename</td></tr>
+<tr><td>&nbsp;</td></tr>
+<td><tt>--make-bed</tt></td><td>                </td><td>  Make .bed, .fam and .bim</td></tr>
+<td><tt>--extract</tt></td><td> {snplist}       </td><td>  Extract list of SNPs</td></tr>
+<td><tt>--remove</tt></td><td> {indlist}        </td><td>  Remove these individuals</td></tr>
+<td><tt>--recode</tt></td><td>                  </td><td>  Output new PED and MAP files</td></tr>
+<td><tt>--recode12</tt></td><td>                </td><td>  As above, with 1/2 alleles</td></tr>
+<td><tt>--merge</tt></td><td> {pedfile} {mapfile}</td><td> Merge two PED/MAP files </td></tr>
+<td><tt>--restrand</tt></td><td>                </td><td>  Flip all SNPs</td></tr>
+<td><tt>--flip</tt></td><td> {snplist}          </td><td>  Flip strand of SNPs in list</td></tr>
+<tr><td>&nbsp;</td></tr>
+<td><tt>--maf</tt></td><td> {0.02}              </td><td>  Minor allele frequency</td></tr>
+<td><tt>--geno</tt></td><td> {0.1}              </td><td>  Maximum per-SNP missing</td></tr>
+<td><tt>--mind</tt></td><td> {0.1}              </td><td>  Maximum per-person missing</td></tr>
+<td><tt>--cell</tt></td><td> {5}                </td><td>  Minimum genotype cell count for <tt>--model</tt></td></tr>
+<tr><td>&nbsp;</td></tr>
+<td><tt>--freq</tt></td><td>                    </td><td>  Save allele frequencies</td></tr>
+<td><tt>--missing</tt></td><td>                    </td><td>  Missing rates (per individual/SNP) </td></tr>
+<td><tt>--hardy</tt></td><td>                   </td><td>  Hardy-Weinberg disequilibrium tests </td></tr>
+<tr><td>&nbsp;</td></tr>
+
+      <td><tt>--perm</tt></td><td> {1000}             </td><td>  # of permutations</td></tr>
+      <td><tt>--within</tt></td><td>                  </td><td>  Within cluster permutation</td></tr>
+      <td><tt>--family</tt></td><td>                  </td><td>  Make Family ID the cluster</td></tr>
+      <td><tt>--within-file</tt></td><td> {file}      </td><td>  File containing clusters</td></tr>
+<tr><td>&nbsp;</td></tr>
+
+      <td><tt>--missing-genotype</tt></td><td> {0}    </td><td>  Missing genotype code</td></tr>
+      <td><tt>--missing-phenotype</tt></td><td> {-9}  </td><td>  Missing phenotype code</td></tr>
+ 
+      <td><tt>--ignore</tt></td><td>                  </td><td>  Do not perform analysis</td></tr>
+ 
+  
+ 
+      <td><tt>--genome</tt></td><td>                  </td><td>  Output genome-wide IBS</td></tr>
+      <td><tt>--inbreeding</tt></td><td>              </td><td>  Individual inbreeding</td></tr>
+      <td><tt>--homo-run</tt></td><td> N              </td><td>  </td></tr>
+      <td><tt>--homo-run-snps</tt></td><td> N         </td><td>  </td></tr>
+      <td><tt>--local-homo</tt></td><td> N  </td><td>  sliding window of homozygosity</td></tr>
+      <td><tt>--test-missing</tt></td><td>     </td></tr>
+<tr><td>&nbsp;</td></tr>
+      <td><tt>--cluster</tt></td><td>                 </td><td>  Perform clustering</td></tr>
+      <td><tt>--matrix</tt></td><td>                  </td><td>  Output distance matrices</td></tr>
+      <td><tt>--mc</tt></td><td> {0}                  </td><td>  Maximum cluster size</td></tr>
+      <td><tt>--cc</tt></td><td>                      </td><td>  Cluster by phenotype</td></tr>
+      <td><tt>--sol</tt></td><td> {N}                 </td><td>  Only analyse these subjects</td></tr>
+      <td><tt>--pmerge</tt></td><td> {0.01}           </td><td>  Cluster merge value</td></tr>
+      <td><tt>--ibs</tt></td><td>                     </td><td>  Cluster on IBS, not p-value</td></tr>
+<tr><td>&nbsp;</td></tr>
+      <td><tt>--assoc</tt></td><td>                   </td><td>  Case/control, QT association</td></tr>
+      <td><tt>--model</tt></td><td>                   </td><td>  Full-model C/C association</td></tr> 
+      <td><tt>--tdt</tt></td><td>                     </td><td>  Family-based TDT association</td></tr>
+      <td><tt>--parentdt1</tt></td><td>               </td><td>  </td></tr>
+      <td><tt>--parentdt2</tt></td><td>               </td><td>  </td></tr>
+ 
+ <tr><td>&nbsp;</td></tr>
+       <td><tt>--epistasis</tt></td><td>               </td><td>  </td></tr>
+      <td><tt>--case-only</tt></td><td>               </td><td>  </td></tr>
+      <td><tt>--epi1</tt></td><td> {0.0001}           </td><td>  </td></tr>
+      <td><tt>--epi2</tt></td><td> {0.01}             </td><td>  </td></tr>
+      <td><tt>--set-by-all</tt></td><td>              </td><td>  </td></tr>
+      <td><tt>--genepi</tt></td><td>                  </td><td>  </td></tr>
+      <td><tt>--R</tt></td><td>                       </td><td>  </td></tr>
+      <td><tt>--nop</tt></td><td>                     </td><td>  </td></tr>
+<tr><td>&nbsp;</td></tr>
+       <td><tt>--tag</tt></td><td> {tagfilename}       </td><td>  Multimarker predictor list</td></tr>
+      <td><tt>--hap</tt></td><td> {tagfilename}       </td><td>  Multimarker predictor list</td></tr>
+      <td><tt>--r</tt></td><td>                       </td><td>  Matrix of LD stats (r)</td></tr>
+      <td><tt>--r2</tt></td><td>                      </td><td>  Matrix of LD stats (r^2)</td></tr>
+<tr><td>&nbsp;</td></tr>
+      <td><tt>--set</tt></td><td> {setfilename}       </td><td>  SET definitions </td></tr>
+<tr><td>&nbsp;</td></tr>
+      <td><tt>--sharing</tt></td><td>                 </td><td>  IBS-based association</td></tr>
+      <td><tt>--boot</tt></td><td>                    </td><td>  Bootstrap z-scores</td></tr>
+      <td><tt>--help</tt></td><td>                    </td><td>  Display this list</td></tr>
+</table>
+</p>
+
+
+
+</p><hr></p>
+<strong>Output files</strong>
+</p> 
+
+<table><tr><td width=25%><em>Filename</em></td><td><em>Description</em></td></tr>
+<td> plink.assoc       </td><td> Association results, with permutation </td></tr>
+<td> plink.cluster0    </td><td> Progress of IBS clustering </td></tr>
+<td> plink.cluster1    </td><td> IBS cluster solution, format 1 </td></tr>
+<td> plink.cluster2    </td><td> IBS cluster solution, format 2  </td></tr>
+<td> plink.cluster3    </td><td> IBS cluster solution, format 3  </td></tr>
+<td> plink.mdist       </td><td> IBS distance matrix </td></tr>
+<td> plink.pdist       </td><td> p-value distance matrix  </td></tr>
+<td> plink.imiss       </td><td> Missing rates, per individual </td></tr>
+<td> plink.lmiss       </td><td> Missing rates, per locus </td></tr>
+<td> plink.imendel     </td><td> Mendel errors, per family </td></tr>
+<td> plink.lmendel     </td><td> Mendel errors, per locus </td></tr>
+<td> plink.het         </td><td> Individual inbreeding coefficients </td></tr>
+<td> plink.ihet        </td><td> Runs of homozygosity </td></tr>
+<td> plink.frq         </td><td> Allele frequency table </td></tr>
+<td> plink.hwe         </td><td> Hardy-Weinberg test statistics </td></tr>
+<td> plink.tdt.asym    </td><td> TDT/parenTDT asymptotic results </td></tr>
+<td> plink.tdt.perm    </td><td> TDT/parenTDT permutaion results </td></tr>
+<td> plink.qassoc      </td><td> Quantitative trait association results </td></tr>
+<td> plink.model       </td><td> Full-model association results </td></tr>
+<td> plink.genome      </td><td> Genome-wide IBD/IBS pairwise measures </td></tr>
+<td> plink-recode.ped  </td><td> Recoded PED file </td></tr>
+<td> plink-recode.map  </td><td> Recoded MAP file </td></tr>
+<td> plink-extract.ped </td><td> Extracted PED file </td></tr>
+<td> plink-extract.map </td><td> Extracted MAP file </td></tr>
+<td> plink.epi-cc1     </td><td> Epistasis: case/control pairwise results </td></tr>
+<td> plink.epi-cc2     </td><td> Epistasis: case/control summary results </td></tr>
+<td> plink.epi-co1     </td><td> Epistasis: case-only pairwise results </td></tr>
+<td> plink.epi-co2     </td><td> Epistasis: case-only summary results </td></tr>
+</table>
+
+
+
+<!--#include file="end.html"-->
+
+<em>
+ This document last modified <!--#flastmod file="reference.shtml" -->
+</em>
+
+</body>
+</html>

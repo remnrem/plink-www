@@ -1,0 +1,184 @@
+
+                        xmlTree 1.0.1 Documentation
+                                       
+     * Website URL   [ http://www.phphelper.net/ ]
+     * Local documents:
+          + Version history: ChangeLog
+          + General notes: README
+          + License: LICENSE
+   
+Requirements
+
+     * PHP4
+       PHP needs to be compiled with XML support
+     * a web-browser (doh!).
+   
+Introduction
+
+   xmltree creates a hierarchical tree menu from an XML file.
+    Currently xmltree can:
+     * Have an unlimited depth of nodes
+     * Each leaf node may have its own image type assigned
+     * Collapsable and Expandable branches
+     * Each node can has its own name
+     * Each node can include a link for any other document with a target type(ie _new)
+     * Maintains all expanded/collapsed nodes on use
+     * All additional XML data is available for all nodes
+
+ 
+   
+Installation
+   
+   Quick Install:
+    1. Untar or unzip the distribution (be sure to unzip the
+       subdirectories): tar xzvf xmltree_x.x.tar.gz in a 
+       web accessible directory.
+    2. Point your browser http://<your domain>/<unzip directory/xmltree/test.php
+    3. If you see a tree menu you are done and can make your own XML file
+       for the tree menu or modify the one contained in the zip file. 
+       
+       Note: If you do get an error 99% of the time it will mean your PHP installation
+       was not installed with with XML support. See http://www.php.net/manual/en/ref.xml.php
+       for additional details on adding this support.
+       If all else fails go to http://www.phphelper.net and visit our message boards for further
+       assistance.
+   
+Configuration
+
+   XMLTREE can be used in most cases without modification by including
+   the class into any PHP document, instanciate and calling makeTree.
+   
+   Example:
+    include("xmltree.php"); // include class
+    $tree = new tree; // Instanciate object
+    $html = $tree->makeTree("optional filename"); // Call function to make the tree
+    print $html; // prints the HTML tree
+    
+   Varriables at the top of the class file can be altered be modifying the class file(1)
+   or by assigning a new variable value(2).
+   
+   Example 1:
+      Edit the xmltree.php file to change the path of the icons
+      var $imgPath = "icons/"; // original line
+      
+      Can be changed to:
+      var $imgPath = "images/icons/"; // new line
+      
+      Save the xmltree.php file and the default location for all locations
+      will be changed to the new path.
+   
+   Example 2:
+      include("xmltree.php"); // include class
+      $tree = new tree; // Instanciate object
+      $tree->imgPath = "images/icons/"; // new value assigned
+      $tree->makeTree(); // Call function to make the tree  
+      
+      In this example you changed the value of the image path before making
+      the tree. The next tree made will use the new modified value for imgPath
+      rather then the value assigned in the class file    
+      
+   The imgType array defined in the class associates a node type to an image type.
+   The node type is defined in the XML file used to make the tree.
+   
+   Example:
+     var $imgType = array("pdf" => "t_pdf.gif",
+                       "disk" => "t_disk.gif",
+                       "web" => "t_web.gif");
+                       
+     XML: <node Name="Node3" Type="pdf"></node>
+     
+     The above XML node is Type PDF. If this node is a leaf(the last node
+     in a branch) it will use the icon associated with the Type PDF.
+     
+     If a type is given but the node is expandable(has children) the type icon
+     will be replaced by a standard [+] expand or [-] expanded icon.                       
+   
+   
+XML file information:
+
+    Example XML:
+    
+    <?xml version='1.0' ?>
+    <tree name="Main Menu">
+      <node name="Search Engines" Type="document">
+        <node>
+          <name>google.com</name>
+          <type>web</type>
+          <link>http://www.google.com</link>
+          <target>_blank</target>
+        </node>
+      </node>
+    </tree> 
+
+    In order for xmltree.php to make a tree menu from the XML file the XML need
+    to conform to a couple standards.
+    
+    1. <tree> The tree tag must always START and END the tree menu
+    2. <node> The node tag is used to specify new nodes in the tree
+       each node can have multiple values.
+       The <node> tag may contain link, name, target, and type attributes.
+       
+       Node attributes:
+       
+          Name: This is the name of the node. This name can also be linked to another
+                page by using the link attribute.      
+       
+          Type: The type of node. This value will be used to display the icon
+                for this node. The type must be a valid value contained in the imgType array.
+                
+          Link: This is a valid URL to another document. If the link tag is omitted for a node
+                no link will be used.
+                
+          Target: This is the target value for the link. For example it can be a frame name or _blank
+          
+          In the above XML example the Node with google.com would be displayed in HTML as:
+          
+          <img src="t_web.gif"><a href="http://www.google.com" target="_blank">google.com</a>
+          
+          The <img src> comes from the TYPE of node, the <a href> is the LINK, target is the TARGET,
+          and NAME is google.com
+
+          Additionally attributes be be included with the NODE tag or as their own seperate tags.
+          
+          Example: With attributes include in NODE
+            <node name="google.com" type="web" link="http://www.google.com" target="_blank"></node>
+          
+          Example: Attributes using their own TAGS as children of NODE
+            <node>
+              <name>google.com</name>
+              <type>web</type>
+              <link>http://www.google.com</link>
+              <target>_blank</target>
+            </node>  
+            
+          Both ways are correct and there is no difference in how the information in either example
+          will be displayed.
+          
+          NOTE: All NODE attributes but NAME are optional.
+          
+Additional info:
+
+    The LINK for each node will include the parameters needed for the tree menu.
+    Each page that you want to display the Tree menu with branches Expended/Collapsed by
+    the user you MUST include the "e" variable in your post/get statements.
+    
+    If the "e" value is not assigned the tree menu will default to its original closed state
+    and the user will have to reopen the menu.
+    
+    If you maintain the "e" value throughout your site the menu will never loose its state for
+    the user and probably make for happy users :)                      
+    
+    Example:
+      <a href="index.php">Home</a>
+      
+      This link will lose state of the menu and it will be like the user never used it before.
+      
+      However, if this is used:
+      <a href="index.php?e=0,4,8">Home</a> 
+      
+      The nodes expanded by the user already will remain and they will be happy.                    
+      
+      Node: The values for "e" are just random numbers given. The actual values can be used by
+      using the variable $e
+      
+           

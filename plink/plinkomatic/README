@@ -1,0 +1,62 @@
+xmltree - Readme
+===================
+
+  A PHP-class to display a Tree menu using XML over the WWW.
+
+  Version 1.0 - July 2002
+  ---------------------------
+  http://www.phphelper.net/
+
+    Copyright (C) 2001 Steve Hamilton & phphelper.net
+			    [check Documentation.txt file for more details]
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+  Requirements: 
+    PHP4 with XML support
+    a web-browser (doh!)
+                
+  Summary:
+   xmltree creates a hierarchical tree menu from an XML file.
+    Currently xmltree can:
+     * Have an unlimited depth of nodes
+     * Each leaf node may have its own image type assigned
+     * Collapsable and Expandable branches
+     * Each node can has its own name
+     * Each node can include a link for any other document with a target type(ie _new)
+     * Maintains all expanded/collapsed nodes on use
+     * All additional XML data is available for all nodes
+     
+  Download:
+    You can get the newest version at http://www.phphelper.net/.
+
+
+  Installation:
+    Please see the Documentation.txt/.html file.
+  
+  ChangeLog:
+    Please see ChangeLog.txt
+  
+  Documentation:
+    Basic documentation available in Documentation.txt
+
+  Support:
+    There is a support forums available at http://www.phphelper.net/
+
+
+    Enjoy!
+
+
+

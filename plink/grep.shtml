@@ -1,0 +1,148 @@
+<html>
+<title>PLINK</title>
+<body>
+
+<head>
+<link rel="stylesheet" href="plink.css" type="text/css">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<title>PLINK: Whole genome data analysis toolset</title>
+</head>
+
+<!--#include file="start.html"-->
+
+
+<h1>Gene reporting tool</h1>
+
+The functions listed here are designed to provide a quick and easy way
+to partition any PLINK results file that indexes SNPs based on
+chromosome and base-pair position in terms of genes.
+
+</p>
+<a name="grep1">
+<h2>Basic usage</h2>
+</a>
+
+</p>
+
+The basic command to produce a gene-centric report of single SNP results, for example from <tt>run1.assoc</tt>, is
+<h5>
+ ./plink --gene-report run1.assoc --gene-list glist-hg18
+</h5></p>
+which assumes the file <tt>run1.assoc</tt> will have a standard header row containing the fields 
+<tt>CHR</tt> and <tt>BP</tt>, which it will if it was created by the PLINK <tt>--assoc</tt> command 
+previously. It is not necessary that the original genotype filesets be present when running this command.
+</p>
+
+The gene list, <tt>glist-hg18</tt>, should a standard text file in the
+following format: one row per gene, chromosome, start and stop
+positions (base-pair) and then gene name, e.g.
+
+<pre>
+     7 20140803 20223538 7A5
+     19 63549983 63556677 A1BG
+     10 52236330 52315441 A1CF
+     8 43266741 43337485 A26A1
+     15 19305252 19336667 A26B1
+     21 13904368 13935777 A26B3
+     ...
+</pre>
+
+These files are available for download from the <a href="res.shtml#glist">resources section</a> of this web-site.
+
+</p>
+This generates a file
+<pre>
+      plink.range.report
+</pre>
+which simply takes the lines of the results file, and lists them by the genes specified in the gene-list file. The listing is
+alphabetical by gene name. For example, 
+<pre><font size="-1">
+     ACO2 -- chr22:40195074..40254939 ( 59.865kb ) 
+
+           DIST  CHR        SNP         BP   A1      F_A      F_U   A2        CHISQ            P           OR 
+        13.22kb   22  rs2267435   40208294    3   0.3958   0.3537    1       0.3351       0.5627        1.197 
+        24.84kb   22  rs2076196   40219909    1   0.3333   0.2683    3       0.8852       0.3468        1.364 
+        57.13kb   22  rs1810460   40252200    4  0.04167  0.07317    2       0.8278       0.3629       0.5507 
+
+
+     ADORA2A -- chr22:23153529..23168325 ( 14.796kb ) 
+
+           DIST  CHR        SNP         BP   A1      F_A      F_U   A2        CHISQ            P           OR 
+        11.14kb   22  rs5760423   23164672    4   0.4592   0.4024    3       0.5854       0.4442        1.261 
+
+</font></pre>
+etc, which shows the lines of <tt>run1.assoc</tt> split by the genes the SNPs fall in. In this case, the first 
+gene is <tt>ACO2</tt>; the location based on <tt>glist-hg18</tt> is specified, along with the length. Then the 
+SNPs within this gene are listed.  If genes overlap, then the SNPs will be listed more than once. If a SNP does 
+not fall within any gene or region specified, then it will not be listed here. 
+</p>
+The first field, <tt>DIST</tt> is added, which represents the distance from the start position of the gene. (Note: if
+a border is added, with <tt>--gene-list-border</tt>, see below, then <tt>DIST</tt> can be negative, i.e. representing 
+that the SNP is before the actual start of the gene.)
+</p>
+Naturally, the regions listed in the <tt>--gene-list</tt> file do not have to correspond to actual genes -- for 
+example, they might correspond to known linkage peaks, or regions with disease-related copy number variants, etc.
+</p>
+
+
+<a name="grep2">
+<h2>Other options</h2>
+</a>
+</p>
+The following options modify this procedure: 
+<pre>
+     --pfilter 0.01
+</pre>
+will list only SNPs with p-values less than 0.01. This requires that
+the results file has a field labelled <tt>P</tt> in the header row.
+</p>
+The additional command
+<pre>
+     --gene-list-border 20
+</pre>
+will add a 20kb border to the start and stop of each gene listed in the gene file.
+</p>
+The additional command
+<pre>
+     --gene-subset candidate.list
+</pre>
+will make a report extracting only the genes listed
+in <tt>candidate.list</tt> from the file specified by 
+<tt>--gene-list</tt>.  For example, if the
+file <tt>candidate.list</tt> contained two schizophrenia candidate
+genes,
+<pre>
+     DISC1
+     COMT
+</pre>
+then (assuming the genes listed here match a row in the gene-list file, <tt>glist-hg18</tt>) 
+<h5>
+<pre>
+plink --gene-report run1.assoc 
+      --gene-list glist-hg18 
+      --gene-subset candidate.list 
+      --pfilter 0.05 
+      --gene-list-border 50
+<pre>
+</h5></p>
+will only report nominally significant (P=0.05) SNPs within or near
+(+/- 50kb) these two genes.  This is designed to be a more convenient
+way to quickly query a focussed set of genes, so one can keep only a
+single, central gene-list file.
+
+</p>
+
+
+<!--#include file="end.html"-->
+
+
+<em>
+ This document last modified <!--#flastmod file="simulate.shtml" -->
+</em>
+
+</body>
+
+<HEAD>
+<META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
+</HEAD>
+</html>

@@ -1,0 +1,161 @@
+<html>
+<body>
+
+<head>
+<link rel="stylesheet" href="plink.css" type="text/css">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<title>PLINK: Whole genome data analysis toolset</title>
+</head>
+
+<!--#include file="start.html"-->
+
+<blockquote>Population stratification</blockquote>
+
+A simple but powerful approach to population stratification is
+included in PLINK, that can use whole genome SNP data in a
+computationally efficient manner. We use complete linkage
+agglomerative clustering, based on pairwise IBS distance, but with
+some modifications to the clustering process: restrictions based on a
+significance test for whether two individuals belong to the same
+population (i.e. do not merge clusters that contain significantly
+different individuals) , a phenotype criterion (i.e. all pairs must
+contain at least one case and one control) and a cluster size
+restriction (i.e. such that, with a cluster size of 2, for example,
+the subsequent association test would implicitly match every case with
+its nearest control, as long as the case and control do not show
+evidence of belonging to different populations). Any evidence of
+population substructure (from this or any other analysis) can be
+incorporated in subsequent association tests via the specification of
+clusters, as at each permutation step of the tests described below,
+individuals are only permuted within cluster.
+
+</p>
+<warn>All these analyses require a large number of SNPs!</warn>
+</p>
+
+<hr>
+
+<strong>IBS distance matrix</strong>
+</p>
+
+To create matrix of IBS pairwise distances
+</p><type>
+    plink --file mydata --matrix
+</type</p>
+creates two files
+<pre>
+     plink.mdist
+     plink.pdist
+</pre>
+
+which contain the IBS distances and p-value tests for all pairs of
+individuals.
+</p> 
+<warn>HINT</warn> See the <a href="faq.shtml">FAQ
+page</a> for instructions on using using R to visualise these results.
+
+
+</p><hr>
+<strong>IBS clustering</strong>
+</p>
+
+To perform the clustering: 
+</p><type>
+  plink --file mydata --cluster 
+</type></p>
+The output is sent to four files
+<pre>
+     plink.cluster0
+     plink.cluster1
+     plink.cluster2
+     plink.cluster3
+</pre>
+that contain similar information but in different formats. The 
+
+</p>The <tt>cluster0</tt> file contains information on the merging process.
+
+</p>The <tt>cluster1</tt> file contains information on the final solution, listed by cluster: e.g. for 4 individuals in 3 clusters:
+<pre>
+     0   A
+     1   B C
+     2   D
+</pre>
+
+</p>The <tt>cluster2</tt> file contains the same information but listed by individual:
+<pre>
+     A 0
+     B 1
+     C 1
+     D 2
+</pre>
+
+</p>The <tt>cluster3</tt> file is in the same format as <tt>cluster2</tt> but contains all solutions, each column is a solution: e.g.
+<pre>
+     A 0 0 0 0
+     B 1 1 1 0
+     C 2 1 1 0
+     D 3 2 0 0
+</pre>
+
+i.e. reading from left to right, we start with N clusters of size 1; moving right, we end with 1 cluster size N.
+
+</p><hr>
+<strong>Constraints on clustering</strong>
+</p>
+
+The extra constraints that can be placed on the clustering, as options
+that go along with the <tt>--cluster</tt> option. (Note:
+<tt>--matrix</tt> and <tt>--cluster</tt> can be performed at the same
+time)
+
+</p>
+
+To only merge clusters that do not contain individuals differing at a
+certain p-value:
+
+</p><type>
+     --merge 0.0001  
+</type></p>
+
+To ensure that every cluster has at least one case and one control:
+
+</p><type>
+	--cc
+</type></p>
+
+To set the maximum cluster size to a certain value, e.g. 2:
+</p><type>
+	--mc 2 
+</type></p>
+
+Putting these together with some of the association options
+will probably be the most common usuage of this cluster option. Some
+of these are illustrated in the <a href="anal.shtml">association
+analysis</a> section.
+
+</p><warn>WARNING!</warn> The calculation of p-values for all pairs
+assumes that all SNPs are uncorrelated, i.e. not too close together. (The
+basic IBS clustering does not make this assumption). Therefore, if this
+option is used, it should only be performed on a subset of independent
+SNPs.
+                                                                                
+</p>
+<warn>HINT</warn> Also, this test is susceptible to non-random missingness
+in genotypes, particularly if heterozygotes are more likely to be dropped.
+It is therefore good practice to set the <tt>--geno</tt> very high for
+this analysis, e.g. so only SNPs with virtually complete genotyping are
+included.
+</p>
+
+
+
+
+<!--#include file="end.html"-->
+
+<hr>
+<em>
+ This document last modified <!--#flastmod file="strat.shtml" -->
+</em>
+
+</body>
+</html>

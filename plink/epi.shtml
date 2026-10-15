@@ -1,0 +1,291 @@
+<html>
+<body>
+
+<head>
+<link rel="stylesheet" href="plink.css" type="text/css">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<title>PLINK: Whole genome data analysis toolset</title>
+</head>
+
+<!--#include file="start.html"-->
+
+
+<h1>Epistasis</h1>
+
+For disease-trait population-based samples, it is possible to test for
+epistasis. The epistasis test can either be case-only or
+case-control. All pairwise combinations of SNPs can be tested:
+although this may or may not be desirable in statistical terms, it is
+computationally feasible for moderate datasets using PLINK, e.g. the
+4.5 billion two-locus tests generated from a 100K data set took just
+over 24 hours to run, for approximately 500 individuals (with
+the <tt>--fast-epistasis</tt> command). </p>
+
+Alternatively, sets can be specified (e.g. to test only the most
+significant 100 SNPs against all other SNPs, or against themselves,
+etc). The output consists only pairwise epistatic results above a
+certain significance value; also, for each SNP, a summary of all the
+pairwise epistatic tests is given (e.g.  maximum test, proportion of
+tests significant at a certain threshold, etc).
+</p>
+
+To test for gene-by-environment interaction, see either
+the <a href="anal.shtml#strat">section on stratified analyses</a> for
+disease traits, or the <a href="anal.shtml#qtgxe">section on QTL
+GxE</a> for quantitative traits.
+</p>
+
+<strong>IMPORTANT!</strong> These tests for epistasis are currently
+only applicable for population-based samples, not family-based.
+
+
+<a name="snp">
+<h2>SNP x SNP epistasis</h2>
+</a></p>
+
+To test SNP x SNP epistasis for case/control population-based samplse, use the command
+<h5>
+plink --file mydaya --epistasis 
+</h5></p>
+which will send output to the files
+<pre>
+     plink.epi.cc
+     plink.epi.cc.summary
+</pre>
+where <tt>cc</tt> = case-control; for quantitative traits, <tt>cc</tt> will be replaced by <tt>qt</tt>.
+</P>
+
+The default test uses either linear or logistic regression, depending on whether the phenoype is 
+a quantitative or binary trait.  PLINK makes a model based on allele dosage for each SNP, <tt>A</tt> 
+and <tt>B</tt>, and fits the model in the form of
+<pre>
+     Y ~ b0 + b1.A + b2.B + b3.AB + e 
+</pre>
+
+The test for interaction is based on the coefficient <tt>b3</tt>.
+This test therefore only considers allelic by allelic epistasis.
+Currently, covariates can not be included when using this
+command. Similarly, permutation, and use of modifier commands such
+as <tt>--genotypic</tt>, <tt>--within</tt> or <tt>--sex</tt>, etc, are
+not currently available.
+  
+</p>
+
+
+<strong>Important</strong>  The <tt>--epistasis</tt> command is set up 
+for testing a potentially very large number of SNP by SNP comparisons, 
+most of which would not be significant or of interest.  Because the output
+may contains millions or billions of line, the default is to only output
+tests with p-values less than 1e-4, as specified by the <tt>--epi1</tt> 
+option (see below).  If your dataset is much smaller and you definitely 
+want to see all the output, add <tt>--epi1 1 </tt>.  If you do not, odds 
+are you'll see a blank output file except for the header (i.e. immediately
+telling you that none of the tests were significant at 1e-4).
+
+</p><b><font color="green">Specifying which SNPs to test</font></b> </p>
+
+There are different modes for specifying which SNPs are tested:
+<pre>ALL x ALL</pre> 
+<h5>
+	plink --file mydata --epistasis
+</h5></p>
+<pre>SET1 x SET1 <em> { where epi.set contains only 1 set }</em></pre>
+<h5>
+	plink --file mydata --epistasis --set-test --set epi.set 
+</h5></p>
+<pre>SET1 x ALL <em> { where epi.set contains only 1 set } </em></pre>
+<h5>
+	plink --file mydata --epistasis --set-test --set epi.set --set-by-all
+</h5></p>
+<pre>SET1 x SET2 <em> { where epi.set contains 2 sets } </em> </pre>
+<h5>
+	plink --file mydata --epistasis --set-test --set epi.set
+</h5></p>
+
+For the 'symmetrical' cases (ALLxALL and SET1xSET1) then only unique pairs 
+are analysed. </p>
+
+For the other two cases (SET1xALL, SET1xSET2) then all pairs are
+analysed (e.g. will perform SNPA x SNPB as well as SNPB x SNPA, if A
+and B are in both SET1 and SET2). It will not try to analysis SNPA x
+SNPA however.</p>
+
+</p><b><font color="green">The output</font></b> </p>
+
+The output can be controlled via 
+<h5>
+	plink --file mydata --epistasis --epi1 0.0001
+</h5></p>
+
+which means only record results that are significant p<=0.0001. (This
+prevents too much output from being generated). The output is in the form 
+
+<pre>
+     CHR1    Chromosome of first SNP
+     SNP1    Identifier for first SNP
+     CHR2    Chromosome of second SNP
+     SNP2    Identifier for second SNP
+     OR_INT  Odds ratio for interaction
+     STAT    Chi-square statistic, 1df
+     P       Asymptotic p-value
+</pre>
+
+The odds ratio for interaction is interpreted in the standard manner:
+a value of 1.0 indicates no effect.  To better visualise the manner of
+an interaction, use the <tt>--twolocus</tt> command to produce a
+report. For example:
+<h5>
+ plink --bfile mydata --twolocus rs9442385 rs4486391
+</h5></p>
+generates the file 
+<pre>
+     plink.twolocus
+</pre>
+which contains counts and frequencies of the two locus genotypes,
+e.g. (there is no interaction evident in this case):
+<pre>
+All individuals
+===============
+                    rs4486391
+                    1/1    1/4    4/4    0/0    */*
+  rs9442385  4/4      4      5      7      1     17
+             4/3      7     15     14      0     36
+             3/3      6     20     10      0     36
+             0/0      0      1      0      0      1
+             */*     17     41     31      1     90
+
+                    rs4486391
+                    1/1    1/4    4/4    0/0    */*
+  rs9442385  4/4  0.044  0.056  0.078  0.011  0.189
+             4/3  0.078  0.167  0.156  0.000  0.400
+             3/3  0.067  0.222  0.111  0.000  0.400
+             0/0  0.000  0.011  0.000  0.000  0.011
+             */*  0.189  0.456  0.344  0.011  1.000
+</pre>
+
+For case/control data, two similar sets of tables are included which
+stratify the two-locus genotype counts by cases and controls
+
+</p>
+
+A second part of the output: for each SNP in SET1, or in ALL if no
+sets were specified, is information about the number of significant
+epistatic tests that SNP featured in (i.e. either with ALL other SNPs,
+with SET1, or with SET2).  The threshold <tt>--epi2</tt> determines this: 
+
+<h5>
+plink --file mydata --epistasis --epi1 0.0001 --epi2 0.05
+</h5></p>
+
+The output in the <tt>plink.epi.cc.summary</tt> file containts the following fields:
+<pre>
+     CHR        Chromosome
+     SNP        SNP identifier
+     N_SIG      # significant epistatic tests (p <= "--epi2" threshold)
+     N_TOT      # of valid tests (i.e. non-zero allele counts, etc)
+     PROP       Proportion significant of valid tests
+     BEST_CHISQ Highest statistic for this SNP 
+     BEST_CHR   Chromosome of best SNP
+     BEST_SNP   SNP identifier of best SNP
+</pre>
+
+This file should be interpreted as giving only a very rough idea about
+the extent of epistasis and which SNPs seem to be interacting
+(although, of course, this is a naive statistic as we do not take LD
+into account -- i.e. <tt>PROP</tt> does not represent the number
+of <em>independent</em> epistatic results). </p>
+
+<h6>A faster epistasis option</h6>
+
+For disease traits only, an approximate but faster method can be used
+to screen for epistasis: use the <tt>--fast-epistasis</tt> command
+instead of <tt>--epistasis</tt>. This test is based on a Z-score for
+difference in SNP1-SNP2 assocation (odds ratio) between cases and
+controls (or in cases only, in a case-only analysis). For more
+details, see <a href="epidetails.shtml">this page</a>.
+
+</p>
+
+<a name="case">
+<h2>Case-only epistasis</h2>
+</a></p>
+
+For case-only epistatic analysis, 
+<h5>
+	plink --file mydata --fast-epistasis --case-only
+</h5></p>
+sends output to (<tt>co</tt> = case-only)
+<pre>
+     plink.epi.co
+     plink.epi.co.summary
+</pre>
+
+All other options are as described above.
+</p>
+
+Currently, in case-only analysis, only SNPs that are more than 1 Mb
+apart, or on different chromosomes, are included in case-only
+tests. This behavior can be changed with the <tt>--gap</tt> option,
+with the distance specified kb: for example, to specify a gap of 5 Mb,
+
+<h5>
+plink --file mydata --fast-epistasis --case-only --gap 5000
+</h5></p>
+
+This option is important, as the case-only test for epistasis assumes
+that the two SNPs are in linkage equilibrium in the general
+population.
+
+
+<a name="gene">
+<h2>Gene-based tests of epistasis</h2>
+</a></p>
+
+</p><strong>WARNING</strong> This test is still under heavy 
+development and not ready for use.
+
+<!--
+</p>
+
+For disease traits, in population-based samples, a gene-based 
+test is available with the <tt>--genepi</tt> option, that 
+requires a set-file (<tt>--set <em>filename</em></tt>) to 
+be specified, containing at least two sets/genes
+(i.e. specifying the SNPs in two or more genes; the analysis is
+pairwise between pairs of genes, not pairs of SNPs).
+<h5>
+  plink --file mydata --genepi --set gene.set
+</h5></p>
+
+sends output to 
+<pre>
+     plink.genepi
+</pre>
+If used in conjunction with the <tt>--mperm N</tt> option (currently 
+only a fixed number of permutations is possible), a file with 
+empircal p-values will be generated:
+<pre>
+     plink.genepi.mperm
+</pre>
+
+It is also possible to specify a <tt>--case-only</tt> analysis with 
+this option.</p>
+
+</p><strong>WARNING</strong> This test is still under heavy 
+development and should not be used yet (as of version 0.99j).
+
+</p>
+-->
+
+<!--#include file="end.html"-->
+
+<em>
+ This document last modified <!--#flastmod file="epi.shtml" -->
+</em>
+
+</body>
+
+<HEAD>
+<META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
+</HEAD>
+</html>

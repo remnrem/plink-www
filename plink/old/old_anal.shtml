@@ -1,0 +1,320 @@
+<html>
+<body>
+
+<head>
+<link rel="stylesheet" href="plink.css" type="text/css">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<title>PLINK: Whole genome data analysis toolset</title>
+</head>
+
+<!--#include file="start.html"-->
+
+<blockquote>Association analysis</blockquote>
+</p>
+
+The basic association test is for a disease trait and is based on
+comparing allele frequencies between cases and controls (asymptotic
+and empirical p-values are available). Also implemented are the
+Cochran-Armitage trend test, dominant and recessive models and a two
+degree of freedom general model. The ability to compare different
+models by likelihood ratio test and to evaluate the significant of the
+most significant model by permutation are also incorporated. We also
+test for difference in missing genotype rates between cases and
+controls. </p>
+
+<tt>PLINK</tt> is designed to perform these basic tests quickly: to
+calculate the chi-square statistics and odds ratios for all SNPs in a
+100K dataset containing 350 individuals takes ~2 seconds on a standard
+Linux workstation, making a permutation-based approach to whole genome
+analysis feasible. </p>
+
+Family-based data can be analyzed with the basic TDT, using either
+asymptotic or empirical significance values. In addition, the basic
+test is modified to include information on parental phenotypes to give
+a more powerful combined test. The permutation procedure will flip
+transmitted/untransmitted status constantly for all SNPs for a given
+family, thereby preserving the LD and linkage information between
+markers and siblings. </p>
+
+Quantitative traits can be tested for association also, using either
+asymptotic (likelihood ratio test and Wald test) or empirical
+significance values. As above, any clustering scheme can be specified
+for the permutations: in this way, it is possible to control for
+subpopulation membership as well as family structure, if related
+individuals are being analyzed. </p>
+
+For all tests (disease, quantitative and family-based) it is possible
+to specify 'sets' of SNPs to calculate 'set-based' or 'gene-based'
+test statistics: these are based on cumulative sums of rank-ordered
+single SNP statistics, and are evaluated by permutation.</p>
+
+<p><hr>
+
+
+<strong>Basic case/control association test</strong>
+</p>
+To perform a standard case/control association analysis, use the option:
+</p><type>
+	plink --file mydata --assoc 
+</type></p>
+Results are stored in the file 
+</p><type>
+	plink.assoc	
+</type></p>
+in the form: 
+<pre>
+	Chromosome
+	SNP ID
+	Allele 1
+	Frequency of allele 1
+	Allele 2
+	Association chi-square
+	Empirical p-value **
+	Adjusted empirical p-value
+	Odds ratio (allele 1)
+</pre>
+	
+The empirical p-value is currently based on a method that will be more
+conservative if there are missing data that are unevenly distributed
+between cases and controls: this may help to partially control the
+confounding that can arise with non-random missing data. </p>
+
+</p>
+<warn> Currently X/Y chromosome markers are not properly handled by
+these analyses.</warn>
+</p>
+
+To obtain a <em>missing chi-sq</em> test (i.e. does, for each SNP,
+missingness differ between cases and controls?): this should append an
+extra column onto the standard results in <tt>plink.assoc</tt>:
+
+</p><type>
+	plink --file mydata --assoc --test-missing
+</type></p>
+
+
+</p>
+<hr>
+<strong>Permutation procedure: clusters</strong>
+</p>
+
+The number of permutations (default is 1000) is set as follows:
+</p><type>
+	plink --file mydata --assoc --perm 20000
+</type></p>
+
+To perform stratification clustering, then permute only within
+cluster, e.g. make all nearest neighbour case-control pairs (within a
+certain threshold) and permute only within pairs:
+</p><type>
+   plink --file mydata --cluster --cc --mc 2 --merge 0.001 --assoc --within 
+</type></p>
+
+To make permutation within family ID grouping (i.e. you can swap any
+measure in as the Family ID column, as this is not used for any other
+purpose).
+</p><type>
+	plink --file mydata --assoc --within --family
+</type></p>
+
+</p>
+<warn>TODO</warn> Describe how the permutation / clustering works, and
+potential applications (e.g. controlling for factors).
+
+
+<hr>
+<strong>Alternate / full model association tests</strong>
+</p>
+
+This option, for case/control data, performs a series of tests other
+than the basic allelic test, for association:
+
+</p><type>
+	plink --file mydata --model
+</type></p>
+
+<pre>
+     Chromosome
+     SNP
+     MAF
+     Case(11) genotype count
+     Case(12) genotype count
+     Case(22) genotype count
+     Control(11) genotype count
+     Control(12) genotype count
+     Control(22) genotype count
+     Cochran-Armitage trend test chi-square
+     Standard allele-based chi-square
+     General model 2df chi-square
+     Dominant model chi-square
+     Recessive model chi-square
+
+     Cochran-Armitage trend test p-value
+     Standard allele-based p-value
+     General model 2df p-value
+     Dominant model p-value
+     Recessive model p-value
+
+     General versus allelic test p-value
+     General versus dominant test p-value
+     General versus recessive test p-value
+
+     Flag (0/1) indicating whether genotypic test was valid
+     Best model (G, M, D, R, X=invalid)
+</pre>
+
+</p>
+<warn>TODO</warn> Describe the output of this analysis </p>
+
+</p>
+<hr>
+<strong>Quantitative trait association</strong>
+</p>
+
+If the phenotype (column 6 of the PED file or the phenotype as
+specified with the <tt>--pheno</tt> option) is quantitative
+(i.e. contains values other than 1, 2 or missing) then plink will
+automatically treat the analysis as a quantitative trait analysis.
+</p><type>
+	plink --file mydata --assoc
+</type></p>
+will generate the file
+</p><type>
+	plink.qassoc
+</type></p>
+with fields as follows:
+<pre>
+     Col 1 : SNP name
+     Col 2 : SNP chromosome
+     Col 3 : # non-missing genotypes
+     Col 4 : regression coefficient (beta)
+     Col 5 : Var(beta)
+     Col 6 : Regression r^2
+     Col 7 : Likelihood ratio test (chi-sq, 1 df)
+     Col 8 : Likelihood ratio test p-value
+     Col 9 : Wald statistic (chi-sq, 1 df)
+     Col 10 : Wald statistic p-value
+</pre>
+as well as the standard 
+
+</p><type>
+	plink.assoc
+</type></p>
+
+which contains the same fields as for case/control association
+testing, except the odds ratio columns are not defined. The primary
+use of this second <tt>plink.assoc</tt> file is for empirical p-values
+(which are based on the Wald statistic).
+
+
+
+
+<hr>
+<strong>Family-based association (TDT)</strong>
+</p>
+
+<tt>PLINK</tt> supports basic family-based association testing for disease 
+traits, using the TDT and a variant that also incorporates parental 
+phenotype information, parenTDT.</p>
+
+All families must be nuclear families (i.e. two-generations) otherwise an 
+error message will be given. To evaluate pedigree structure, break 
+multi-generational families into nuclear family units, and enumerate 
+different types of families, please use the <tt><a 
+href="../famtypes/">famtypes</a></tt> program first. </p>
+
+</p><type>
+	plink --file mydata --tdt
+</type></p>
+
+This option will first perform a check for Mendel errors, report these 
+errors and make the offending genotypes missing.</p>
+
+Output is sent to two files:
+<pre>
+     plink.tdt.asym
+     plink.tdt.perm
+</pre>
+The first contains the basic transmitted/untransmitted allele counts for 
+all markers, the chi-square statistics and asymptotic p-values. Also 
+included is information about the parenTDT and a combined test.</p>
+
+</p>
+<warn>TODO</warn> Add documentation.
+
+
+
+
+</p>
+<hr>
+<strong>parenTDT</strong>
+</p>
+
+</p><type>
+	plink --file mydata --parentdt1
+</type></p>
+
+</p><type>
+	plink --file mydata --parentdt2
+</type></p>
+
+</p>
+<warn>TODO</warn> Add documentation.
+
+</p>
+<hr>
+<strong>Set-based tests</strong>
+</p>
+
+To perform gene-based/set-based sum-of-chi-squares tests:
+
+</p><type>
+	plink --file mydata --assoc --set my.set
+</type></p>
+
+where the file <tt>my.set</tt> is in form
+<pre>
+     SET1
+     rs1234
+     rs28384
+     rs29334
+     END
+
+     SET2
+     rs4774
+     rs662662
+     rs77262
+     END
+
+     ...
+</pre>
+
+The output for the set statistics is in the file
+<pre>
+     plink.set-assoc
+</pre>
+in the form:
+<pre>	
+     Set name (SET)
+     Number of SNPs in set (S<1, S<2, etc) (S)
+     nth most associated SNP (i.e. order of inclusion) (SNP)
+     Average chi-square for set of n SNPs (T)
+     Empirical p-value for average chi-square (p0)
+     Empirical p-value corrected for all tests within this set (p1)
+     Empirical p-value corrected for all tests in all sets (p2)
+</pre>
+
+The <tt>p1</tt> value for the <tt>S<1</tt> statistic will be a statistic
+of natural interest -- the significance of the best hit in a gene,
+controlling for all other SNPs in that gene. 
+
+<!--#include file="end.html"-->
+
+<hr>
+<em>
+ This document last modified <!--#flastmod file="anal.shtml" -->
+</em>
+
+
+</body>
+</html>

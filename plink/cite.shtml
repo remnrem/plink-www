@@ -1,0 +1,48 @@
+<html>
+<body>
+
+<head>
+<link rel="stylesheet" href="plink.css" type="text/css">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<title>PLINK: Whole genome data analysis toolset</title>
+</head>
+
+<!--#include file="start.html"-->
+
+
+<h1>Citing PLINK</h1>
+
+If you use PLINK in any published work, please cite both the software 
+(as an electronic resource/URL) and the manuscript describing the methods. 
+
+<pre>
+        Package:     PLINK (including version number)
+        Author:      Shaun Purcell
+        URL:         http://pngu.mgh.harvard.edu/purcell/plink/
+
+        Purcell S, Neale B, Todd-Brown K, Thomas L, 
+        Ferreira MAR, Bender D, Maller J, de Bakker PIW, 
+        Daly MJ & Sham PC (in press) PLINK: a toolset 
+        for whole-genome association and population-based 
+	linkage analysis. American Journal of Human Genetics.
+</pre>
+
+A <a href="plink_preprint.pdf">manuscript</a> is in press (American 
+Journal of Human Genetics). Please do not distribute this pre-publication 
+version.
+
+
+<!--#include file="end.html"-->
+
+<hr>
+<em>
+ This document last modified <!--#flastmod file="cite.shtml" -->
+</em>
+
+
+</body>
+
+<HEAD>
+<META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
+</HEAD>
+</html>

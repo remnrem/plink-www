@@ -1,0 +1,119 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>Plinkomatic - Introduction</title>
+<meta name="generator" content="Bluefish 1.0.5">
+<meta name="author" content="Lori Thomas">
+<meta name="date" content="2006-04-25T11:58:18-0400">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8">
+<meta http-equiv="content-style-type" content="text/css">
+<link rel="stylesheet" href="plink.css" type="text/css">
+</head>
+
+<body>
+<!--#include file="pomstart.html"-->
+
+<p>
+
+<tt>PLINK-O-MATIC</tt> is an interactive, web-based documentation tool, designed to build commands for <a 
+href="../index.shtml"><tt>PLINK</tt></a>. By answering a series of simple questions, you will be shown 
+the command line needed to perform the actual analysis (that is, you will need <tt>PLINK</tt> installed 
+locally). The commands generated can either be copied into a terminal window or saved in a batch file. 
+
+</p>
+
+<p>&nbsp;</p>
+
+<div align="center">
+<font size="+1">
+<div style="margin-left:auto; margin-right:auto; width:70%; text-align: 
+center;border: 1px dotted #000000; 
+background-color:#e7e7ff;">
+<a href="pom1.php"><tt>>> START PLINK-O-MATIC <<</tt></a>
+</font>
+</div>
+</div>
+
+<p>&nbsp;</p>
+The 6 screenshots below illustrate the steps in using <tt>PLINK-O-MATIC</tt> to build a command line.
+<p>&nbsp;</p>
+
+
+<table><tr>
+<td><img src="blacksq1.jpg" align="middle"></td>
+<td>
+Answer some basic questions about the type of data you are using, and whether you want to 
+filter markers based on a number of criteria.
+</td></tr></table>
+<img src="pom-ss1.jpeg"><br>
+<p>&nbsp;</p>
+
+<table><tr>
+<td><img src="blacksq2.jpg" align="middle"></td>
+<td>
+Select the type of analysis, summary statistic or data management procedure you want from a decision 
+tree.
+</td></tr></table>
+<img src="pom-ss2.jpeg"><br>
+<p>&nbsp;</p>
+
+<table><tr>
+<td><img src="blacksq3.jpg" align="middle"></td>
+<td>
+Specify the names of the input and output files.
+</td></tr></table>
+<img src="pom-ss3.jpeg"><br>
+<p>&nbsp;</p>
+
+<table><tr>
+<td><img src="blacksq4.jpg" align="middle"></td>
+<td>
+Depending on your answers so far, some extra context-specific questions will appear at ths stage. In this 
+example, a panel allows the default thresholds for excluding SNPs and individuals based on 
+genotyping rate and allele frequency to be changed. 
+</td></tr></table>
+<img src="pom-ss4.jpeg"><br>
+<p>&nbsp;</p>
+
+<table><tr>
+<td><img src="blacksq5.jpg" align="middle"></td>
+<td>
+Any errors will be flagged -- here, for example, the user forgot to specify a file name.
+</td></tr></table>
+<img src="pom-ss5.jpeg"><br>
+<p>&nbsp;</p>
+
+<table><tr>
+<td><img src="blacksq6.jpg" align="middle"></td>
+<td>
+When all the information has been collected, the <tt>PLINK</tt> command line is shown, and the 
+expected output files are listed.
+</td></tr></table>
+<img src="pom-ss6.jpeg"><br>
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<div align="center">
+<font size="+1">
+<div style="margin-left:auto; margin-right:auto; width:70%; text-align: 
+center;border: 1px dotted #000000; 
+background-color:#e7e7ff;">
+<a href="pom1.php"><tt>>> START PLINK-O-MATIC <<</tt></a>
+</font>
+</div>
+</div>
+
+<p>&nbsp;</p>
+
+<!--#include file="pomend.html"-->
+
+<hr>
+<em>
+This document last modified <!--#flastmod file="index.shtml" -->
+</em>
+
+
+</body>
+</html>

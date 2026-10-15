@@ -1,0 +1,48 @@
+<html>
+<title>PLINK</title>
+<body>
+
+<head>
+<link rel="stylesheet" href="plink.css" type="text/css">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<title>PLINK: Whole genome data analysis toolset</title>
+</head>
+
+<!--#include file="start.html"-->
+
+
+<h1>Credits</h1>
+
+<tt><b><font color="green">PLINK</font></b></tt> is developed by Shaun Purcell, with the help of 
+others. 
+</p>
+In particular, Douglas Ruderfer has contributed to many internal 
+functions and has performed extensive testing. 
+
+</p>
+
+Below is a list of others who have been involved in 
+one way or another:
+
+<ul>
+ <li> Paul de Bakker: testing and many detailed suggestions
+ <li> David Bender: Haploview interface for veiwing PLINK results
+ <li> Mark Daly: various statistical and computational algorithms
+ <li> Julian Maller: Haploview interface for veiwing PLINK results
+ <li> Ben Neale: IBD estimation routines
+ <li> Robert Plenge: early beta-testing 
+ <li> Lori Thomas: development of PLINK-O-MATIC and beta version of <tt>gPLINK</tt>
+ <li> Kathe Todd-Brown: <tt>gPLINK</tt> development
+ <li> Pak Sham: IBD estimation and other association routines
+</ul>
+and others at MGH, the Broad Institute and elsewhere. Thanks!
+
+</p>
+<!--#include file="end.html"-->
+
+<em>
+ This document last modified <!--#flastmod file="misc.shtml" -->
+</em>
+
+</body>
+</html>

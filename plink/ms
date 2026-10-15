@@ -1,0 +1,89 @@
+<html>
+<body>
+                                                                                                   
+<head>
+<link rel="stylesheet" href="plink.css" type="text/css">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<title>PLINK: Whole genome data analysis toolset</title>
+</head>
+                                                                                                   
+<!--#include file="start.html"-->
+                                                                                                   
+                                                                                                   
+This page contains some important information regarding how to set up and use
+<tt>PLINK</tt>. Individuals familiar with using command line programs can
+probably skip most of this page. A version history recording changes and additions
+to <tt>PLINK</tt> is given at the bottom of this page, also.
+                                                                                                   
+</p>
+                                                                                                   
+<a name="download"></a>
+<h1>Download</h1>
+                                                                                                   
+                                                                                                   
+<tt><font color="darkgreen"><b>PLINK</b></font></tt> is now available for
+free download, as a pre-release trial version.
+                                                                                                   
+</p><strong>Important...</strong>
+<em><b>Until v1.00 is released, please consider yourself a tester rather than a
+user.</b></em>
+                                                                                                   
+</p>
+                                                                                                   
+                                                                                                   
+</p>
+                                                                                                   
+<table border=1 width=80%>
+                                                                                                   
+<tr><td> Linux (x86_64)  </td>
+<td> <a herf="dist/plink-latest-linux-x86_64.tar.gz">
+plink-latest-linux-x86_64.tar.gz
+</a></td>
+<td> v0.99l </td>
+</tr>
+                                                                                                   
+<tr><td> Linux (i686)  </td>
+<td> <a herf="dist/plink-latest-linux-i686.tar.gz">
+plink-latest-linux-i686.tar.gz
+</a></td>
+<td> v0.99l </td>
+</tr>
+                                                                                                   
+<tr><td> MS-DOS  </td>
+<td> <a herf="dist/plink-latest-msdos.zip">
+plink-latest-msdos.zip
+</a></td>
+<td> v0.99l </td>
+</tr>
+                                                                                                   
+<tr><td> Apple Mac </td>
+<td> <a herf="dist/plink-latest-mac.zip">
+plink-latest-mac.zip
+</a></td>
+<td> v0.99l </td>
+</tr>
+
+<tr><td> Solaris </td>
+<td> <a herf="dist/plink-latest-solaris.tar.gz">
+plink-latest-solaris.tar.gz
+</a></td>
+<td> v0.99l </td>
+</tr>
+                                                                                                   
+<tr><td> C/C++ source code </td>
+<td> <a herf="dist/plink-latest-src.tar.gz">
+plink-latest-src.tar.gz
+</a></td>
+<td> v0.99l </td>
+</tr>
+                                                                                                   
+<tr><td> C/C++ source code </td>
+<td> <a herf="dist/plink-latest-src.zip">
+plink-latest-src.zip
+</a></td>
+<td> v0.99l </td>
+</tr>
+                                                             
+</table>
+</p>
+

@@ -1,0 +1,100 @@
+<html>
+<body>
+
+<head>
+<link rel="stylesheet" href="plink.css" type="text/css">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<title>PLINK: Whole genome data analysis toolset</title>
+</head>
+
+<!--#include file="start.html"-->
+
+<tt><font color="darkgreen"><b>PLINK</b></font></tt> is a whole genome
+association analysis toolset, designed to perform large-scale analyses
+in a computationally efficient manner.
+
+</p>
+
+<tt><font color="darkgreen"><b>PLINK</b></font></tt> is primarily
+developed by Shaun Purcell, although various aspects of the code are
+in collaboration with Pak Sham, Ben Neale as well as Mark Daly's group. It 
+offers the following functions:
+
+ <blockquote> Data management</blockquote
+  <ul>
+   <li> Recode a PED file
+   <li> Reorder a PED file
+   <li> Merge two PED files
+   <li> Extracts subsets (SNPs or individuals) 
+   <li> Flip strand of SNPs
+   <li> Compress PED data in binary format
+  </ul>
+
+<blockquote>Summary statistics for quality control</blockquote>
+<ul>
+  <li> Allele, genotypes frequencies, HWE tests
+  <li> Missing genotype rates
+  <li> Inbreeding, IBS and IBD statistics for individuals and pairs of 
+individuals
+  <li> non-Mendelian transmission in family data
+  </ul>
+
+ <blockquote> Population stratification detection</blockquote>
+  <ul>
+    <li> Complete linkage hierarchical clustering
+    <li> Handles virtually unlimited numbers of SNPs
+    <li> Significance test for whether two individuals belong to the same 
+population
+    <li> Constrain cluster solution by phenotype and/or specify maximum 
+cluster size
+    <li> Perform subsequent association analyses conditional on cluster 
+solution 
+  </ul> 
+
+ <blockquote> Basic association testing</blockquote>
+  <ul>
+
+    <li> Case/control
+    <ul>
+     <li> Standard allelic test
+     <li> Cochran-Armitage trend test
+     <li> Dominant/recessive and general models
+     <li> Model comparison tests (e.g. general versus multiplicative)
+    </ul>
+    <li> Family-based association (TDT)
+    <li> Quantitative traits
+    <li> Asymptotic and empirical p-values
+    <li> Flexible clustered permutation scheme
+  </ul>
+
+ <blockquote> Additional tests</blockquote>
+  <ul>
+   <li> Gene-based tests of association
+   <ul>
+    <li> Cumulative rank-order sum statistics
+    <li> IBS sharing methods
+   </ul>
+   <li> Screen for epistasis (SNP-by-SNP and gene-by-gene)
+   <li> Gene-environment interaction (dichotomous environment)
+  </ul>
+
+ <blockquote> Multimarker predictors</blockquote>
+   <ul>
+    <li> Impute a new dataset containing specific imputed haplotypes
+    <li> Test for association on the posterior distribution of haplotypes 
+given genotypes
+ </ul>
+
+
+
+
+<!--#include file="end.html"-->
+
+<hr>
+<em>
+ This document last modified <!--#flastmod file="intro.shtml" -->
+</em>
+
+</body>
+</html>
+

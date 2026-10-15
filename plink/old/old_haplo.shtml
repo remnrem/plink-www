@@ -1,0 +1,95 @@
+<html>
+<body>
+<head>
+<link rel="stylesheet" href="plink.css" type="text/css">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<title>PLINK: Whole genome data analysis toolset</title>
+</head>
+
+
+<!--#include file="start.html"-->
+
+<blockquote>Multimarker haplotype tests</blockquote>
+
+All tests described above are based on single SNP tests. It is also
+possible to impute haplotypes based on multimarker predictors using
+the standard E-M algorithm and to create a new file with the most
+likely haplotype pair imputed (or set to missing if the most likely
+phase is below a certain value).</p>
+
+Soon to be added: the ability to perform the test of association on
+the posterior distribution of haplotypes given genotypes for each
+individual (for main disease and quantitative trait population-based
+association tests only).
+
+
+<hr>
+
+<strong>Imputing multimarker haplotypes</strong>
+</p>
+
+The command 
+
+</p><type>
+	plink --file mydata --tag mytagfile 
+</type></p>
+
+will read the mytagfile, which is expected to be in format:
+<pre>
+     rs1001 5 0 201  1 2   T     snp1
+     rs1002 5 0 202  A C   TTA   snp1 snp3 snp4
+     ...
+</pre>
+
+where
+
+<pre>
+     Col 1 : Imputed SNP name
+     Col 2 : Imputed SNP chromosome
+     Col 3 : Imputed SNP genetic distance (default: Morgan coding)
+     Col 4 : Imputed SNP physical position (bp units)
+     Col 5 : Imputed SNP allele 1 name
+     Col 6 : Imputed SNP allele 2 name
+     Col 7 : Tag SNP allele/haplotype that equals imputed SNP allele 1
+     Col 8+ : Tag SNP(s) [in same order as haplotype in Col 7]
+</pre>
+
+and create two new files
+<pre>
+     plink-impute.ped
+     plink-impute.map
+</pre>
+
+based on the E-M phase reconstructed haplotypes. </p>
+
+</p> <warn>This option is under construction</warn> To perform
+haplotype-based tests, two steps are involved: imputing these
+haplotypes, then testing the new file, as though the imputed
+haplotypes were SNPs that you have directly observed.  The imputed haplotype file can be merged with the original SNP file with the <tt>--merge</tt> option.
+</p>
+
+</p><hr>
+<strong>Imputing multimarker haplotypes</strong>
+</p>
+
+<warn>TODO</warn> Soon to be added: tests that account for the
+potential ambiguous phase reconstruction (i.e. to fractionally count
+haplotypes). The package <a
+href="http://pngu.mgh.harvard.edu/purcell/whap">whap</a> already
+performs such an analysis, but it is not ideally suited to very
+large-scale analysis.
+
+</p>
+
+
+<!--#include file="end.html"-->
+
+<hr>
+
+<em>
+ This document last modified <!--#flastmod file="haplo.shtml" -->
+</em>
+
+
+</body>
+</html>

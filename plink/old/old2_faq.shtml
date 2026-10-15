@@ -1,0 +1,93 @@
+<html>
+<body>
+
+<head>
+<link rel="stylesheet" href="plink.css" type="text/css">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<title>PLINK: Whole genome data analysis toolset</title>
+</head>
+
+<!--#include file="start.html"-->
+
+<blockquote>How can I generate the a multidimensional scaling plot to 
+represent population substructure in my sample?</blockquote>
+
+To get the multidimensional scaling plot: then in the freely-available
+statistical package <a href="http://www.r-project.org/">R</a>, for example:
+
+<pre>
+	d <- read.table("plink.mdist")
+	m <- as.matirx(d)
+	mds <- cmdscale(as.dist(1-m))
+	plot(mds)
+</pre>
+To import lables, e.g. by phenotype:
+<pre>
+	gawk ' { print $6 } ' mydata.ped > phenotypes
+	gawk ' { print $1 } ' mydata.ped > ids
+</pre>
+Then in R, as above, plus
+<pre>	
+	p <- read.table("phenotypes")[,1]
+	plot(mds,col=p)
+	id <- read.table("ids")[,1]
+	plot(mds,type="n")
+	text(mds,as.character(id))		
+</pre>
+To save a plot as EPS
+<pre>
+	plot(mds)
+	dev.copy2eps(file="myplot.eps")
+</pre>	
+To redirect to PDF
+<pre>
+	pdf(file="myplot.pdf")
+	plot(mds)
+	dev.off()
+</pre>
+
+ &nbsp; </p>
+
+<blockquote>My sample consists of sibling pairs? Can I perform a
+sibling-based analysis?</blockquote>
+
+The <tt>--within-file</tt> or <tt>--within</tt> options: for example,
+to permute individuals only within family ID groups, use the
+following:
+</p>
+<kbd>
+	plink --file mydata --assoc --within --family
+</kbd>
+&nbsp;</p> &nbsp; </p>
+
+<blockquote>How can I check my file prior to using <tt>PLINK</tt>?</blockquote>
+
+One approach is to use Unix tools: the things to check are that every
+row has the same number of items. For example, 
+
+</p>
+<kbd>
+	gawk ' { print NF } ' myfile.ped | sort | uniq -c
+</kbd></p>
+
+should just give one line of output (showing the number of lines, and
+the number of items each line has). More than two lines of output
+indicates that the file is not properly formed.
+
+</p>
+To check pedigree structure, you might use the program PEDSTATS or
+FAMTYPES.
+</p>
+
+
+
+<!--#include file="end.html"-->
+
+<hr>
+<em>
+ This document last modified <!--#flastmod file="faq.shtml" -->
+</em>
+
+
+</body>
+</html>

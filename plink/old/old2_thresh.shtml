@@ -1,0 +1,92 @@
+<html>
+<body>
+
+<head>
+<link rel="stylesheet" href="plink.css" type="text/css">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<title>PLINK: Whole genome data analysis toolset</title>
+</head>
+
+<!--#include file="start.html"-->
+
+
+<blockquote>Inclusion thresholds</blockquote>
+
+This secion describes options that can be used to filter out
+individuals or SNPs on the basis of the summary statistic measures
+described in the previous <a href="summary.shtml">summary
+statistics</a> page.</p>
+
+
+<strong>Allele frequency</strong>
+</p>
+
+Subsequent analyses can be set to automatically exclude SNPs on the
+basis of MAF (minor allele frequency):
+</p><kbd>
+	plink --file mydata --maf 0.05
+</kbd></p>
+means only include SNPs with MAF >= 0.05. The default value is 0.02.
+
+</p><hr>
+<strong>Missing rate per SNP</strong>
+</p>
+
+Subsequent analyses can be set to automatically exclude SNPs on the
+basis of MAF (minor allele frequency):
+</p><kbd>
+	plink --file mydata --geno 1 
+</kbd></p>
+
+means only include all SNPs irrespective of their missing rate. The
+default value is 0.1 (i.e. exclude SNPs with more than 10% missing
+genotyping).
+
+</p><hr>
+<strong>Missing rate per person</strong>
+</p>
+
+Subsequent analyses can be set to automatically exclude SNPs on the
+basis of MAF (minor allele frequency):
+</p><kbd>
+	plink --file mydata --mind 0.1
+</kbd></p>
+means exclude with more than 10% missing genotypes (this is the defalt 
+value). A line in the terminal output will appear, indicating how many 
+individuals were removed due to low genotyping. If any individuals were 
+removed, a file called <tt>plink.irem</tt> will be created, listing the 
+Family and Individual IDs of these removed individuals. Any subsequent 
+analyses will be performed without these individuals therefore.
+</p>
+One might instead wish to create a new PED file with these individuals 
+removed: this is done in two steps:
+</p><kbd>
+	plink --file data --mind 0.2 --out data
+</kbd></p>
+</p><kbd>
+	plink --file data --remove data.irem --out cleaned
+</kbd></p>
+will generate files
+<pre>
+     cleaned-extract.ped
+     cleaned-extract.map
+</pre>
+with all individuals with more than 20% missing genotypes removed.
+
+</p><hr>
+<warn>TODO</warn> <strong>Hardy-Weinberg disequilibrium</strong>
+</p>
+
+</p><hr>
+<warn>TODO</warn> <strong>Mendel error rate</strong>
+</p>
+
+<!--#include file="end.html"-->
+
+<hr>
+<em>
+ This document last modified <!--#flastmod file="thresh.shtml" -->
+</em>
+
+</body>
+</html>

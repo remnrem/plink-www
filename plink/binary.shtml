@@ -1,0 +1,270 @@
+<html>
+<body>
+
+<head>
+<link rel="stylesheet" href="plink.css" type="text/css">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<title>PLINK: Whole genome data analysis toolset</title>
+</head>
+
+<!--#include file="start.html"-->
+
+<a name="archive"></a>
+<h1>BED file format</h1>
+
+This page describes the format of binary PED (BED) files. Consider the 
+following example PED file, <tt>test.ped</tt>:
+
+<pre>
+     1 1 0 0 1  0    G G    2 2    C C
+     1 2 0 0 1  0    A A    0 0    A C
+     1 3 1 2 1  2    0 0    1 2    A C
+     2 1 0 0 1  0    A A    2 2    0 0
+     2 2 0 0 1  2    A A    2 2    0 0
+     2 3 1 2 1  2    A A    2 2    A A
+</pre>
+
+and corresponding MAP file <tt>test.map</tt>
+
+<pre>
+     1 snp1 0 1
+     1 snp2 0 2
+     1 snp3 0 3
+</pre>
+
+We create a binary fileset with the following command:
+<h5>
+ plink --file test --make-bed --out test
+</h5></p>
+
+which produces output:
+
+<pre>
+
+     @----------------------------------------------------------@
+     |         PLINK!       |    v0.99l     |   27/Jul/2006     |
+     |----------------------------------------------------------|
+     |  (C) 2006 Shaun Purcell, GNU General Public License, v2  |
+     |----------------------------------------------------------|
+     |       http://pngu.mgh.harvard.edu/purcell/plink/         |
+     @----------------------------------------------------------@
+
+     Web-based version check ( --noweb to skip )
+     Connecting to web...  OK, v0.99l is current
+
+     *** Pre-Release Testing Version ***
+
+     Writing this text to log file [ test.log ]
+     Analysis started: Sat Jul 29 17:22:59 2006
+
+     Options in effect:
+             --file test
+             --make-bed
+             --out test
+
+     3 (of 3) markers to be included from [ test.map ]
+     6 individuals read from [ test.ped ]
+     3 individuals with nonmissing phenotypes
+     Assuming a binary trait (1=unaff, 2=aff, 0=miss)
+     Missing phenotype value is also -9
+     Before frequency and genotyping pruning, there are 3 SNPs
+     Applying filters (SNP-major mode)
+     4 founders and 2 non-founders found
+     0 SNPs failed missingness test ( GENO > 1 )
+     0 SNPs failed frequency test ( MAF < 0 )
+     After frequency and genotyping pruning, there are 3 SNPs
+     Writing pedigree information to [ test.fam ]
+     Writing map (extended format) information to [ test.bim ]
+     Writing genotype bitfile to [ test.bed ]
+     Using (default) SNP-major mode
+     Analysis finished: Sat Jul 29 17:37:57 2006
+</pre>
+
+and generates files
+
+<pre>
+     test.bed
+     test.bim
+     test.fam
+</pre>     
+
+The file <tt>test.bim</tt> is the extended map file, which also includes 
+the names of the alleles: (chromosome, SNP, cM, base-position, allele 1, allele 2):
+<pre>
+     1       snp1    0       1       G       A
+     1       snp2    0       2       1       2
+     1       snp3    0       3       A       C
+</pre> 
+The file <tt>test.fam</tt> is simply the first six columns of <tt>test.ped</tt>
+<pre>
+     1 1 0 0 1 0
+     1 2 0 0 1 0
+     1 3 1 2 1 2
+     2 1 0 0 1 0
+     2 2 0 0 1 2
+     2 3 1 2 1 2
+</pre>
+
+We can inspect the BED file with the Unix <tt>xxd</tt> command, to view a 
+binary file:
+
+<h5>
+     xxd -b test.bed
+</h5></p>
+
+which generates:
+<pre>
+     0000000: 01101100 00011011 00000001 11011100 00001111 11100111  l.....
+     0000006: 00001111 01101011 00000001                             .k.
+</pre>
+
+The actual binary data are the nine blocks of 8 bits (a byte) in the center: 
+the first 3 bytes have a special meaning. The first two are fixed, a 'magic number'
+that enables <tt>PLINK</tt> to confirm that a BED file is really a BED file. That
+is, BED files should always start <tt>01101100 00011011</tt>. The third byte indicates 
+whether the BED file is in SNP-major or individual-major mode: a value of <tt>00000001</tt> 
+indicates SNP-major (i.e. list all individuals for first SNP, all individuals for second SNP, etc)
+whereas a value of <tt>00000000</tt> indicates individual-major (i.e. list all SNPs for the first
+individual, list all SNPs for the second individual, etc).  By default, all BED files are
+SNP-major mode (as is the example below).
+</P>
+Here we have extracted and annotated the relevant part of the <tt>xxd</tt> output:
+<pre>
+     |-magic number--| |-mode-| |--genotype data---------| 
+
+     01101100 00011011 00000001 11011100 00001111 11100111
+
+     |--genotype data-cont'd--| 
+
+     00001111 01101011 00000001 
+
+</pre>
+
+For the genotype data, each byte encodes up to four genotypes (2 bits per genoytpe). The coding is
+<pre>
+     00  Homozygote "1"/"1"
+     01  Heterozygote
+     11  Homozygote "2"/"2"
+     10  Missing genotype
+</pre>
+
+The only slightly confusing wrinkle is that each byte is effectively read 
+backwards. That is, if we label each of the 8 position as A to H, we would label 
+backwards:
+
+<pre>
+     01101100
+     HGFEDCBA
+</pre>
+and so the first four genotypes are read as follows:
+<pre>
+     01101100
+     HGFEDCBA
+
+           AB   00  -- homozygote (first)
+         CD     11  -- other homozygote (second)
+       EF       01  -- heterozygote (third)
+     GH         10  -- missing genotype (fourth)
+</pre>
+
+Finally, when we reach the end of a SNP (or if in individual-mode, the end of an
+individual) we skip to the start of a new byte (i.e. skip any remaining bits in
+that byte). 
+</p>
+It is important to remember that the files <tt>test.bim</tt> and <tt>test.fam</tt>
+will already have been read in, so <tt>PLINK</tt> knows how many SNPs and individuals
+to expect.
+</p>
+
+So, considering the full <tt>test.bed</tt> file: here we consider the six bytes
+that contain all the genotype data. We consider them one at a time, showing how
+the 4 genotypes are extracted from each byte to make up the entire dataset. Some
+positions are called <tt>null</tt> meaning that all the genotypes for that SNP
+have been read in, so we advance to the start of a new byte for the next SNP (when 
+in SNP-major mode):
+
+<pre>
+
+                Genotype    Person    SNP
+     11011100 
+
+           00   G/G         1 1       snp1
+         11     A/A         1 2       snp1
+       10       0/0         1 3       snp1
+     11         A/A         2 1       snp1
+
+
+     00001111 
+
+           11   A/A         2 2       snp1
+         11     A/A         2 3       snp1
+       00       (null)
+     00         (null)
+
+
+     11100111
+           
+           11   2/2         1 1       snp2
+         10     0/0         1 2       snp2
+       01       1/2         1 3       snp2
+     11         2/2         2 1       snp2
+
+
+     00001111 
+  
+           11   2/2         2 2       snp2
+         11     2/2         2 3       snp2
+       00       (null) 
+     00         (null)
+
+
+     01101011
+
+           11   C/C         1 1       snp3
+         01     A/C         1 2       snp3
+       01       A/C         1 3       snp3
+     10         0/0         2 1       snp3
+
+
+     00000001
+
+           10   0/0         2 2       snp3
+         00     A/A         2 3       snp3
+       00       (null)
+     00         (null)
+
+</pre>
+ 
+In summary, the following define the BED file format
+<ul>
+ <li> First two bytes <tt>01101100 00011011</tt> for PLINK v1.00 BED file
+ <li> Third byte is <tt>00000001</tt> (SNP-major) or <tt>00000000</tt> (individual-major)
+ <li> Genotype data, either in SNP-major or individual-major order
+ <li> New "row" always starts a new byte
+ <li> Each byte encodes up to 4 genotypes
+ <li> <tt>10</tt> indicates missing genotype, otherwise <tt>0</tt> and <tt>1</tt> 
+point to allele 1 or allele 2 in the BIM file, respectively
+ <li> Bits in each byte read in reverse order
+</ul>
+
+Any changes to this format will be accompanied by a different, unique magic number 
+and will be backwards compatabile in <tt>PLINK</tt>
+
+</p>
+<strong>Old versions</strong> Earlier versions: v0.99 BED files do not contain the 2-byte magic number; BED
+files prior to 0.99 are always in individual-major mode and contain neither 
+the magic-numbers nor the SNP-major/individual-major identifier. <tt>PLINK</tt>
+will indicate if these earlier, legacy files are found.
+</p>
+
+
+ 
+<!--#include file="end.html"-->
+ 
+<em>
+ This document last modified <!--#flastmod file="download.shtml" -->
+</em>
+ 
+</body>
+</html>
+

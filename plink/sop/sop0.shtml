@@ -1,0 +1,54 @@
+<html>
+<body>
+
+<head>
+<link rel="stylesheet" href="../plink.css" type="text/css">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<title>PLINK: Whole genome data analysis toolset</title>
+</head>
+
+<!--#include file="start.html"-->
+
+<table border=0 width=100%>
+<tr><td width=70%>
+
+
+<h1>Header</h1>
+
+This is a command line
+
+<h5>
+ls -lh
+</h5></p>
+
+and this is output
+<pre>
+     COL1 ...
+     COL2 ...
+</pre>
+
+<h2>A secondary title</h2>
+
+And the following can be useful:
+
+</p><strong>HINT!</strong> This is a hint 
+</p>
+
+etc
+
+
+
+<!--#include file="end.html"-->
+
+<hr>
+<em>
+ This document last modified <!--#flastmod file="sop1.shtml" -->
+</em>
+
+</body>
+
+<HEAD>
+<META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
+</HEAD>
+</html>
+

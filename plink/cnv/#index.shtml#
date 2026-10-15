@@ -1,0 +1,581 @@
+
+
+<html>
+<title>PLINK</title>
+<body>
+
+<head>
+<link rel="stylesheet" href="plink.css" type="text/css">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<title>PLINK: Whole genome data analysis toolset</title>
+</head>
+
+<!--#include file="start.html"-->
+
+
+<b> THIS PAGE UNDER CONSTRUCTION -- FEATURES IN VERSION 1.02 NOT YET RELEASED </b>
+</p>
+
+<h1>Analysis of Copy Number Variation data</h1>
+
+This page describes some basic file formats, convenience functions and
+analysis options for both common and rare copy number variant (CNV)
+data. Two quite distinct representations of CNV data are available,
+that will typically, although not necessarily, map onto rare versus
+common variants.
+</p>
+
+The first way of representing copy number variants is
+as <em>segments</em>. These segments are essentially represented and
+analysed in a similar manner to how PLINK handles runs of
+homozygosity. These options are specified via the <tt>--cnv-list</tt>
+option. Allelic (i,e. basic SNP) information is not considered here.
+</p>
+In addition, there is another way to represent copy number variation
+in specific SNP genotypes, for example,
+allowing <tt>A</tt>, <tt>AAB</tt> or <tt>AABB</tt> genotypes (being
+copy number 1,3 and 4 respectively) as well as the
+canonical <tt>AA</tt>, <tt>AB</tt> and <tt>BB</tt> genotypes. These
+formats are specified via the "generic variant" (<tt>--gfile</tt>)
+option.
+</p>
+
+Here we assume that some other software package has previously been
+used to make calls for either specific copy-number variable genotypes
+or to identify particular genomic regions in individuals that are
+deletions or duplications, based on the raw data. That is, PLINK only
+offers functions for downstream analysis of CNV data, not for
+identifying CNVs in the first place, i.e. similar to the distinction
+between SNP genotype calling versus the subsequent analysis of those
+calls.
+</p>
+
+Note that in both of these modes, <tt>PLINK</tt> bypasses the usual
+procedure of reading in SNP genotype data. You are advised not to
+specify commands that normally apply to basic SNP data when using
+either of these two approaches (i.e. either <tt>--cnv-list</tt>
+or <tt>--gfile</tt>).
+</p>
+
+<ul>
+ <li> <a href="#cnv1"> Basic support for segmental CNV data</a>
+ <li> <a href="#cnv1b"> Filtering options for segmental CNV data</a>
+ <li> <a href="#cnv1c"> Association analysis of segmental CNV data</a>
+ <li> <a href="#cnv1d"> Verbose output and grouping options for segmental CNV data</a>
+</p>
+ <li> <a href="#cnv2"> Format for common CNVs (generic variant format)</a>
+ <li> <a href="#cnv2b"> Association models for combined SNP and common CNV data </a>
+</ul>
+
+<a name="cnv1"></a>
+<h2>Basic support for segmental CNV data</h2>
+</p>
+
+The basic command for reading a list of segmental CNV variants is
+<p><h5>
+  plink --cnv-list mydata.cnv
+</h5></p>
+where the file <tt>mydata.cnv</tt> has the format
+<pre>
+     FID     Family ID
+     IID     Individual ID
+     CHR     Chromosome
+     BP1     Start position (base-pair)
+     BP2     End position (base-pair)
+     TYPE    Type of variant, e.g. 0,1 or 3,4 copies
+     SCORE   Confidence score associated with variant 
+     SITES   Number of probes in the variant
+</pre>
+Having a header row is optional; if the first line starts with <tt>FID</tt>
+it will be ignored.
+
+</p><strong>Note</strong> The <tt>SCORE</tt> and <tt>SITES</tt> values
+are not used in any direct way, except potentially as variates to filter
+segments on, as described below. That is, the values of these do not
+fundamentally impact the way analysis is performed by <tt>PLINK</tt>
+itself (they might alter the meaning of the results of course, e.g. if
+including low-confidence calls into the analysis!). In other words, if
+whatever software was used to generate the CNV calls does not supply
+some conceptually similar values, it is okay to simply put dummy codes
+(e.g. all 0) in these two fields.
+
+</p><b><font color="green">Initial creaton of a MAP file</font></b>
+</p>
+
+Prior to any analysis, a dummy MAP first needs to be created (this
+step only needs to be performed once per CNV file). This
+PLINK-generated MAP file has dummy entries that correspond to the
+start and stop sites of all segments.  This facilitates subsequent
+parsing and analysis of CNV data by <tt>PLINK</tt>. 
+The <tt>--cnv-make-map</tt> command is used as follows:
+<h5>
+   plink --cnv-list mydata.cnv --cnv-make-map 
+</h5></p>
+which creates a file 
+<pre>
+     plink.cnv.map
+</pre>
+which will look just like a standard MAP file but with
+dummy markers:
+<pre>
+     1       pos1    0       51593
+     1       pos2    0       51598
+     1       pos3    0       51666
+     1       pos4    0       52282
+     1       pos5    0       69061
+     ...
+</pre>
+
+As an (unrealistic) example to illustrate how the mapping works,
+consider the following, with 3 segments, spanning "positions" 1 to 8,
+4 to 12 and 16 to 23.  In this case, 6 unqiue map positions would be 
+created, the three start positions and the three stop positions. 
+<pre>
+        Base                1111111111222222
+        Position   1234567890123456789012345  
+
+        Marker #   1..2...3...4...5......6..
+                   |  |   |   |   |      |
+                              |   |      |
+        Segments   *------*       |      |
+                      *-------*             
+                                  *------*
+</pre>
+The new MAP file would then be
+<pre>
+     1 pos1  0  1
+     1 pos2  0  4
+     1 pos3  0  8
+     1 pos4  0  12
+     1 pos5  0  16
+     1 pos6  0  23
+</pre>
+
+Given such a MAP file, these three segments would then be perfectly
+mapped to the corresponding markers (<tt>pos1</tt> to <tt>pos3</tt>, 
+<tt>pos2</tt> to <tt>pos4</tt> and <tt>pos5</tt>
+to <tt>pos6</tt>). The created MAP file is then specified in
+subsequent segmental CNV analyses (using <tt>--cnv-list</tt>) with the
+standard <tt>--map</tt> command.
+
+</p><b><font color="green">Loading and analysing a CNV segment list</font></b>
+
+</p>
+
+Once a suitable MAP file has been created, i.e. with dummy markers
+that correspond to the position of every start and stop site of all
+segments, use the <tt>--cnv-list</tt> command again to load in the CNV
+segment data: in addition to the basic CNV file, a MAP (previously
+generated) and FAM file (continaing ID and phenotype information) also
+need to be specified. For example.
+<h5>
+  plink --map plink.cnv.map  --fam mydata.fam  --cnv-list mydata.cnv
+</h5></p>
+
+This will by default simply load in the CNV data and produce a report
+in the LOG file, enumerating the number of CN states in the total
+dataset and any filtering processes applied. For example, 
+<pre>
+     Reading segment list (CNVs) from [ cnv1.list ]
+     714 of 2203 mapped as valid segments
+     1872 mapped to a person, of which 714 passed filters
+        CopyN  Count
+        0      46
+        1      339
+        3      200
+        4      129
+     Writing segment summary to [ plink.cnv.indiv ]
+</pre>
+
+This indicates that of 2203 total segments (i.e. should correspond to
+number of lines in the <tt>cnv1.list</tt> file, allowing for any
+header) 1872 are mapped to a person in the dataset. In other words,
+some of the segments in <tt>cnv1.list</tt> are for individuals not in
+<tt>cnv1.fam</tt>.  These are simply ignored; for example, these
+individuals might have been filtered out of the study for other
+reasons, e.g. QC based on standard SNP genotypes. Of these, 714 passed
+the further set of filters, as described below. Segments can be
+filtered based on genomic location, size, quality score/number of
+sites and type (duplication or deletion).
+</p>
+It will also be reported in the LOG file if some of the segments do
+not map to a marker in the MAP file: if this is because you've
+used <tt>--chr</tt> or similar commands to restrict the portion of the
+data examined, you can safely ignore this line; otherwise, it might
+mean that the appropriate MAP file wasn't created
+(e.g. using <tt>--cnv-make-map</tt>) for that CNV file.
+</p>
+By default, <tt>PLINK</tt> will create a file that summarises per
+individual events (after any filtering has been applied), in a file
+named
+<pre>
+     plink.cnv.indiv
+</pre>
+which has the fields, one row per person, in the same order as the original FAM file:
+<pre>
+     FID     Family ID
+     IID     Individual ID
+     PHE     Phenotype 
+     NSEG    Number of segments that individual has
+     KB      Total kilobase distance spanned by segments 
+     KBAVG   Average segment size
+</pre>
+
+<strong>Note</strong> PLINK does not check to see whether segments are
+overlapping for the same person or not (e.g. if a deletion and a
+duplication event had been specified for the same person in the same
+region, or if the same event is listed twice). </p>
+
+
+<a name="cnv1b"></a>
+<h2>Filtering options for segmental CNV data</h2>
+</p>
+
+The segments read in can be filtered in a number of ways. First, one
+can specify to read in only either deletions (<tt>TYPE</tt> is less
+than 2) or duplications (<tt>TYPE</tt> is greater than 2), with the
+options,
+<pre>
+   --cnv-del
+</pre>
+and
+<pre>
+   --cnv-dup
+</pre>
+
+Segments can also be filtered based on a minimum size (kb), score or
+number of sites contributing with the following commands:
+<pre>
+   --cnv-kb 50 
+   --cnv-score 3
+   --cnv-sites 5
+</pre>
+The default minimum segment size is 20kb; none of the other filters
+have a default setting that would exclude anything. Also,
+corresponding maximum thresholds can be set:
+<pre>
+   --cnv-max-kb 2000
+   --cnv-max-score 10
+   --cnv-max-sites 10
+</pre>
+  
+</P>
+
+</p><b><font color="green">Filtering the segment list by intersection
+with specific genomic co-ordinates</font></b> </p>
+
+It is possible to extract a specific set of segments that overlap with
+one or more regions as specified in a file, e.g. that might contain
+the genomic co-ordinates for genes or segmental duplications, etc. Use the command 
+<pre>
+     --cnv-intersect regions.list
+</pre>
+in addition with <tt>--cnv-list</tt> to do so. The file <tt>regions.list</tt> 
+should be in the following format: one range per line, whitespace-separated:
+<pre>
+     CHR     Chromosome code (1-22, X, Y, XY, MT, 0)
+     BP1     Start of range, physical position in base units
+     BP2     End of range, as above
+</pre>
+For example,
+<pre>
+     2 30000000 35000000
+     2 60000000 62000000
+     X 10000000 20000000
+</pre>
+would extract/exclude all segments that at least partially span these
+three regions (5Mb and 2Mb on chromosome 2 and 10Mb on chromosome X).
+
+</p>
+Alternatively, you can use
+<pre>
+     --cnv-exclude regions.list
+</pre> 
+to filter out a specific set of segments, i.e. any that overlap with
+one or more regions specified in the file <tt>regions.list</tt>.
+
+</p>
+In addition, the standard commands for filtering chromosomal positions
+are still applicable, for example
+<pre>
+     --chr 5
+</pre>
+or
+<pre>
+     --chr 2 --from-mb 20 --to-mb 25
+</pre>
+
+Finally, given a set of filters applied, you can output as a new CNV file
+the filtered subset, with the command
+<pre>
+     --cnv-write
+</pre>
+
+For example, to make a new file using only deletions over 200kb but not more 
+than 1000kb, with a quality score of 10 or more, use the command
+<h5>
+<pre>
+ plink --cnv-list cnv1.list 
+       --map plink.cnv.map 
+       --fam cnv1.fam 
+       --cnv-del 
+       --cnv-kb 200 
+       --cnv-max-kb 1000 
+       --cnv-score 10
+       --cnv-write 
+       --out hiqual-large-deletions 
+</pre></h5></p>
+
+
+<a name="cnv1c"></a>
+<h2>Association analysis of segmental CNV data</h2>
+</p>
+
+To perform a simple permutation-based test of association of segmental
+CNV data for case/control phenotypes, add the option 
+<pre>
+     --mperm 50000
+</pre>
+as well as <tt>--cnv-list</tt>, for perform, for example, 50,000 null permutations
+to generate empirical p-values.  The results are saved in two files
+<pre>
+     plink.cnv.summary
+     plink.cnv.summary.mperm
+</pre>
+The first file has the fields
+<pre>
+     CHR    Chromosome code
+     SNP    SNP identifier (dummy SNP, see below)
+     BP     Base-pair position
+     AFF    Number of affected individuals with a segment at this position
+     UNAFF  Number of unaffected individuals 
+</pre>
+
+
+
+
+
+<a name="cnv1d"></a>
+<h2>Verbose output and grouping options for segmental CNV data</h2>
+</p>
+
+Finally, there are two option to group or report sets of segments that 
+span a particular position. In the first case, use the option
+<pre>
+     --segment-group
+</pre>
+which takes all segments in a given region (whole genome unless
+otherwise specified) and forms "pools" of overlapping
+segments. Several pools of overlapping segments will be created; these
+will be listed in order of decreasing size (number of segments); note
+that the same segment can appear in multiple pools (e.g. if A overlaps
+with C, and B overlaps with C, but A and B do not overlap). The pools
+give information as described below.
+
+</p>
+
+The more restricted form of this command forms a single pool of all
+segments that overlap a particular position, which takes a single
+parameter of a marker name; typically these will be the dummy <tt>pos*</tt> 
+markers created by the <tt>--cnv-make-map</tt> command.
+<pre>
+     --segment-spanning pos119
+</pre>
+In this case, for some made-up data, we see from
+the <tt>plink.cnv.summary</tt> file that there are 8 cases and 6
+controls with a segment spanning a particular
+position, <tt>pos586</tt>
+<pre>
+      CHR        SNP           BP      AFF    UNAFF
+      ...        ...          ...      ...      ...
+        1     pos586     16631570        8        6
+      ...        ...          ...      ...      ...
+</pre>
+In this case, there is unsurprisingly no association between segmental
+CNVs and disease: for example, the corresponding position in
+the <tt>plink.cnv.summary.mperm</tt> file shows an empirical p-value
+of 0.35, but of p=1 if adjusted for multiple testing (<tt>EMP2</tt>)
+<pre>
+      CHR     SNP         STAT         EMP1         EMP2
+      ...     ...          ...          ...          ...
+        1  pos586     0.419408     0.351324            1
+      ...     ...          ...          ...          ...
+</pre>
+
+Naturally, one would usually be more interested in following up significantly
+associated regions of course...  Nonetheless, if so desired we can see which 
+segments (given any the filtering specified) are spanning this position, with 
+<tt>--segment-spanning</tt>, which gives the following:
+<pre>
+      POOL         FID         IID      PHE  CHR         BP1         BP2       KB
+        S1     PT-2378     PT-2378        2   12    16631570    16751087  119.517 
+        S1     PT-268D     PT-268D        2   12    16631494    16732162  100.668 
+        S1     PT-2M8O     PT-2M8O        1   12    16631441    16751082  119.641 
+        S1     PT-2FZ9     PT-2FZ9        2   12    16631436    16751045  119.609 
+        S1     PT-287D     PT-287D        1   12    16616579    17183201  566.622 
+        S1     PT-2C91     PT-2C91        2   12    16616579    16751045  134.466 
+        S1     PT-28A8     PT-28A8        1   12    16616579    16751045  134.466 
+        S1     PT-2FPB     PT-2FPB        1   12    16616579    16714372   97.793 
+        S1     PT-28IG     PT-28IG        2   12    16616579    16708856   92.277 
+        S1     PT-2E5N     PT-2E5N        2   12    16614664    16715703  101.039 
+        S1     PT-2FVL     PT-2FVL        1   12    16614664    16751045  136.381 
+        S1     PT-2DYE     PT-2DYE        2   12    16614664    16715489  100.825 
+        S1     PT-264I     PT-264I        2   12    16614664    16751045  136.381 
+        S1     PT-25WZ     PT-25WZ        1   12    16591338    16715767  124.429 
+        S1         CON          14      8:6   12    16631570    16708856   77.286 
+        S1       UNION          14      8:6   12    16591338    17183201  591.863 
+</pre>
+
+Here we see the 14 segments listed, 8 cases and 6
+controls. The <tt>CON</tt> and <tt>UNION</tt> lines at the end of the
+pool give the consensus region (i.e. shared by all segments) and the
+total distance spanned by all. The <tt>PHE</tt> field gives the
+phenotype for each individual.
+</p>
+Note that the way in which the dummy markers are selected will effectively mean that every 
+possibly unique position, in terms of counts of segments, is evaluated.  The actual base 
+pair regions of any dummy marker is itself probably not of interest: given a sigificant (set of) 
+SNPs, the strategy would be to select any one and generate the corresponding pool to see 
+what and where the association maps to.
+
+<a name="cnv2"></a>
+<h2>Format for common CNVs (generic variant format)</h2>
+</p>
+
+For common CNVs, that might also have meaningful allelic/SNP
+variation, it can be desirable to represent and analyse these not as
+segments. The rest of the page considers non-segmental specification
+of CNVs: that is, copy-number variable specific genotype calls, such
+as <tt>A</tt> or <tt>AAB</tt>. 
+</p>
+
+Such data are represented with the <em>generic variant</em> file format,
+and read into PLINK with the command:
+<h5>
+  plink --gfile mydata
+</h5></p>
+where three files are assumed to exist
+<pre>
+     mydata.fam     (describes individuals, as usual)
+     mydata.map     (describes variants, as usual)
+     mydaya.gvar    (new file format)     
+</pre>
+
+The <tt>.gvar</tt> file is in long-format: always with 7 fields, one
+row per genotype:
+<pre>
+  FID       Family ID
+  IID       Individual ID  (i.e. person should appear in .fam file)
+  NAME      Variant name (should appear in .map file)
+  ALLELE1   Code for allele from first parent
+  DOSAGE1   Copy number for first allele
+  ALLELE2   Code for allele from second parent
+  DOSAGE2   Copy number for second allele
+</pre>
+
+Note that the reference to the first and second parents above does not
+imply that paternal or maternal origin should be known or is used.
+</p>
+Some example of using this format to represent different genotypes are shown here:
+<pre>
+     1 1  var1  A 1  C 1    -> normal het
+     1 1  var2  A 2  C 1    -> AAC genotype
+     1 1  var3  0 1  0 1    -> missing individual
+     1 1  var4  0 0  0 0    -> homozygous deletion
+
+     1 1  var5  4 1  7 1    -> e.g. 4/7 genotype
+     2 1  var5  4 1  8 1    -> e.g. 4/8 genotype
+
+     1 1  var6  A 0.95 C 1.05  -> expected allele dosage (e.g. from imputation)
+</pre>
+
+As currently implemented, all the codings below would be equivalent,
+i.e. specifying an <tt>AA</tt> homozygote:
+<pre>
+     1 1  var7  A 1 A 1
+     2 1  var7  A 0 A 2
+     3 1  var7  A 2 A 0
+     4 1  var7  X 0 A 2
+     5 1  var7  0 0 A 2
+</pre>
+That is, if there is <tt>0</tt> copy number, then it does not matter
+what is specified in the allele field; otherwise, a value
+of <tt>0</tt> in the <em>allele</em> field is taken to mean a missing
+genotype (rather than a null/deleted genotype).
+</p>
+When loading this kind of file, <tt>PLINK</tt> will parse allelic and
+copy number variation; currently by default it looks for integer
+dosage calls in this part of the process. There are currently no
+functions implemented yet for fractional counts, but the datatype
+exists.
+</p>
+Alleles and CNVs are then appropriately counted.  <tt>PLINK</tt>
+assesses and records for each variant whether there is allelic and/or
+copy number variation, and this influences downstream analysis.
+Currently variation is defined as at least one individual varying, but
+in the future thresholds will be added (e.g. to treat a site of a CNV
+only if, say, 1% of all individuals have a non-canonical copy number).
+</p>
+The basic summary output is also in "long format": in the future this
+will be expanded and reformated, e.g. to include specific allelic/CNV
+frequncies or counts; stratification by phenotype, etc. This summary file 
+is called
+<pre>
+     plink.gvar.summary
+</pre>
+and always contains three columns, as illustrated here 
+<pre>
+             NAME        FIELD        VALUE
+             var1          CHR            1
+             var1           BP         1000
+             var1          CNV          yes
+             var1      ALLELIC          yes
+             var1            A          0.5
+             var1            C          0.5
+             var1          [1]        0.375
+             var1          [2]        0.625
+</pre>
+
+The CN counts are always in [x] to distingush from allele codes, if
+they are also numeric.  e.g. in this example, 37.5% of sample have the
+deletion for example. There can be more than 2 CN states for a given
+variant.
+
+<a name="cnv2b"></a>
+<h2>Association models for combined SNP and common CNV data</h2>
+</p>
+
+<tt>PLINK</tt> has implemented the following regression models
+(logistic or linear) currently applicable to biallelic and/or CNVs.
+
+<pre>
+  Y ~ b0 + b1.DOSE(A) + b2.DOSE(B)    (Model M2)
+
+  Y ~ b0 + b1.DOSE(A)                 (Model MA)
+
+  Y ~ b0 + b1.( DOSE(A) + DOSE(B) )   (Model MC)
+</pre>
+
+If there is no allelic variation and/or no CNV, then we only fit the
+appropriate models. If we do fit all models, then we also have the two
+nested tests, comparing log-likelihoods/F-test for <tt>M2</tt>
+versus <tt>MA</tt> (test of CNV conditional on allelic variation)
+and <tt>M2</tt> versus <tt>MC</tt> (test of allelic variation
+conditional on CNV).  e.g.: (just dummy data below, no obvious pattern
+of results meant to be evident).
+</p>
+
+<b><em> [ TODO: clarify the above and add an example ] </em></b>
+
+<!--#include file="end.html"-->
+
+<em>
+ This document last modified <!--#flastmod file="misc.shtml" -->
+</em>
+
+</body>
+
+<HEAD>
+<META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
+</HEAD>
+</html>

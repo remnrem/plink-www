@@ -1,0 +1,228 @@
+<html>
+<body>
+
+<head>
+<link rel="stylesheet" href="plink.css" type="text/css">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<title>PLINK: Whole genome data analysis toolset</title>
+</head>
+
+<!--#include file="start.html"-->
+
+
+<blockquote>Data management tools</blockquote>
+
+PLINK provides a simple interface for recoding, reordering, merging,
+flipping DNA-strand and extracting subsets of data. </p>
+
+<hr>
+<strong>Recode and reorder a sample</strong>
+</p>
+
+A basic, but often useful feature: to output a file a) with the PED
+file markers reordered for physical position, b) with excluded SNPs
+(negative values in the MAP file) excluded from the new PED file, c)
+possibly recoding the SNPs to a 1/2 coding (the second
+<tt>--recode12</tt> option).
+
+</p><kbd>
+plink --file data --recode
+</kbd></p>
+or
+</p><kbd>
+plink --file data --recode12
+</kbd></p>
+
+These create 2 new files
+<pre>
+     plink-recode.ped
+     plink-recode.map
+</pre>
+
+("plink" would be replaced by any specified --output {filename} )
+
+
+</p><hr>
+<strong>Flip DNA strand for SNPs</strong>
+</p>
+
+This command will read the list of SNPs in the file <tt>list.txt</tt>
+and flip the strand for these SNPs, then save a new PED/MAP file
+(i.e. by using the <tt>--recode</tt> command):
+
+</p><kbd>
+     plink --file data --flip list.txt --recode 
+</kbd></p>
+
+The <tt>list.txt</tt> should just be a simple list of SNP IDs, one SNP per 
+line.
+
+</p><hr>
+<strong>Merge two PED/MAP files</strong>
+</p>
+
+To merge two PED/MAP files:
+
+</p><kbd>
+     plink --file data1 --merge data2.ped data2.map --recode --out merge
+</kbd></p>
+
+The <tt>--merge</tt> option must be followed by 2 arguments: the name
+of the new PED file and the name of the new MAP file. The
+<tt>--recode</tt> option is necessary to output the newly merged file;
+the <tt>--out</tt> option will call the new files
+<tt>merge-recode.ped</tt> and <tt>merge-recode.map</tt>.
+
+</p>
+The <tt>--merge</tt> option can also be used with binary PED files,
+either as input or output, but not as the second file: i.e.
+
+</p><kbd>
+     plink --bfile data1 --merge data2.ped data2.map --make-bed --out merge
+</kbd></p>
+
+will create <tt>merge.bed</tt>, <tt>merge.fam</tt> and
+<tt>merge.bim</tt>, as the <tt>--make-bed</tt> option was used instead
+of the <tt>--recode</tt> option. Likewise, the <tt>data1.*</tt> files
+point to a binary PED file set; <tt>data2.ped</tt> must be a standard
+plain text PED file, however. In otherwords, you cannot merge two
+binary files; all other combinations are okay.
+
+</p>
+
+The two PED files can either overlap completely, partially, or not at
+all both in terms of markers and individuals. Imputed genotypes will
+be set to missing (i.e. if <tt>SNP_B</tt> is not measured in the first
+file, but it is in the second, then any individuals in the first file
+who are not also present in the second file will be set to missing for
+<tt>SNP_B</tt>.  
+
+Any existing genotype data (i.e. in <tt>data1.ped</tt>)
+will not be over-written by data in the second file
+(<tt>data2.ped</tt>).
+
+</p>
+A warning will be given if the chromosome and/or physical position
+differ between the two MAP files.
+
+</p><hr>
+<strong>Extract a subset of SNPs</strong>
+</p>
+
+Sometimes, to exclude certain SNPs, it is more convenient to specify a 
+list of required SNPs and make a new file,
+rather than having to set the 4th column of the MAP file to
+negative/positive values for every SNP. This is achieved by using the
+command
+</p><kbd>
+	plink --file data --extract mysnps.txt
+</kbd></p>
+where the file is just a list of SNPs, one per line, e.g.
+<pre>
+     snp005
+     snp008
+     snp101
+</pre>
+This command will create two new files:
+<pre>
+     plink-extract.ped
+     plink-extract.map
+</pre>
+
+Again, "plink" would be replaced by any specified <tt>--output
+{filename}</tt>.
+
+</p><hr>
+<strong>Remove a subset of SNPs</strong>
+</p>
+
+To re-write the PED/MAP files, but with certain SNPs excluded, use the 
+option
+</p><kbd>
+	plink --file data --exclude mysnps.txt
+</kbd></p>
+where the file <tt>mysnps.txt</tt> is, as for the <tt>--extract</tt> 
+command, just a list of SNPs, one per line.
+</p>
+This option creates the files
+<pre>
+     plink-extract.ped
+     plink-extract.map
+</pre>
+
+Another way of removing SNPs is to make the physical position negative 
+in the MAP file and then use the <tt>--recode</tt> option. 
+
+
+</p><hr>
+<strong>Extract a subset of individuals</strong>
+</p>
+
+To re-write the PED/MAP files, but with only certain individuals included, 
+use the option
+</p><kbd>
+	plink --file data --keep mylist.txt
+</kbd></p>
+where the file <tt>mylist.txt</tt> is, as for the <tt>--remove</tt> 
+command, just a list of Family ID / Individual ID pairs, one set per 
+line, i.e. one person per line.
+</p>
+
+
+</p><hr>
+<strong>Remove a subset of individuals</strong>
+</p>
+
+To re-write the PED/MAP files, but with certain individuals excluded, 
+use the option
+</p><kbd>
+	plink --file data --remove mylist.txt
+</kbd></p>
+where the file <tt>mylist.txt</tt> is, as for the <tt>--keep</tt> 
+command, just a list of Family ID / Individual ID pairs, one set per 
+line, i.e. one person per line.
+</p>
+
+
+</p><hr>
+<strong>Make a Binary PED file</strong>
+</p>
+
+To create a binary PED file use the following command, which will
+create the three files necessary:
+
+</p><kbd>
+	plink --file mydata --make-bed
+</kbd></p>
+
+which creates (by default)
+
+<pre>
+     plink.bed      ( binary file, genotype information )
+     plink.fam      ( first six columns of mydata.ped ) 
+     plink.bim      ( extended MAP file: two extra cols = allele names)
+</pre>
+
+You can specify a different output root file name (i.e. different to
+"plink") by using the <tt>--output</tt> (or <tt>--out</tt>) option:
+
+</p><kbd>
+	plink --file mydata --output mydata --make-bed
+</kbd></p>
+which will create
+<pre>
+	mydata.bed
+	mydata.fam
+	mydata.bim
+</pre>
+
+<!--#include file="end.html"-->
+
+<hr>
+<em>
+ This document last modified <!--#flastmod file="dataman.shtml" -->
+</em>
+
+
+</body>
+</html>

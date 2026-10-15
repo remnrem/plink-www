@@ -1,0 +1,5 @@
+PLINK-VERSION 0.99r
+
+Old versions of PLINK (<0.99r) contain bugs fixed in 0.99r \n
+
+MESSAGE-ALL \n *** Pre-Release Version *** \n  END

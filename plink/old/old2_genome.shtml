@@ -1,0 +1,65 @@
+<html>
+<body>
+
+<!--#include file="start.html"-->
+
+
+<hr><h4> List of IBD / IBS values for all pairs </h4>
+<pre>
+	./plink --file mydata --genome 
+</pre>
+which create the file
+<pre>
+	plink.genome	
+</pre>
+Current output has columns:
+<pre>
+	ID (family, individual) for individual 1 (2 cols)
+	"X"
+	ID (family, individual) for individual 2 (2 cols)
+	P(IBD=0)
+	P(IBD=1)
+	P(IBD=2)
+	pi-hat = proportion of alleles shared IBD = P(IBD1)/2 + P(IBD2) 
+	Number of IBS 0 loci
+	Number of IBS 1 loci 
+	Number of IBS 2 loci
+</pre>
+Therefore, 
+<pre>
+	sort -nr --key=9 plink.genome | head -n 50 
+</pre>
+or something similar is a good way of getting the top 50 most relateds. 
+
+I would advocate also calculating the average pi-hat for each
+individual and looking for outliers: indicative of true relationships,
+and sample contamination (i.e. too many hets -> fewer IBS 0 calls ->
+over-estimated IBD with all other people in the sample). 
+
+<hr><h4>HETEROZYGOSITY</h4>
+<pre>
+	./plink --file mydata --inbreeding
+</pre>
+Output is in 
+<pre>
+	plink.het
+</pre>
+and contains the fields
+<pre>
+	Family ID
+	Individual ID
+	# observed homozygous genotypes
+	# expected homozygous genotypes
+	# non-missing genotypes
+	F inbreeding coefficient
+</pre>
+Remember to do this only for autosomal markers: this can be achieved
+by having a MAP file with the X/Y markers with 0's in the 4th column
+to exclude them. [note: set to automatically exclude these]
+
+
+
+<!--#include file="end.shtml"-->
+
+</body>
+</html>

@@ -1,0 +1,15 @@
+PLINK-VERSION 0.99s
+
+Old versions of PLINK (<0.99s) contain bugs fixed in 0.99s \n
+
+MESSAGE-ALL \n *** Pre-Release Version: patch available (p2) *** \n  
+
+END-MESSAGE
+
+WARN --make-bed
+WARN --recode
+FATAL --all-pheno
+FATAL --hap
+FATAL --hap-window
+
+END

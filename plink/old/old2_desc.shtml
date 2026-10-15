@@ -1,0 +1,122 @@
+<html>
+<body>
+
+<head>
+<link rel="stylesheet" href="plink.css" type="text/css">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<title>PLINK: Whole genome data analysis toolset</title>
+</head>
+
+<!--#include file="start.html"-->
+
+<tt><font color="darkgreen"><b>PLINK</b></font></tt> is a whole genome
+association analysis toolset, designed to perform large-scale analyses
+in a computationally efficient manner. By using a binary
+representation of SNP data, very large datasets can be loaded into
+memory in their entirety and processed very efficiently. For example,
+to calculate the chi-square statistics and odds ratios for all SNPs in
+a 100K dataset containing 350 individuals took ~2 seconds on a
+standard Linux workstation, making a permutation-based approach to
+whole genome analysis feasible. </p>
+
+<tt><font color="darkgreen"><b>PLINK</b></font></tt> will generate a
+number of standard summary statistics that are useful for quality
+control and can be used as thresholds for subsequent analyses
+(e.g. missing genotype rate, minor allele frequency, Hardy-Weinberg
+equilibrium failures and non-Mendelian transmission rates) as well as
+some more novel ones (estimated inbreeding coefficients for each
+individual and genome-wide identity-by-state and identity-by-descent
+estimates for all pairs of individuals). The later can be used to
+detect sample contaminations, swaps and duplications as well as
+pedigree errors and unknown familial relationships (e.g. sibling pairs
+in a case/control population-based sample). <tt><font
+color="darkgreen"><b>PLINK</b></font></tt> also provides a simple
+interface for recoding, reordering, flipping DNA-strand and extracting
+subsets of SNP data. </p>
+
+A simple but powerful approach to population stratification is
+included in <tt><font color="darkgreen"><b>PLINK</b></font></tt>, that
+can use whole genome SNP data in a computationally efficient
+manner. We use complete linkage agglomerative clustering, based on
+pairwise IBS distance, but with some modifications to the clustering
+process: restrictions based on a significance test for whether two
+individuals belong to the same population (i.e. do not merge clusters
+that contain significantly different individuals) , a phenotype
+criterion (i.e. all pairs must contain at least one case and one
+control) and a cluster size restriction (i.e. such that, with a
+cluster size of 2, for example, the subsequent association test would
+implicitly match every case with its nearest control, as long as the
+case and control do not show evidence of belonging to different
+populations). Any evidence of population substructure (from this or
+any other analysis) can be incorporated in subsequent association
+tests via the specification of clusters, as at each permutation step
+of the tests described below, individuals are only permuted within
+cluster. </p>
+
+The basic association test is for a disease trait and is based on
+comparing allele frequencies between cases and controls (asymptotic
+and empirical p-values are available). Also implemented are the
+Cochran-Armitage trend test, dominant and recessive models and a two
+degree of freedom general model. The ability to compare different
+models by likelihood ratio test and to evaluate the significant of the
+most significant model by permutation are also incorporated. We also
+test for difference in missing genotype rates between cases and
+controls. </p>
+
+Family-based data can be analyzed with the basic TDT, using either
+asymptotic or empirical significance values. In addition, the basic
+test is modified to include information on parental phenotypes to give
+a more powerful combined test. The permutation procedure will flip
+transmitted/untransmitted status constantly for all SNPs for a given
+family, thereby preserving the LD and linkage information between
+markers and siblings. </p>
+
+Quantitative traits can be tested for association also, using either
+asymptotic (likelihood ratio test and Wald test) or empirical
+significance values. As above, any clustering scheme can be specified
+for the permutations: in this way, it is possible to control for
+subpopulation membership as well as family structure, if related
+individuals are being analyzed. </p>
+
+For all tests (disease, quantitative and family-based) it is possible
+to specify 'sets' of SNPs to calculate 'set-based' or 'gene-based'
+test statistics: these are based on cumulative sums of rank-ordered
+single SNP statistics, and are evaluated by permutation.</p>
+
+For the disease-trait population-based samples, it is possible to test
+for epistasis. The epistasis test can either be case-only or
+case-control. Either all pairwise combinations of SNPs can be tested
+(although this is most likely not desirable, it is computationally
+feasible using <tt><font color="darkgreen"><b>PLINK</b></font></tt> -- the 4.5 billion two-locus tests generated from
+a 100K data set took just over 24 hours to run) or sets can be
+specified (e.g. to test only the most significant 100 SNPs against all
+other SNPs, or against themselves, etc). The output consists only
+pairwise epistatic results above a certain significance value; also,
+for each SNP, a summary of all the pairwise epistatic tests is given
+(e.g.  maximum test, proportion of tests significant at a certain
+threshold, etc). A similar methodology allows for testing of
+gene-environment interaction (for dichotomous environmental
+variables). </p>
+
+All tests described above are based on single SNP tests. It is also
+possible to impute haplotypes based on multimarker predictors using
+the standard E-M algorithm and either perform the test on the
+posterior distribution of haplotypes given genotypes for each
+individual (for main disease and quantitative trait population-based
+association tests only), alternatively to create a new file with the
+most likely haplotype pair imputed (or set to missing if the most
+likely phase is below a certain value).</p>
+
+
+
+
+
+<!--#include file="end.html"-->
+
+<em>
+ This document last modified <!--#flastmod file="desc.shtml" -->
+</em>
+
+</body>
+</html>
+

@@ -1,0 +1,376 @@
+<html>
+<title>PLINK</title>
+<body>
+
+<head>
+<link rel="stylesheet" href="plink.css" type="text/css">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<title>PLINK: Whole genome data analysis toolset</title>
+</head>
+
+<!--#include file="start.html"-->
+
+<h1>LD calculations</h1>
+
+PLINK includes a set of options to calculate pairwise linkage
+disequilibrium between SNPs, and to present or process this
+information in various ways. Also see the functions
+on <a href="haplo.shtml">haplotype analyisis</a>.
+</p>
+
+<a name="ld1">
+<h2>Pairwise LD measures for a single pair of SNPs</h2></a>
+</p>
+
+The command <tt>--ld</tt> followed by two SNP identifiers prints the
+following LD statistics to the LOG file, for a single pair of SNPs:
+r-squared, D', the estimated haplotype frequencies and those expected
+under linkage equilibrium, and indicates which haplotypes are in phase
+(i.e. occuring more often than expected by chance). For example:
+<h5>
+plink --bfile mydata --ld rs2840528 rs7545940
+</h5></p> 
+gives the following output
+<pre>
+     LD information for SNP pair [ rs2840528 rs7545940 ]
+
+        R-sq = 0.592     D' = 0.936
+
+        Haplotype     Frequency    Expectation under LE
+        ---------     ---------    --------------------
+            GC          0.013            0.199
+            AC          0.435            0.245
+            GT          0.441            0.250
+            AT          0.111            0.307
+
+        In phase alleles are GT/AC
+</pre>
+
+The LD statistics presented here are based on haplotype frequencies
+estimated via the EM algorithm. Only founders are used in these
+calculations.
+
+</p>
+
+<a name="ld2">
+<h2>Pairwise LD measures for multiple SNPs (genome-wide)</h2></a>
+</p>
+
+Correlations based on genotype allele counts (i.e. w/out phasing, and
+for founders only) can be obtained with the commands
+<h5>
+plink --file mydata --r
+</h5></p>
+or
+<p><h5>
+plink --file mydata --r2
+</h5></p>
+
+That is, this calculates for each SNP the correlation between two
+variables, coded 0, 1 or 2 to represent the number of non-reference
+alleles at each. The squared correlation based on genotypic allele
+counts is therefore not identical to the r-sq as estimated from
+haplotype frequencies (see above), although it will typically be very
+similar. Because it is faster to calculate, it provides a good way to
+screen for strong LD.  The estimated value for the example in the
+section above (rs2840528,rs7545940) is 0.5748 (versus 0.592).
+</p>
+Both commands create a file called
+<pre>
+	plink.ld
+</pre>
+
+with a list of R or R-squared values in it.
+
+<h6>Filtering the output</h6>
+
+By default, several filters on imposed on which pairwise calculations
+are calculated and reported. To only analyse SNPs that are not more
+than 10 SNPs apart, for example, use the option (default is 10 SNPs)
+<pre>
+     --ld-window 10
+</pre>
+to specify a kb window in addition (default 1Mb)
+<pre>
+     --ld-window-kb 1000
+</pre>
+and to report only values above a particular value (this only applies when the <tt>--r2</tt> 
+and not the <tt>--r</tt> command is used) (default is 0.2)
+<pre>
+     --ld-window-r2 0.2
+</pre>
+
+The default for <tt>--ld-window-r2</tt> is set at 0.2 to reduce the
+size of output files when many comparisons are made: to get all pairs
+reported, set <tt>--ld-window-r2</tt> to 0.
+
+
+<h6> Obtaining LD values for a specific SNP versus all others</h6>
+
+To obtain all LD values for a set of SNPs versus one specific SNP, use the <tt>--ld-snp</tt>
+command in conjunction with <tt>--r2</tt>. For example, to get a list of all values for 
+every SNP within 1Mb of <tt>rs12345</tt>, use the command 
+<h5>
+<pre>
+    plink --file mydata 
+          --r2 
+          --ld-snp rs12345 
+          --ld-window-kb 1000 
+          --ld-window 99999 
+          --ld-window-r2 0
+</pre>
+</h5></p>
+The <tt>--ld-window</tt> and <tt>--ld-window-r2</tt> commands effectively means that output 
+will be shown for <em>all</em> other SNPs within 1Mb of <tt>rs12345</tt>.
+
+</p>
+
+Similar to the <tt>--ld-snp</tt> command, but for multiple seed SNPs:
+to obtain all LD values from a group of SNPs with other SNPs, use the
+command
+<pre>
+     --ld-snp-list mysnps.txt
+</pre>
+where <tt>mysnps.txt</tt> is a list of SNPs.  
+
+
+<h6>Obtaining a matrix of LD values</h6>
+
+Alternatively, it is possible to add the <tt>--matrix</tt> option,
+which creates a matrix of LD values rather than a list: in this case,
+all SNP pairs are calculated and reported, even for SNPs on different 
+chromosomes.  
+</p>
+
+<strong>Note</strong> To force all SNP-by-SNP cross-chromosome comparisons 
+with the standard output format (e.g. without <tt>--matrix</tt>) add the flag 
+<pre>
+     --inter-chr
+</pre>
+instead.  This can be combined
+with <tt>--ld-window-r2</tt>, for example to list all
+inter-chromosomal SNPs pairs with very high R-squared
+values.  <b>Warning</b>: this command could take an excessively long
+time to run if applied to large datasets with many SNPs.
+
+
+
+
+
+<a name="tags">
+<h2>Functions to select tag SNPs for specified SNP sets</h2></a>
+</p>
+
+The command
+<h5>
+ plink --bfile mydata --show-tags mysnps.txt
+</h5></p>
+where <tt>mysnps.txt</tt> is just a list of SNP IDs, generates a file
+<pre>
+     plink.tags
+</pre>
+that lists all the SNPs in the dataset that tag the SNPs
+in <tt>mysnps.txt</tt> (including the SNPs in the original file).
+A message is also written to the LOG file that indicates how many new
+SNPs were added
+<pre>
+     Reading SNPs to tag from [ mysnps.txt ]
+     Read 10 SNPs to tag, of which 10 are unique and present
+     In total, added 2 tag SNPs
+     Writing tag list to [ plink.tags ]
+</pre>
+meaning that <tt>plink.tags</tt> will contain 12 SNPs. This command
+could be useful, for example, if one wants to generate a list of SNPs
+that tag all known coding SNPs, or a list of known disease-associated
+SNPs.
+</p>
+If the option 
+<pre>
+     --list-all
+</pre>
+is also added, then an additional file is generated that gives some
+more details for each target SNP (i.e. each SNP listed
+in <tt>mysnps.txt</tt>, in the above example) regarding how many and
+which tags were set for it. The file is named 
+<pre>
+     plink.tags.list
+</pre>
+and has the following fields
+<pre>
+       SNP   Target SNP ID
+       CHR   Chromosome code
+        BP   Physical position (base-pair)
+      NTAG   Number of other SNPs that tag this SNP
+      LEFT   Physical position of left-most (5') tagging SNP (bp)
+     RIGHT   Physical position of right-most (3') tagging SNP (bp)
+    KBSPAN   Kilobase size of region implied by LEFT-RIGHT
+      TAGS   List of SNPs that tag target
+</pre>
+For example:
+<pre><small>
+            SNP  CHR         BP NTAG       LEFT      RIGHT   KBSPAN TAGS
+      rs2542334   22   16694612    2   16693517   16695440    1.923 rs415170|rs2587108
+      rs2587108   22   16695440    2   16693517   16695440    1.923 rs415170|rs2542334
+       rs873387   22   16713566    0   16713566   16713566        0 NONE
+        rs11917   22   16717565    2   16717565   16742194   24.629 rs1057721|rs2075444
+      rs1057721   22   16718397    2   16717565   16742194   24.629 rs11917|rs2075444
+      rs9605422   22   16737494    0   16737494   16737494        0 NONE
+      rs2075444   22   16742194    2   16717565   16742194   24.629 rs11917|rs1057721
+      rs4819644   22   16744470    0   16744470   16744470        0 NONE
+      rs2083882   22   16769795    0   16769795   16769795        0 NONE
+      rs5992907   22   16796453    5   16796453   16830384   33.931 rs400509|rs396012|rs415651|rs384215|rs453557
+       rs400509   22   16800853    3   16796453   16813039   16.586 rs5992907|rs396012|rs384215
+       rs396012   22   16806587    3   16796453   16813039   16.586 rs5992907|rs400509|rs384215
+      rs7293187   22   16807274    0   16807274   16807274        0 NONE
+</small></pre>
+
+</p>
+
+The settings for declaring that a SNP tags another SNP can be varied with the 
+commands
+<pre>
+     --tag-r2 0.5
+</pre>
+to specify a minimum r-squared (based on the genotypic correlation,
+see above); in this case it is set to a value of 0.5 as being
+necessary to declare that one SNP tags another (the default is 0.8). Also, 
+<pre>
+     --tag-kb 1000
+</pre>
+will constrain the search for tags to be within a megabase (the default
+is 250kb).
+
+</p>
+
+<strong>HINT</strong> If you specify the filename for
+the <tt>--show-tags</tt> command to be the keyword <tt>all</tt>, then
+PLINK will only generate the <tt>plink.tags.list</tt> file, but for
+all SNPs in the dataset.  (This means that you cannot have a file
+actually called <tt>all</tt> used as the input for
+the <tt>--show-tags</tt> command of course).
+</p>
+
+<strong>NOTE</strong> You can add the <tt>--tag-mode2</tt> command to
+specify an alternative input and output format. In this case, we
+assume the input file contains two columns, with the second field being 
+either 0 or 1 to indicate whether or not this is a target SNP:
+<pre>
+     rs00001  0
+     rs00002  0
+     rs00003  1
+     rs00004  0
+     rs00005  1
+     rs00006  0
+</pre>
+The output is in a similar form, except that tagging SNPs will now have a <tt>1</tt> in the second field:
+<pre>
+     rs00001  0
+     rs00002  0
+     rs00003  1
+     rs00004  1
+     rs00005  1
+     rs00006  1
+</pre>
+i.e. this above example would be equivalent to the original input file
+<pre>
+     rs00003  
+     rs00005  
+</pre>
+and output file
+<pre>
+     rs00003  
+     rs00004  
+     rs00005  
+     rs00006  
+</pre>
+indicating that SNPs <tt>rs00004</tt> and <tt>rs00006</tt> have been added as tags.
+</p>
+
+<strong>NOTE</strong> This function does not pick the minimal set of
+SNPs required to tag all common variation in a region, in the way
+tagging algorithms typically work (e.g. such
+as <a href="http://www.broad.mit.edu/mpg/tagger/">Tagger</a>). Rather,
+this utility function is designed merely to indicate which other SNPs
+tag a one or more of a pre-specified list of SNPs.
+
+
+<a name="blox">
+<h2>Haplotyp block estimation</h2></a>
+</p>
+
+The command 
+<h5>
+ plink --bfile mydata --blocks
+</h5></p> 
+generates two files
+<pre>
+     plink.blocks
+</pre>
+and
+<pre>
+     plink.blocks.det
+</pre>
+
+Haplotype blocks are estimated following the default procedure in <a
+href="http://www.broad.mit.edu/mpg/haploview/">Haploview</a>. Note
+that only individuals with a non-missing phenotype are included in
+this analysis.
+</p>
+
+By default, pairwise LD is only calculated for SNPs within 200kb. If
+needed, this parameter can be changed via the <tt>--ld-window-kb</tt>
+option.
+
+</p>
+
+The first file lists each block (2 or more SNPs) on a row, starting
+with an asterisk symbol (*), for example:
+<pre>
+     * rs7527871 rs2840528 rs7545940
+     * rs2296442 rs2246732
+     * rs10752728 rs897635
+     * rs10489588 rs9661525 rs2993510
+</pre>
+
+
+ This format can be used with the <tt>--hap</tt> command, for example
+to test each haplotype in each block for assocaition, or to estimate
+the haplotype frequencies: for example,
+<h5>
+ plink --bfile mydata --hap plink.blocks --hap-freq
+</h5></p>
+The second file, <tt>plink.blocks.det</tt> is similar to the first, but 
+contains some addition information:
+<pre>
+     CHR      Chromosome identifier
+     BP1      The start position (base-pair units) of this block
+     BP2      The end position (base-pair units) of this block
+     KB       The kilobase distanced spanned by this block
+     NSNPS    The number of SNPs in this block
+     SNPS     List of SNPs in this block
+</pre>
+for example
+<pre>
+     CHR          BP1          BP2           KB  NSNPS SNPS
+       1      2313888      2331789       17.902      3 rs7527871|rs2840528|rs7545940
+       1      2462779      2482556       19.778      2 rs2296442|rs2246732
+       1      2867411      2869431        2.021      2 rs10752728|rs897635
+       1      2974991      2979823        4.833      3 rs10489588|rs9661525|rs2993510
+       ....
+</pre>
+
+
+<!--#include file="end.html"-->
+
+<em>
+ This document last modified <!--#flastmod file="ld.shtml" -->
+</em>
+
+</body>
+
+<HEAD>
+<META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
+</HEAD>
+</html>
+
+

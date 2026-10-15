@@ -1,0 +1,206 @@
+<html>
+<body>
+
+<head>
+<link rel="stylesheet" href="plink.css" type="text/css">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<title>PLINK: Whole genome data analysis toolset</title>
+</head>
+
+<!--#include file="start.html"-->
+
+
+<h1>What's new?</h1>
+
+<h2>Version 1.07 released 10 October 2009</h2>
+</p>
+
+This release contains a number of major new features:
+<ul>
+
+ <li> Meta-analysis of generic association test summary data | <a href="metaanal.shtml">link</a>
+ <li> Analysis of post-imputation dosage data | <a href="dosage.shtml">link</a> 
+ <li> Result file annotation functions | <a href="annot.shtml">link</a>
+ <li> Preliminary support for ZLIB file compression, which will be extended to all operations in future releases
+</ul>
+A full list of changes is detailed in the <a href="changelog.shtml"><tt>CHANGELOG</tt></a>.
+</p>
+
+<h2>Version 1.06 released 22 April 2009</h2>
+</p>
+
+This release contain a number of minor improvements and bug-fixes as well as some major enhancements:
+<ul>
+ <li> Haplotype block estimation and SNP tagging features  | <a href="ld.shtml#tags">link</a> 
+ <li> Covariates and permutation allowed for haplotype-based tests | <a href="haplo.shtml#hap3c">link</a>
+ <li> Extensive ID-helper utility functions | <a href="ids.shtml">link</a>
+ <li> Support for LAPACK library, to speed up MDS analysis | <a href="strat.shtml#mds">link</a>
+ <li> Additional input format features for long-format files | <a href="data.shtml#lgen">link</a>
+ <li> Attributes for filtering SNPs and individuals | <a href="dataman.shtml#extract">link</a>
+</ul>
+A full list of changes is detailed in the <a href="changelog.shtml"><tt>CHANGELOG</tt></a>.
+
+<h2>Version 1.05 released 11 December 2008</h2>
+</p>
+
+This release contains a number of additional features, format changes
+and bug fixes, including:
+<ul>
+ <li> More flexible support for R-plugins (<b>note:</b> protocol changed for R functions, see <a href="rfunc.shtml">R plugin page</a> for details)
+ <li> Preliminary support for quality scores (SNPs and genotypes)
+ <li> Calculation of expected IBD sharing for known relatives
+ <li> Various commands to update individual and SNP information
+ <li> Many minor fixes and changes (including to some output files)
+</ul>
+
+There is now a <a href="flow.shtml">flow-chart</a> that details the order of major operations in PLINK. 
+
+For the full list of changes, see the <a href="changelog.shtml"><tt>CHANGELOG</tt></a>.
+
+
+<h2>Version 1.04 released 26 August 2008</h2>
+</p>
+
+This release contains a number of additional features. There is a new
+set-based test, various commands for parsing SNP and CNV data and
+results by genes. There are also a number of smaller new features and
+bug fixes, described in the <a href="changelog.shtml"><tt>CHANGELOG</tt></a>. 
+A new PDF snapshot of the online documentation has also been created.
+
+
+<h2>Version 1.03 released 10 June 2008</h2>
+</p>
+
+A number of minor additions and bug fixes, described <a href="changelog.shtml">here</a>
+
+
+<h2>Version 1.02 released 27 March 2008</h2>
+</p>
+
+This version contains a whole new suite of tools for 
+handling copy number variation data, for both rare (segmental)
+and common variants. As well as a number of minor fixes 
+and improvements, the web manual is now available as a single
+PDF file. 
+
+<h2>Version 1.01 released 27 January 2008</h2>
+</p>
+
+This contains a number of additions and fixes, largely minor in
+nature, relative to 1.00. In particular, there is updated proxy
+association/imputation command syntax, output, features and default
+settings. Problems introduced in the last release, in QFAM, sliding
+window haplotype analysis, and the --hap-impute function are
+fixed. Also, some convenience functions have been added, e.g. to
+update a map file (--update-map) and create dummy variables for
+categorical covariates (--dummy-coding). In addition, various parts of
+the online documentation have been updated.
+
+</p>
+
+
+<h2>Version 1.00 released 5 December 2007</h2>
+</p>
+
+After a relatively long period since 0.99s was released, version 1.00,
+the first "stable" release, provides several important fixes and
+updates as well as several completely new features.  Although several
+new features are designated as being in a <em>beta</em> stage of
+development, releasing as version 1.00 (as opposed to 0.99t) signifies
+both a reasonable level of maturity for many parts of this package as
+well as the fact that <tt>PLINK</tt> will, for the foreseeable future,
+still be subject to regular change (in the form of additions and
+updates as well as bug fixes).
+
+</p>
+The main new features are
+<ul>
+
+ <li> <a href="whap.shtml">Conditional haplotype-based association
+tests</a>: a set of routines have been added that implement and extend
+most features offered in the
+no-longer-supported <a href="../whap/">WHAP</a> software package.
+
+ <li> A simple facility to <a href="clump.shtml">clump groups of
+SNP-based results</a> across one or more files based on
+linkage-disequilibrium
+
+ <li> <em>Beta</em> development version of
+a <a href="pimputation.shtml">full SNP imputation</a> routine (i.e. to
+impute and test ungenotyped SNPs given a reference such as
+the <a href="res.shtml#hapmap">Phase 2 HapMap</a>)
+
+</ul>
+
+<h2>Version 0.99s released 27 July 2007</h2>
+</p>
+
+There are several entirely new sets of features in version v0.99s. This release was 
+scheduled to be the v1.00 release, but given the number of new features added, it 
+seemed appropriate to have one more beta release, to iron out any major problems 
+before the main release.</p> The main additions are:
+<ul>
+ <li> A set of <a href="proxy.shtml">proxy association</a> methods,
+that are designed to present single SNP associations in their
+haplotypic context: for example, is a single SNP association also seen
+in the surrounding haplotypes? Also, the basic single SNP test is
+reframed in terms of a haplotype test, which can have some advantages
+with respect to non-random genotyping failure.
+ 
+ <li> There is now a web-based <a href="psnp.shtml">lookup</a>
+function, to quickly give report a set of different types of
+annotation data for particular SNPs.
+
+ <li> PLINK now has some degree of extensibility, via
+a <a href="rfunc.shtml">R plugin</a> feature. Users can define their
+own test statistic using the R language, which can then be easily
+embedded within a PLINK run.
+
+ <li> Data can now be loaded in "long format" (in which one row
+corresponds to a genotype, rather than a person or a SNP).
+
+ <li> Changed the implementation of the <tt>--homozyg-*</tt>
+functions, that looks for extended stretches of homozygosity.
+
+ <li> Several other minor additions and bug-fixes. Most notable bug
+fixes are for the DFAM test, having covariates and genotypic tests in
+the <tt>--linear</tt> and
+<tt>--logistic</tt> functions; a problem with the <tt>--bmerge</tt> option. 
+
+</ul>
+
+There have also been a number of improvements and fixes made to
+the <a href="gplink.shtml">gPLINK</a> GUI (now version v1.00). In
+addition, several improvements and additions relevant to viewing PLINK
+output files have been made to the Haploview program (version 4.0,
+release candidate 2) available
+from <a href="http://www.broad.mit.edu/mpg/haploview">here</a>.
+
+
+<h2>Version 0.99r released 29 April 2007</h2>
+</p>
+
+Main additions include the DFAM and QFAM tests, in addition to several 
+bug fixes and data management options.
+
+<h2>Manuscript describing PLINK in press</h2>
+</p>
+A <a href="plink_preprint.pdf">manuscript</a> is in press (American 
+Journal of Human Genetics). Please do not distribute this pre-publication 
+version.
+
+
+<!--#include file="end.html"-->
+
+<hr>
+<em>
+ This document last modified <!--#flastmod file="news.shtml" -->
+</em>
+
+
+</body>
+
+<HEAD>
+<META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
+</HEAD>
+</html>

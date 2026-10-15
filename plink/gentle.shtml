@@ -1,0 +1,136 @@
+<html>
+<body>
+ 
+<head>
+<link rel="stylesheet" href="plink.css" type="text/css">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<title>PLINK: Whole genome data analysis toolset</title>
+</head>
+ 
+<!--#include file="start.html"-->
+ 
+<h1>A <tt>PLINK</tt> tutorial</h1>
+</p>
+
+These notes are designed to help Windows users who are unfamiliar 
+with the command line to set up the example files for the tutorial.
+</p>
+
+<table width=100% border=1>
+<tr width=50%>
+<td>
+Go to the start menu and select the "Run..." option
+</td>
+<td align="center">
+<img src="ptut1.png"></p>
+</td>
+</tr>
+
+<tr><td> </td></tr>
+
+<tr>
+<td>
+Type "cmd" at the prompt. 
+</td>
+<td align="center">
+<img src="ptut2.png"></p>
+</td>
+</tr>
+
+<tr><td> </td></tr>
+
+<tr>
+<td>
+This should bring up a command window (i.e. this is MS-DOS). Using 
+the command line, create a new folder for the tutorial files. In this 
+case, I've first moved to the drive called "E" by typing 
+<h5>
+e:
+</h5></p>
+You might not have a drive called <tt>E:</tt> -- your default drive is 
+probably <tt>C:</tt>.  The exact location of where you run this tutorial 
+is not important -- we are next going to create a folder, but this can be 
+anywhere on your system. </p>
+By typing (all on one line)
+<h5>
+mkdir example
+</h5></p>
+we have created a new folder called <tt>example</tt> (assuming this did 
+not already exist). Move into this new folder with the <tt>cd</tt> 
+command: (all on one line)
+<h5>
+cd example
+</h5></p>
+</td>
+<td align="center">
+<img src="ptut3.png"></p>
+</td>
+</tr>
+
+<tr><td>&nbsp;</td></tr>
+
+<tr>
+<td>
+Finally, using Windows, copy the <tt>hapmap1.zip</tt> file you 
+downloaded to this folder and unzip, e.g. using WinZip as below. If you
+do not have WinZip installed, you can obtain a free evaluation copy from 
+the product's <a href="http://www.winzip.com">website</a>
+</td>
+
+<td align="center">
+<img src="ptut4.png"></p>
+</td>
+</tr>
+
+</table>
+
+&nbsp;</p>
+
+You now should return to the command line prompt, which will still be 
+point to the newly created directory, with the required PED and MAP 
+files in it. You can verify this by typing at the command line:
+<h5>
+dir
+</h5></p>
+which should show 4 new files in addition to the zip archive:
+<pre>
+     E:\example>dir
+      Volume in drive E is New Volume
+      Volume Serial Number is XXXX-XXXX
+
+      Directory of E:\example
+
+     06/05/2006  08:36 PM    &lt;DIR&gt;          .
+     06/05/2006  08:36 PM    &lt;DIR&gt;          ..
+     06/05/2006  11:24 PM         1,693,668 hapmap1.map
+     06/05/2006  10:24 PM        29,739,617 hapmap1.ped
+     06/05/2006  08:29 PM         2,913,399 hapmap1.zip
+     06/05/2006  11:24 PM            93,968 pop.phe
+     06/05/2006  11:24 PM            93,968 qt.phe
+
+                    3 File(s)     34,346,684 bytes
+                    2 Dir(s)  34,455,240,704 bytes free
+</pre>
+
+You can erase the ZIP file with this command:
+
+<h5>
+erase hapmap1.zip
+</h5></p>
+
+You are now ready to return to the <a href="tutorial.shtml">main 
+tutorial</a>.
+
+
+
+<!--#include file="end.html"-->
+ 
+<hr>
+<em>
+ This document last modified <!--#flastmod file="anal.shtml" -->
+</em>
+ 
+ 
+</body>
+</html>
+

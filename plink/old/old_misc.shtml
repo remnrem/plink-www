@@ -1,0 +1,82 @@
+<html>
+<title>PLINK</title>
+<body>
+
+<head>
+<link rel="stylesheet" href="plink.css" type="text/css">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<title>PLINK: Whole genome data analysis toolset</title>
+</head>
+
+<!--#include file="start.html"-->
+
+
+<blockquote>Miscellaneous & TODO</blockquote>
+
+Development of <tt>PLINK</tt> is ongoing: as such, there is always
+likely to be a list of features, listed here, that are only partialy
+implemented.
+</p>
+<hr>
+<strong>Matrix of pairwise LD (genotype correlation)</strong>
+</p>
+
+Correlations based on genotype allele counts (i.e. w/out phasing)
+</p><type>
+	./plink --file mydata --r
+</type></p>
+<type>
+	./plink --file mydata --r2
+</type></p>
+
+These both create a file called
+<pre>
+	plink.ld
+</pre>
+
+with the matrix of r or r^2 values in it. 
+
+
+<hr>
+</p>
+<warn>TODO</warn> <strong>IBS sharing association tests</strong>
+</p>
+
+These tests are currently being implemented and are not ready for
+general use.
+
+<pre>
+	./plink --file mydata --sharing
+</pre>
+
+
+<hr>
+</p>
+<warn>TODO</warn> </p>
+Allow specific chromosomes and marker ranges only to be tested in the association analyses.
+</p>
+
+
+<hr>
+</p>
+<warn>TODO</warn> </p>
+Implement haplotype-based test that fractionally counts all possible haplotypes.
+</p>
+
+
+<hr>
+</p>
+<warn>TODO</warn> </p>
+Filters on Mendel rates, HWD, etc
+</p>
+
+
+
+<!--#include file="end.html"-->
+
+<em>
+ This document last modified <!--#flastmod file="misc.shtml" -->
+</em>
+
+</body>
+</html>

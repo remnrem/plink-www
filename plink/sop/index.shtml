@@ -1,0 +1,40 @@
+<html>
+<body>
+
+<head>
+<link rel="stylesheet" href="../plink.css" type="text/css">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<title>SOP: Whole genome data analysis toolset</title>
+</head>
+
+<!--#include file="start.html"-->
+
+<table border=0 width=100%>
+<tr><td width=70%>
+
+These pages are designed to provide basic guidance in the application 
+of the Broad/MGH WGAS tools (the suite of scripts and software tools such as Haploview, 
+PLINK and gPLINK).
+
+<hr>
+
+<center>
+<em> This document is currently under construction </em>
+</center>
+
+<hr>
+
+<!--#include file="end.html"-->
+
+<hr>
+<em>
+ This document last modified <!--#flastmod file="index.shtml" -->
+</em>
+
+</body>
+
+<HEAD>
+<META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
+</HEAD>
+</html>
+

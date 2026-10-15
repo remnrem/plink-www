@@ -1,0 +1,728 @@
+<html>
+<body>
+                                                                                                   
+<head>
+<link rel="stylesheet" href="plink.css" type="text/css">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<title>PLINK: Whole genome data analysis toolset</title>
+</head>
+                                                                                                   
+<!--#include file="start.html"-->
+                                                                                                   
+                                                                                                   
+This page contains old versions of <tt>PLINK</tt>.
+                                                                                                   
+</p>
+                                                                                                   
+<a name="archive"></a>
+<h1>Archive</h1>
+
+<b><em>The latest release version is 1.07</em></b> (see 
+main <a href="download.shtml">download page</a>).</p>
+
+</p>
+<b><em>Version 1.06</em></b>.
+                                                                                          
+<table border=1 width=80%>
+
+<tr>
+<td>Linux (x86_64) </td>
+<td><a href="dist/plink-1.06-x86_64.zip">plink-1.06-x86_64.zip</a> 
+</td>
+<td>v1.06</td>
+</tr>
+                                                                                          
+<tr>
+<td> Linux (i686) </td>
+<td> <a href="dist/plink-1.06-i686.zip">plink-1.06-i686.zip</a>  </td>
+<td>v1.06</td>
+</tr>
+                                                                                          
+<tr>
+<td> MS-DOS  </td>
+<td> <a href="dist/plink-1.06-dos.zip">plink-1.06-dos.zip</a> </td>
+<td>v1.06</td>
+</tr>
+                                                                                          
+<tr>
+<td> Apple Mac (PPC) </td>
+<td> <a href="dist/plink-1.06-mac.zip">plink-1.06-mac.zip</a>  
+</td>
+<td>v1.06</td>
+</tr>
+                                                                                          
+<tr>
+<td> C/C++ source (.zip) </td>
+<td> <a href="dist/plink-1.05-src.zip">plink-1.06-src.zip</a> </td>
+<td>v1.06</td>
+</tr>
+                                                                                          
+</table>
+</p>
+
+
+<b><em>Version 1.05</em></b>.
+                                                                                          
+<table border=1 width=80%>
+
+<tr>
+<td>Linux (x86_64) </td>
+<td><a href="dist/plink-1.05-x86_64.zip">plink-1.05-x86_64.zip</a> 
+</td>
+<td>v1.05</td>
+</tr>
+                                                                                          
+<tr>
+<td> Linux (i686) </td>
+<td> <a href="dist/plink-1.05-i686.zip">plink-1.05-i686.zip</a>  </td>
+<td>v1.05</td>
+</tr>
+                                                                                          
+<tr>
+<td> MS-DOS  </td>
+<td> <a href="dist/plink-1.05-dos.zip">plink-1.05-dos.zip</a> </td>
+<td>v1.05</td>
+</tr>
+                                                                                          
+<tr>
+<td> Apple Mac (PPC) </td>
+<td> <a href="dist/plink-1.05-mac.zip">plink-1.05-mac.zip</a>  
+</td>
+<td>v1.05</td>
+</tr>
+                                                                                          
+<tr>
+<td> C/C++ source (.zip) </td>
+<td> <a href="dist/plink-1.05-src.zip">plink-1.05-src.zip</a> </td>
+<td>v1.05</td>
+</tr>
+                                                                                          
+</table>
+</p>
+
+
+
+
+<b><em>Version 1.04</em></b>.
+                                                                                          
+<table border=1 width=80%>
+
+<tr>
+<td>Linux (x86_64) </td>
+<td><a href="dist/plink-1.04-x86_64.zip">plink-1.04-x86_64.zip</a> 
+</td>
+<td>v1.04</td>
+</tr>
+                                                                                          
+<tr>
+<td> Linux (i686) </td>
+<td> <a href="dist/plink-1.04-i686.zip">plink-1.04-i686.zip</a>  </td>
+<td>v1.04</td>
+</tr>
+                                                                                          
+<tr>
+<td> MS-DOS  </td>
+<td> <a href="dist/plink-1.04-dos.zip">plink-1.04-dos.zip</a> </td>
+<td>v1.04</td>
+</tr>
+                                                                                          
+<tr>
+<td> Apple Mac (PPC) </td>
+<td> <a href="dist/plink-1.04-mac.zip">plink-1.04-mac.zip</a>  
+</td>
+<td>v1.04</td>
+</tr>
+                                                                                          
+<tr>
+<td> C/C++ source (.zip) </td>
+<td> <a href="dist/plink-1.04-src.zip">plink-1.04-src.zip</a> </td>
+<td>v1.04</td>
+</tr>
+                                                                                          
+</table>
+</p>
+
+
+
+
+<b><em>Version 1.03</em></b>.
+                                                                                          
+<table border=1 width=80%>
+
+<tr>
+<td>Linux (x86_64) </td>
+<td><a href="dist/plink-1.03-x86_64.zip">plink-1.03-x86_64.zip</a> 
+</td>
+<td>v1.03</td>
+</tr>
+                                                                                          
+<tr>
+<td> Linux (i686) </td>
+<td> <a href="dist/plink-1.03-i686.zip">plink-1.03-i686.zip</a>  </td>
+<td>v1.03</td>
+</tr>
+                                                                                          
+<tr>
+<td> MS-DOS  </td>
+<td> <a href="dist/plink-1.03-dos.zip">plink-1.03-dos.zip</a> </td>
+<td>v1.03</td>
+</tr>
+                                                                                          
+<tr>
+<td> Apple Mac (PPC) </td>
+<td> <a href="dist/plink-1.03-mac.zip">plink-1.03-mac.zip</a>  
+</td>
+<td>v1.03</td>
+</tr>
+                                                                                          
+<tr>
+<td> C/C++ source (.zip) </td>
+<td> <a href="dist/plink-1.03-src.zip">plink-1.03-src.zip</a> </td>
+<td>v1.03</td>
+</tr>
+                                                                                          
+</table>
+</p>
+
+
+
+<b><em>Version 1.02</em></b>.
+                                                                                          
+<table border=1 width=80%>
+
+<tr>
+<td>Linux (x86_64) </td>
+<td><a href="dist/plink-1.02-x86_64.zip">plink-1.02-x86_64.zip</a> 
+</td>
+<td>v1.02</td>
+</tr>
+                                                                                          
+<tr>
+<td> Linux (i686) </td>
+<td> <a href="dist/plink-1.02-i686.zip">plink-1.02-i686.zip</a>  </td>
+<td>v1.02</td>
+</tr>
+                                                                                          
+<tr>
+<td> MS-DOS  </td>
+<td> <a href="dist/plink-1.02-dos.zip">plink-1.02-dos.zip</a> </td>
+<td>v1.02</td>
+</tr>
+                                                                                          
+<tr>
+<td> Apple Mac (PPC) </td>
+<td> <a href="dist/plink-1.02-mac.zip">plink-1.02-mac.zip</a>  
+</td>
+<td>v1.02</td>
+</tr>
+                                                                                          
+<tr>
+<td> C/C++ source (.zip) </td>
+<td> <a href="dist/plink-1.02-src.zip">plink-1.02-src.zip</a> </td>
+<td>v1.02</td>
+</tr>
+                                                                                          
+</table>
+</p>
+
+
+<b><em>Version 1.01</em></b>.
+                                                                                          
+<table border=1 width=80%>
+
+<tr>
+<td>Linux (x86_64) </td>
+<td><a href="dist/plink-1.01-x86_64.zip">plink-1.01-x86_64.zip</a> 
+</td>
+<td>v1.01</td>
+</tr>
+                                                                                          
+<tr>
+<td> Linux (i686) </td>
+<td> <a href="dist/plink-1.01-i686.zip">plink-1.01-i686.zip</a>  </td>
+<td>v1.01</td>
+</tr>
+                                                                                          
+<tr>
+<td> MS-DOS  </td>
+<td> <a href="dist/plink-1.01-dos.zip">plink-1.01-dos.zip</a> </td>
+<td>v1.01</td>
+</tr>
+                                                                                          
+<tr>
+<td> Apple Mac (PPC) </td>
+<td> <a href="dist/plink-1.01-mac.zip">plink-1.01-mac.zip</a>  
+</td>
+<td>v1.01</td>
+</tr>
+                                                                                          
+<tr>
+<td> C/C++ source (.zip) </td>
+<td> <a href="dist/plink-1.01-src.zip">plink-1.01-src.zip</a> </td>
+<td>v1.01</td>
+</tr>
+                                                                                          
+</table>
+</p>
+
+
+<b><em>Version 1.00</em></b>.
+                                                                                          
+<table border=1 width=80%>
+
+<tr>
+<td>Linux (x86_64) </td>
+<td><a href="dist/plink-1.00-x86_64.zip">plink-1.00-x86_64.zip</a> 
+</td>
+<td>v1.00</td>
+</tr>
+                                                                                          
+<tr>
+<td> Linux (i686) </td>
+<td> <a href="dist/plink-1.00-i686.zip">plink-1.00-i686.zip</a>  </td>
+<td>v1.00</td>
+</tr>
+                                                                                          
+<tr>
+<td> MS-DOS  </td>
+<td> <a href="dist/plink-1.00-dos.zip">plink-1.00-dos.zip</a> </td>
+<td>v1.00</td>
+</tr>
+                                                                                          
+<tr>
+<td> Apple Mac (PPC) </td>
+<td> <a href="dist/plink-1.00-mac.zip">plink-1.00-mac.zip</a>  
+</td>
+<td>v1.00</td>
+</tr>
+                                                                                          
+<tr>
+<td> C/C++ source (.zip) </td>
+<td> <a href="dist/plink-1.00-src.zip">plink-1.00-src.zip</a> </td>
+<td>v1.00</td>
+</tr>
+                                                                                          
+</table>
+</p>
+
+
+
+<b><em>Version 0.99r</em></b>.
+                                                                                          
+<table border=1 width=80%>
+
+<tr>
+<td>Linux (x86_64) </td>
+<td><a href="dist/plink-0.99s-x86_64.zip">plink-0.99s-x86_64.zip</a> 
+</td>
+<td>v0.99s</td>
+</tr>
+                                                                                          
+<tr>
+<td> Linux (i686) </td>
+<td> <a href="dist/plink-0.99s-i686.zip">plink-0.99s-i686.zip</a>  </td>
+<td>v0.99s</td>
+</tr>
+                                                                                          
+<tr>
+<td> MS-DOS  </td>
+<td> <a href="dist/plink-0.99s-dos.zip">plink-0.99s-dos.zip</a> </td>
+<td>v0.99s</td>
+</tr>
+                                                                                          
+<tr>
+<td> Apple Mac (PPC) </td>
+<td> <a href="dist/plink-0.99s-mac.zip">plink-0.99s-mac.zip</a>  
+</td>
+<td>v0.99s</td>
+</tr>
+                                                                                          
+<tr>
+<td> C/C++ source (.zip) </td>
+<td> <a href="dist/plink-0.99s-src.zip">plink-0.99s-src.zip</a> </td>
+<td>v0.99s</td>
+</tr>
+                                                                                          
+</table>
+</p>
+
+
+
+
+<b><em>Version 0.99r</em></b>.
+                                                                                          
+<table border=1 width=80%>
+
+<tr>
+<td>Linux (x86_64) </td>
+<td><a href="dist/plink-0.99r-x86_64.zip">plink-0.99r-x86_64.zip</a> 
+</td>
+<td>v0.99r</td>
+</tr>
+                                                                                          
+<tr>
+<td> Linux (i686) </td>
+<td> <a href="dist/plink-0.99r-i686.zip">plink-0.99r-i686.zip</a>  </td>
+<td>v0.99r</td>
+</tr>
+                                                                                          
+<tr>
+<td> MS-DOS  </td>
+<td> <a href="dist/plink-0.99r-dos.zip">plink-0.99r-dos.zip</a> </td>
+<td>v0.99r</td>
+</tr>
+                                                                                          
+<tr>
+<td> Apple Mac (PPC) </td>
+<td> <a href="dist/plink-0.99r-mac.zip">plink-0.99r-mac.zip</a>  
+</td>
+<td>v0.99r</td>
+</tr>
+                                                                                          
+<tr>
+<td> C/C++ source (.zip) </td>
+<td> <a href="dist/plink-0.99r-src.zip">plink-0.99r-src.zip</a> </td>
+<td>v0.99r</td>
+</tr>
+                                                                                          
+</table>
+</p>
+
+
+
+<b><em>Version 0.99q</em></b>.
+                                                                                          
+<table border=1 width=80%>
+
+<tr>
+<td>Linux (x86_64) </td>
+<td><a href="dist/plink-0.99q-x86_64.zip">plink-0.99q-x86_64.zip</a> 
+</td>
+<td>v0.99q</td>
+</tr>
+                                                                                          
+<tr>
+<td> Linux (i686) </td>
+<td> <a href="dist/plink-0.99q-i686.zip">plink-0.99q-i686.zip</a>  </td>
+<td>v0.99q</td>
+</tr>
+                                                                                          
+<tr>
+<td> MS-DOS  </td>
+<td> <a href="dist/plink-0.99q-dos.zip">plink-0.99q-dos.zip</a> </td>
+<td>v0.99q</td>
+</tr>
+                                                                                          
+<tr>
+<td> Apple Mac (PPC) </td>
+<td> <a href="dist/plink-0.99q-mac.zip">plink-0.99q-mac.zip</a>  
+</td>
+<td>v0.99q</td>
+</tr>
+                                                                                          
+<tr>
+<td> Solaris </td>
+<td> <a 
+href="dist/plink-0.99q-solaris.zip">plink-0.99q-solaris.zip</a> 
+</td> <td>v0.99q</td>
+</tr>
+                                                                                          
+<tr>
+<td> C/C++ source (.zip) </td>
+<td> <a href="dist/plink-0.99q-src.zip">plink-0.99q-src.zip</a> </td>
+<td>v0.99q</td>
+</tr>
+                                                                                          
+</table>
+</p>
+
+
+<b><em>Version 0.99p</em></b>.
+                                                                                          
+<table border=1 width=80%>
+
+<tr><td> Linux (x86_64)  </td>
+<td> <a href="dist/plink-0.99p-x86_64.zip">
+plink-0.99p-x86_64.zip
+</a></td>
+<td> v0.99p </td>
+</tr>
+
+<tr><td> Linux (i686)  </td>
+<td> <a href="dist/plink-0.99p-i686.zip">
+plink-0.99p-i686.zip
+</a></td>
+<td> v0.99p </td>
+</tr>
+
+<tr><td> MS-DOS  </td>
+<td> <a href="dist/plink-0.99p-dos.zip">
+plink-0.99p-dos.zip
+</a></td>
+<td> v0.99p </td>
+</tr>
+
+<tr><td> Apple Mac </td>
+<td> <a href="dist/plink-0.99p-mac.zip">
+plink-0.99p-mac.zip
+</a></td>
+<td> v0.99p </td>
+</tr>
+
+<tr><td> Solaris </td>
+<td> <a href="dist/plink-0.99p-solaris.zip">
+plink-0.99p-solaris.zip
+</a></td>
+<td> v0.99p </td>
+</tr>
+                                                                                                   
+<tr><td> C/C++ source code </td>
+<td> <a href="dist/plink-0.99p-src.zip">
+plink-0.99p-src.zip
+</a></td>
+<td> v0.99p </td>
+</tr>
+                                                             
+</table>
+
+</p>
+
+</p>
+
+<b><em>Version 0.99o</em></b>.
+
+<table border=1 width=80%>
+
+<tr><td> Linux (x86_64)  </td>
+<td> <a href="dist/plink-0.99o-linux-x86_64.zip">
+plink-0.99o-linux-x86_64.zip
+</a></td>
+<td> v0.99o </td>
+</tr>
+
+<tr><td> Linux (i686)  </td>
+<td> <a href="dist/plink-0.99o-linux-i686.zip">
+plink-0.99o-linux-i686.zip
+</a></td>
+<td> v0.99o </td>
+</tr>
+
+<tr><td> MS-DOS  </td>
+<td> <a href="dist/plink-0.99o-dos.zip">
+plink-0.99o-dos.zip
+</a></td>
+<td> v0.99o </td>
+</tr>
+
+<tr><td> Apple Mac </td>
+<td> <a href="dist/plink-0.99o-mac.zip">
+plink-0.99o-mac.zip
+</a></td>
+<td> v0.99o </td>
+</tr>
+
+<tr><td> Solaris </td>
+<td> <a href="dist/plink-0.99o-solaris.zip">
+plink-0.99o-solaris.zip
+</a></td>
+<td> v0.99o </td>
+</tr>
+                                                                                                   
+<tr><td> C/C++ source code </td>
+<td> <a href="dist/plink-0.99o-src.zip">
+plink-0.99o-src.zip
+</a></td>
+<td> v0.99o </td>
+</tr>
+                                                             
+</table>
+</p>
+
+</p>
+
+
+<b><em>Version 0.99n</em></b>.
+
+<table border=1 width=80%>
+
+<tr><td> Linux (x86_64)  </td>
+<td> <a href="dist/plink-0.99n-linux-x86_64.zip">
+plink-0.99n-linux-x86_64.zip
+</a></td>
+<td> v0.99n </td>
+</tr>
+
+<tr><td> Linux (i686)  </td>
+<td> <a href="dist/plink-0.99n-linux-i686.zip">
+plink-0.99n-linux-i686.zip
+</a></td>
+<td> v0.99n </td>
+</tr>
+
+<tr><td> MS-DOS  </td>
+<td> <a href="dist/plink-0.99n-dos.zip">
+plink-0.99n-dos.zip
+</a></td>
+<td> v0.99n </td>
+</tr>
+
+<tr><td> Apple Mac </td>
+<td> <a href="dist/plink-0.99n-mac.zip">
+plink-0.99n-mac.zip
+</a></td>
+<td> v0.99n </td>
+</tr>
+
+<tr><td> Solaris </td>
+<td> <a href="dist/plink-0.99n-solaris.zip">
+plink-0.99n-solaris.zip
+</a></td>
+<td> v0.99n </td>
+</tr>
+                                                                                                   
+<tr><td> C/C++ source code </td>
+<td> <a href="dist/plink-0.99n-src.zip">
+plink-0.99n-src.zip
+</a></td>
+<td> v0.99n </td>
+</tr>
+                                                             
+</table>
+</p>
+
+
+<b><em>Version 0.99m</em></b>.
+
+</p>
+
+</p>
+
+<table border=1 width=80%>
+
+<tr><td> Linux (x86_64)  </td>
+<td> <a href="dist/plink-0.99m-linux-x86_64.tar.gz">
+plink-0.99m-linux-x86_64.tar.gz
+</a></td>
+<td> v0.99m </td>
+</tr>
+
+<tr><td> Linux (i686)  </td>
+<td> <a href="dist/plink-0.99m-linux-i686.tar.gz">
+plink-0.99m-linux-i686.tar.gz
+</a></td>
+<td> v0.99m </td>
+</tr>
+
+<tr><td> MS-DOS  </td>
+<td> <a href="dist/plink-0.99m-msdos.zip">
+plink-0.99m-msdos.zip
+</a></td>
+<td> v0.99m </td>
+</tr>
+
+<tr><td> Apple Mac </td>
+<td> <a href="dist/plink-0.99m-mac.zip">
+plink-0.99m-mac.zip
+</a></td>
+<td> v0.99m </td>
+</tr>
+
+<tr><td> Solaris </td>
+<td> <a href="dist/plink-0.99m-solaris.tar.gz">
+plink-0.99m-solaris.tar.gz
+</a></td>
+<td> v0.99m </td>
+</tr>
+                                                                                                   
+<tr><td> C/C++ source code </td>
+<td> <a href="dist/plink-0.99m-src.tar.gz">
+plink-0.99m-src.tar.gz
+</a></td>
+<td> v0.99m </td>
+</tr>
+                                                                                                   
+<tr><td> C/C++ source code </td>
+<td> <a href="dist/plink-0.99m-src.zip">
+plink-0.99m-src.zip
+</a></td>
+<td> v0.99m </td>
+</tr>
+                                                             
+</table>
+</p>
+
+
+
+<b><em>Version 0.99l</em></b>.
+
+</p>
+
+</p>
+
+<table border=1 width=80%>
+
+<tr><td> Linux (x86_64)  </td>
+<td> <a href="dist/plink-0.99l-linux-x86_64.tar.gz">
+plink-0.99l-linux-x86_64.tar.gz
+</a></td>
+<td> v0.99l </td>
+</tr>
+
+<tr><td> Linux (i686)  </td>
+<td> <a href="dist/plink-0.99l-linux-i686.tar.gz">
+plink-0.99l-linux-i686.tar.gz
+</a></td>
+<td> v0.99l </td>
+</tr>
+
+<tr><td> MS-DOS  </td>
+<td> <a href="dist/plink-0.99l-msdos.zip">
+plink-0.99l-msdos.zip
+</a></td>
+<td> v0.99l </td>
+</tr>
+
+<tr><td> Apple Mac </td>
+<td> <a href="dist/plink-0.99l-mac.zip">
+plink-0.99l-mac.zip
+</a></td>
+<td> v0.99l </td>
+</tr>
+
+<tr><td> Solaris </td>
+<td> <a href="dist/plink-0.99l-solaris.tar.gz">
+plink-0.99l-solaris.tar.gz
+</a></td>
+<td> v0.99l </td>
+</tr>
+                                                                                                   
+<tr><td> C/C++ source code </td>
+<td> <a href="dist/plink-0.99l-src.tar.gz">
+plink-0.99l-src.tar.gz
+</a></td>
+<td> v0.99l </td>
+</tr>
+                                                                                                   
+<tr><td> C/C++ source code </td>
+<td> <a href="dist/plink-0.99l-src.zip">
+plink-0.99l-src.zip
+</a></td>
+<td> v0.99l </td>
+</tr>
+                                                             
+</table>
+</p>
+
+
+ 
+ 
+ 
+<!--#include file="end.html"-->
+ 
+<em>
+ This document last modified <!--#flastmod file="download.shtml" -->
+</em>
+ 
+</body>
+</html>
+

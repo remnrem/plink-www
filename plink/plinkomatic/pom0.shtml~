@@ -1,0 +1,52 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>Plinkomatic Introduction</title>
+<meta name="generator" content="Bluefish 1.0.5">
+<meta name="author" content="Lori Thomas">
+<meta name="date" content="2006-04-25T11:58:02-0400">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8">
+<meta http-equiv="content-style-type" content="text/css">
+
+<link rel="stylesheet" href="plink.css" type="text/css">
+</head>
+<body>
+<!--#include file="pomstart.html"-->
+
+<p><a href="http://pngu.mgh.harvard.edu/~purcell/plink/">Plink</a> is a powerful whole 
+genome analysis program with nearly 100 options.  Building an analysis option-by-option
+can be difficult, so we've designed a tool called Plinkomatic to walk you through the
+process.  It will ask you three sets of questions, then give you a 
+<a href="http://pngu.mgh.harvard.edu/~purcell/plink/download.shtml">command</a> 
+you can copy and paste into a terminal window.
+</p>
+
+<p></p>
+
+Steps:
+<ul>
+	<li>Choose inputs and filters</li> [[Describe here]]
+	<li>Choose test</li> [[Describe here]]
+	<li>Enter files, options and threshholds</li>  [[describe here]]
+</ul>
+
+Results:
+<ul>
+	<li>Description of Analysis</li>  [[Describe here]]   
+	<li>Command</li> Type or copy the command into a terminal window to run the 
+		analysis.
+	<li>Output files to expect</li> The bottom of the page lists the output fi
+</ul>
+
+
+<!--#include file="pomend.html"-->
+
+<hr>
+<em>
+ This document last modified <!--#flastmod file="pom0.shtml" -->
+</em>
+
+
+</body>
+</html>

@@ -1,0 +1,439 @@
+<html>
+<body>
+
+<head>
+<link rel="stylesheet" href="plink.css" type="text/css">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<title>PLINK: Whole genome data analysis toolset</title>
+</head>
+
+<!--#include file="start.html"-->
+
+<h1>Family-based association analysis</h1>
+</p>
+
+The main focus of PLINK is for population-based samples. There is some 
+support for family-based analyses however, described in this section, 
+for disease traits and quantitative traits. 
+
+</p>
+
+<a name="tdt">
+<h2>Family-based association (TDT)</h2>
+</a></p>
+
+<tt>PLINK</tt> supports basic family-based association testing for disease 
+traits, using the TDT and a variant of this test that also incorporates 
+parental phenotype information, the <em>parenTDT</em>.
+</p>
+
+To run a basic TDT analysis for family data:
+<h5>
+	plink --file mydata --tdt
+</h5></p>
+which generates the file
+<pre>
+     plink.tdt
+</pre>
+If permutation has been requested, then either 
+<pre>
+     plink.tdt.perm
+</pre>
+or
+<pre>
+     plink.tdt.mperm
+</pre>
+will be generated also.  The main output file, <tt>plink.tdt</tt>, 
+contains the following fields:
+<pre>
+     CHR         Chromosome number
+     SNP         SNP identifier
+     A1          Minor allele code
+     A2          Major allele code
+     T           Transmitted minor allele count
+     U           Untransmitted allele count
+     OR          TDT odds ratio
+     CHISQ       TDT chi-square statistic
+     P           TDT asymptotic p-value
+     A:U_PAR     Parental discordance counts
+     CHISQ_PAR   Parental discordance statistic
+     P_PAR       Parental discordance asymptotic p-value
+     CHISQ_COM   Combined test statistic
+     P_COM       Combined test asymptotic p-value
+</pre>
+
+If the <tt>--ci</tt> option has been requested, then two additional 
+fields will appear after <tt>TDT_OR</tt>:
+
+<pre>
+     L95         Lower 95% confidence interval for TDT odds ratio
+     U95         Upper 95% confidence interval for TDT odds ratio
+</pre>
+(naturally, if a value other than 0.95 was used as the argument for the 
+<tt>--ci</tt> option, it will appear here instead.)</p>
+
+The TDT statistic is calculated simply as
+<pre>
+     (b-c)^2 / (b+c)
+</pre>
+where <tt>b</tt> and <tt>c</tt> are the number of transmitted and
+untransmitted alleles as shown in <tt>plink.tdt</tt>; under the 
+null, it is distributed as a 1df chi-squared.
+</p>
+
+The parental discordance test is based on counting the number of 
+alleles in affected versus unaffected parents, treating each 
+nuclear family parental pair as a matched pair. These counts 
+can be combined with the <tt>T</tt> and <tt>U</tt> counts of the 
+basic TDT to give a combined test statistic, also shown in the output.
+The parenTDT assumes homogeneity within families rather than between 
+families, in terms of population stratification. If parents are measured 
+on the phenotype, then this test can add considerable power to 
+family-based association analysis, whilst providing a strong degree (but
+not complete) protection against population stratification. The increase
+in power will depend on the proportion of parents that are discordant 
+for the disease. This approach is described in Purcell <em>et al</em> 
+AJHG (2005). <tt>PLINK</tt> uses a more simple approach to calculate the  
+<tt>PAR</tt> and <tt>COM</tt> statistics, however: if
+<pre>
+                   Unaffeced parent
+                   A/A   A/B   B/B
+     Affected A/A   -     p     r
+      parent  A/B   x     -     q
+              B/B   z     y     -
+</pre>
+i.e. such that the <tt>A:U_PAR</tt> fields represents <tt>p+q+2r : x+y+2z</tt>, 
+then
+<pre>
+     PAR = ( (p+q+2r) - (x+y+2z) )^2
+            / ( p+q+x+y+4(r+z) )
+</pre>
+and
+<pre>
+     COM =  ( ( b+p+q+2r ) - ( c+x+y+2z ) )^2 
+             / ( b+p+q+c+x+y+4(r+z) )
+</pre>
+Both statistics follow a 1 df chi-squared distribution under the null.
+</p>
+When running the <tt>--tdt</tt> option, <tt>PLINK</tt> will first 
+perform a check for Mendel errors and make missing the offending 
+genotypes.
+
+</p>
+
+Using the <tt>--tdt</tt> option, if permutation is requested (using 
+either <tt>--perm</tt> or <tt>--mperm</tt>) a file entitled either
+<pre>
+     plink.tdt.perm
+</pre>
+or
+<pre>
+     plink.tdt.mperm
+</pre>
+will be generated: the empirical p-value will be based on the standard TDT 
+test. The permutation procedure will flip transmitted/untransmitted status 
+constantly for all SNPs for a given family, thereby preserving the LD and 
+linkage information between markers and siblings.
+
+
+
+<a name="ptdt">
+<h2>parenTDT</h2>
+</a></p>
+
+The parenTDT, described in the paragraph above, is 
+automatically included when using the <tt>--tdt</tt> option. These 
+alternate commands generate the same output as for the <tt>--tdt</tt> 
+command, described above, except the permutation is based not on the 
+standard TDT, but either the parenTDT if using the option
+<h5>
+	plink --file mydata --parentdt1
+</h5></p>
+or, the combined test (TDT and parenTDT) if using the option
+<h5>
+	plink --file mydata --parentdt2
+</h5></p>
+
+
+<a name="poo">
+<h2>Parent of origin analysis</h2>
+</a></p>
+
+When performing family-based TDT analysis, it is possible to 
+separately consider transmissions from heterozygous fathers 
+versus heterozygous mothers to affected offspring. This is performed
+by adding the <tt>--poo</tt> to request parent-of-origin analysis:
+<h5>
+plink --file mydata --tdt --poo
+</h5></p>
+which generates the file <tt>plink.tdt.poo</tt>.  If permutation is also requested, 
+this also generates the file <tt>plink.tdt.poo.perm</tt> or <tt>plink.tdt.poo.mperm</tt>, 
+depending which permutation procedure is used. The main output file has the following 
+format:
+<pre>
+     CHR        Chromosome number
+     SNP        SNP identifier
+     A1:A2      Allele 1 : allele 2 codes
+     T:U_PAT    Paternal transmitted : untransmitted counts
+     OR_PAT     Paternal odds ratio
+     CHISQ_PAT  Paternal chi-squared test 
+     T:U_MAT    Maternal, as above
+     OR_MAT     Matneral, as above
+     CHISQ_MAT  Maternal, as above
+     Z_POO      Z score for difference in paternal versus maternal odds ratios
+     P_POO      Asymptotic p-value for parent-of-origin test
+</pre>
+
+If permutation is requested, the default test statistic is the absolute value of the Z 
+score for the parent-of-origin test (i.e. making a two-sided test). The flags 
+<tt>--pat</tt> and <tt>--mat</tt> indicate that the permutation statistic should
+be the paternal TDT chi-squared statistics, or the maternal statistic, instead.
+</p>
+
+<strong>NOTE</strong> When both parents are heterozygous, these ambiguous transmissions 
+are counted as 0.5 for both mother and father -- this is why the T:U counts will often 
+not be whole numbers.
+</p>
+
+
+<a name="dfam">
+<h2>DFAM: family-based association for disease traits</h2>
+</a></p>
+
+The DFAM procedure in PLINK implements the sib-TDT and also allows for
+unrelated individuals to be included (via a clustered-analysis using
+the Cochran-Mantel-Haesnzel). To perform this test:
+
+<h5>
+ plink --bfile mydata --dfam 
+</h5></p>
+which generates the file
+<pre>
+     plink.dfam
+</pre>
+which contains the fields
+<pre>
+     CHR        Chromosome code
+     SNP        SNP identifier
+     A1:A2      Minor and major allele codes
+     OBS        Number of observed minor alleles 
+     EXP        Number of expected minor alleles
+     CHISQ      Chi-squared test statistic
+     P          Asymptotic p-value
+</pre>
+
+This test can therefore be used to combine discordant sibship data,
+parent-offspring trio data and unrelated case/control data in a single
+analysis.
+
+</p><strong>NOTE</strong> If you are analysing a sibling-only sample (i.e. 
+no parents) then also add the <tt>--nonfounders</tt> option; otherwise, 
+all SNPs will be pruned out at the filtering stage, as PLINK will by 
+default only consider founder alleles when calculating allele frequency, 
+Hardy-Weinberg, etc.
+
+
+
+<a name="qfam">
+<h2>QFAM: family-based association tests for quantitative traits</h2>
+</a></p>
+
+PLINK offers a somewhat ad-hoc procedure to perform family-based tests of 
+association with quantitative phenotypes: the QFAM procedure, which uses 
+permutation to account for the dependence between related individuals.  
+It adopts the between/within model as used by Fulker et al (1999, AJHG) 
+and Abecasis et al (2000, AJHG) as implemented in the QTDT package. 
+However, rather than fitting a maximum likelihood variance components 
+model, as QTDT does, PLINK performs a simple linear regression of 
+phenotype on genotype, but then uses a special permutation procedure to 
+correct for family structure. 
+</p>
+There are several ways to run QFAM: a total association test (between and 
+within components)
+<h5> 
+ plink --bfile mydata --qfam-total --mperm 100000
+</h5></p>
+or a within-family test
+<h5> 
+ plink --bfile mydata --qfam --mperm 100000
+</h5></p>
+or a test including parental phenotypes
+<h5> 
+ plink --bfile mydata --qfam-parents --mperm 100000
+</h5></p>
+(Also, <tt>--qfam-between</tt> will look only at the between-family 
+component of association).
+
+</p><strong>NOTE</strong> In all cases above, we have used 
+<tt>--mperm</tt> to specify permutation; adaptive permutation can 
+also be used with QFAM (<tt>--perm</tt>). Permutation is necessary for 
+the QFAM test.
+</p>
+
+The columns in the QFAM permutation result files are:
+<pre>
+     CHR     Chromosome code
+     SNP     SNP identifier
+     STAT    Test statistic (ignore)
+     EMP1    Pointwise empirical p-value
+     NP      Number of permutations performed
+</pre>
+
+The columns in the non-permutation file (e.g. <tt>plink.qfam.total</tt>, if <tt>plink.qfam.total.mperm</tt>
+contains the permuted results) are as follows:
+<pre>
+     CHR     Chromosome code
+     SNP     SNP identifier
+     A1      Minor allele (corresponds to beta given below; absent in earlier PLINK releases)
+     TEST    Type of test, <tt>TOT</tt>, <tt>WITH</tt> and <tt>BET</tt>
+     NMISS   Number of non-missing individuals in analysis
+     BETA    Regression coefficient
+     STAT    Test statistic (ignore; not corrected for family-structure)
+     P       Asymptotic p-value (ignore; use empirical p-value)
+</pre>
+These results are from a standard <tt>--linear</tt> type analysis, i.e. which ignores family structure. 
+They are displayed so that the direction of effect may be determined (from the <tt>BETA</tt>) -- but 
+otherwise, only the empirical p-value from the permuted results file should be looked at.
+
+
+</p>
+
+The B and W components are calcalated using parental genotypes if 
+they are available for both parents, otherwise siblings are used. 
+Singletons can be included in this analysis (i.e. B=G and W=0 for them): 
+for example, the scores are shown below for a few configurations, when 
+parents are available:
+<pre>
+     <b>Genotype     G</b>
+     AA           1
+     Aa           0
+     aa          -1
+
+     B = ( Pat + Mat ) / 2
+     W = G - B
+ 
+     <b>Pat     Mat     Offspring     G     B     W</b>
+
+     AA      AA      AA            1     1     0
+
+     Aa      AA      AA            1     0.5   0.5
+     Aa      AA      Aa            0     0.5   -0.5
+
+     aa      AA      Aa            0     0     0
+
+     etc
+</pre>
+
+
+</p>
+
+
+The QFAM permutation procedure breaks down the genotypes into between 
+(B) and within (W) components, permutes them independently (i.e. at the 
+family level, either swapping the B component for one family with another 
+family, or flipping the sign of all W's in a family with 50:50 chance) 
+and then (for the total association test) reconstructs the individual 
+level "genotypes" as the sum of the 
+new B's and W's  i.e:
+<pre>
+     1) G -> B + W (individual-level)
+
+     2a) Permute B (family-level) -> B'
+     2b) Permute W (family-level) -> W'
+
+     3) B' + W' -> G' (individual-level)
+</pre>
+
+The logic is that we know how to permute both B and W separately whilst
+maintaining the familial structural component, and they are orthogonal
+components, so we should permute them separately, but then recombine them
+as a single individual-level genotypic score.
+</p>
+
+<strong>NOTE</strong> The total <tt>--qfam-total</tt> test is designed to 
+extract all association information from a family-based sample, 
+controlling for relatedness: it is not robust to stratification. Use the 
+<tt>--qfam</tt> for a strictly within family test.
+
+</p>
+
+In many circumstances, the standard QTDT as implemented in Goncalo 
+Abecasis' <a href="http://www.sph.umich.edu/csg/abecasis/QTDT/">QTDT</a> 
+program will perhaps be more appropriate. The disadvantages of the QFAM 
+procedure are 
+<ul>
+ <li> that it uses permutation and so is slower
+ <li> appears to be slightly less powerful when there is a higher residual 
+correlation 
+</ul>
+On the plus side, the advantages of the QFAM procedure are 
+<ul>
+ <li> that is uses permutation and so is appropriate for non-normal  
+phenotypes; it could also be used for disease phenotypes, although it will 
+not be appropriate for affected-only TDT style designs
+ <li> that it can be applied to genome-wide data easily (albeit not 
+necessarily quickly)
+</ul>
+
+<strong>Technical note</strong> As a technical point: when permuting 
+genotype between families in this way, one has to be careful with missing 
+genotype data, particularly in the instance in which a family is 
+completely missing. Because a missing B component cannot be recombined 
+with a non-missing W component, and vice versa, this process would tend 
+to increase the amount of missingness in permutations versus the original 
+data.
+</p>
+One could exclude individuals with missing genotypes first and 
+permute separately for each SNP, but this would no longer maintain 
+the correlation between SNPs (and require more computation). Instead, we 
+use the following scheme. We permute once per replicate (e.g. a table of 
+F (original family) and F' (permuted family), true and permuted 
+families). e.g.  but let's say that 2 is missing their B component 
+(denoted 2*)
+For example:
+<pre>
+     F  F'
+     0  5
+     1  2*  <- remove ?
+     2* 4   <- remove ?
+     3  1
+     4  0
+     5  3
+</pre>
+
+This would knock out families 1 and 2 from the permutation. We therefore 
+permute once to create a single table for permutation for all SNPs, but 
+then resursively edit the table on a SNP-by-SNP basis, to regroup the 
+missing families, by swapping missing F' families: in this case, swap 2* 
+with 4 (the other partner of 2*), e.g.
+<pre>
+     F  F'
+     0  5
+     1  4
+     2* 2* <- remove
+     3  1
+     4  0
+     5  3
+</pre>
+
+So now we have a permuted sample but the total level of missingness is the
+same. This procedure still generates valid, completely random permutations 
+of the non-missing genotype data and trys to maintain as much of the  
+correlation between SNPs as possible (i.e. as typically only a small % of  
+genotypes are missing and so we do not need to edit the table much).
+
+<!--#include file="end.html"-->
+
+<hr>
+<em>
+ This document last modified <!--#flastmod file="anal.shtml" -->
+</em>
+
+
+</body>
+
+<HEAD>
+<META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
+</HEAD>
+
+</html>
